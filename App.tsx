@@ -2,7 +2,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { KNOWLEDGE_BASE } from './constants';
 import { Topic, Difficulty } from './types';
-import { askInterviewer } from './geminiService';
+import { askInterviewer, handleFollowUp } from './geminiService';
 
 const DifficultyBadge: React.FC<{ difficulty: Difficulty; className?: string }> = ({ difficulty, className = '' }) => {
   const styles = {
@@ -55,8 +55,10 @@ const App: React.FC = () => {
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isFollowUpLoading, setIsFollowUpLoading] = useState(false);
   
   const recognitionRef = useRef<any>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const flatTopics = useMemo(() => KNOWLEDGE_BASE.flatMap(c => c.topics), []);
   
@@ -69,7 +71,6 @@ const App: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Инициализация Web Speech API
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       recognitionRef.current = new SpeechRecognition();
@@ -83,7 +84,6 @@ const App: React.FC = () => {
           transcript += event.results[i][0].transcript;
         }
         setUserAnswer(prev => {
-            // Чтобы не дублировать текст, если мы просто продолжаем говорить
             const lastPart = event.results[event.results.length - 1][0].transcript;
             if (event.results[event.results.length - 1].isFinal) {
                 return prev + (prev.length > 0 ? ' ' : '') + lastPart;
@@ -92,23 +92,13 @@ const App: React.FC = () => {
         });
       };
 
-      recognitionRef.current.onend = () => {
-        setIsRecording(false);
-      };
-
-      recognitionRef.current.onerror = (event: any) => {
-        console.error('Speech recognition error:', event.error);
-        setIsRecording(false);
-      };
+      recognitionRef.current.onend = () => setIsRecording(false);
+      recognitionRef.current.onerror = () => setIsRecording(false);
     }
   }, []);
 
   const toggleRecording = () => {
-    if (!recognitionRef.current) {
-      alert('Ваш браузер не поддерживает распознавание речи.');
-      return;
-    }
-
+    if (!recognitionRef.current) return alert('Браузер не поддерживает голос.');
     if (isRecording) {
       recognitionRef.current.stop();
     } else {
@@ -117,23 +107,31 @@ const App: React.FC = () => {
     }
   };
 
+  const jumpToTopic = (id: string) => {
+    setSelectedTopicId(id);
+    setAiFeedback(null);
+    setUserAnswer('');
+    if (isRecording) recognitionRef.current?.stop();
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const nextTopic = useMemo(() => 
+    currentTopic.nextTopicId ? flatTopics.find(t => t.id === currentTopic.nextTopicId) : null
+  , [currentTopic, flatTopics]);
+
   const filteredCategories = useMemo(() => {
     return KNOWLEDGE_BASE.map(cat => ({
       ...cat,
       topics: cat.topics.filter(t => {
         const matchesSearch = !searchQuery || 
-          t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          t.keyPoints.some(kp => kp.toLowerCase().includes(searchQuery.toLowerCase()));
+          t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          t.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
         
         const matchesDifficulty = selectedDifficulty === 'all' || t.difficulty === selectedDifficulty;
         
-        const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => {
-            const lowTag = tag.toLowerCase();
-            return t.title.toLowerCase().includes(lowTag) || 
-                   t.description.toLowerCase().includes(lowTag) ||
-                   t.keyPoints.some(kp => kp.toLowerCase().includes(lowTag));
-        });
+        const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => 
+          t.tags.some(topicTag => topicTag.toLowerCase() === tag.toLowerCase())
+        );
         
         return matchesSearch && matchesDifficulty && matchesTags;
       })
@@ -143,27 +141,22 @@ const App: React.FC = () => {
   const handleAskInterviewer = async () => {
     if (!userAnswer.trim()) return;
     setIsLoading(true);
-    if (isRecording) {
-      recognitionRef.current?.stop();
-    }
     const feedback = await askInterviewer(currentTopic.title, userAnswer);
-    setAiFeedback(feedback || "Ошибка связи.");
+    setAiFeedback(feedback || "Ошибка.");
     setIsLoading(false);
   };
 
-  const jumpToTopic = (id: string) => {
-    setSelectedTopicId(id);
-    setAiFeedback(null);
-    setUserAnswer('');
-    if (isRecording) recognitionRef.current?.stop();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  const handleFollowUpRequest = async (type: 'explain' | 'tricky_question') => {
+    if (!aiFeedback) return;
+    setIsFollowUpLoading(true);
+    const feedback = await handleFollowUp(currentTopic.title, type, aiFeedback);
+    setAiFeedback(prev => `${prev}\n\n---\n\n${feedback}`);
+    setIsFollowUpLoading(false);
   };
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag) 
-        : [...prev, tag]
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
     );
   };
 
@@ -176,278 +169,177 @@ const App: React.FC = () => {
   return (
     <div className="flex h-screen flex-col md:flex-row overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-full md:w-96 md:min-w-[384px] bg-slate-900/50 border-r border-slate-800 flex flex-col p-4 overflow-y-auto">
-        <div className="flex items-center gap-3 mb-8 px-2">
-          <div className="bg-emerald-500 p-2 rounded-lg">
-            <i className="fa-brands fa-js text-slate-900 text-xl"></i>
-          </div>
-          <h1 className="font-bold text-xl tracking-tight text-white whitespace-nowrap">JS Interview <span className="text-emerald-500">Pro</span></h1>
+      <aside className="w-full md:w-80 md:min-w-[320px] bg-slate-900 border-r border-slate-800 flex flex-col p-4 overflow-y-auto">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="bg-emerald-500 p-2 rounded-lg"><i className="fa-brands fa-js text-slate-950 text-xl"></i></div>
+          <h1 className="font-bold text-lg text-white">JS Interview <span className="text-emerald-500">Pro</span></h1>
         </div>
 
         <div className="space-y-4 mb-6">
           <div className="relative">
-            <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
+            <i className="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
             <input 
-              type="text" 
-              placeholder="Поиск по темам..."
-              value={searchQuery}
+              type="text" placeholder="Поиск..." value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg py-1.5 pl-9 pr-4 text-xs focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
             />
-            {(searchQuery || selectedTags.length > 0 || selectedDifficulty !== 'all') && (
-              <button 
-                onClick={clearFilters}
-                title="Очистить все фильтры"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-rose-400 transition-colors"
-              >
-                <i className="fa-solid fa-circle-xmark"></i>
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
+                <i className="fa-solid fa-xmark"></i>
               </button>
             )}
           </div>
-
-          <div className="flex flex-wrap gap-1 bg-slate-800/50 p-1 rounded-lg border border-slate-700">
-            {(['all', 'beginner', 'intermediate', 'advanced'] as const).map((diff) => (
-              <button
-                key={diff}
-                onClick={() => setSelectedDifficulty(diff)}
-                className={`flex-1 text-[10px] font-bold py-1.5 px-2 rounded-md transition-all uppercase tracking-wider whitespace-nowrap ${
-                  selectedDifficulty === diff 
-                    ? 'bg-slate-700 text-white shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-300'
-                }`}
-              >
-                {diff === 'all' ? 'Все' : diff === 'beginner' ? 'Beg.' : diff === 'intermediate' ? 'Int.' : 'Adv.'}
+          
+          <div className="flex flex-wrap gap-1 bg-slate-800 p-1 rounded-lg">
+            {(['all', 'beginner', 'intermediate', 'advanced'] as const).map(d => (
+              <button key={d} onClick={() => setSelectedDifficulty(d)}
+                className={`flex-1 text-[9px] font-bold py-1 rounded transition-all uppercase ${selectedDifficulty === d ? 'bg-slate-700 text-white' : 'text-slate-500 hover:text-slate-300'}`}>
+                {d === 'all' ? 'Все' : d.substring(0, 3)}
               </button>
             ))}
           </div>
 
-          <div className="px-1">
-            <div className="flex items-center justify-between mb-2">
-                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                  <i className="fa-solid fa-tags"></i>
-                  Облако тегов
-                </div>
-                {selectedTags.length > 0 && (
-                  <button 
-                    onClick={() => setSelectedTags([])}
-                    className="text-[9px] text-slate-500 hover:text-emerald-400 uppercase font-bold tracking-tighter"
-                  >
-                    сбросить
-                  </button>
-                )}
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {popularTags.map(tag => {
-                const isActive = selectedTags.includes(tag);
-                return (
-                  <button
-                    key={tag}
-                    onClick={() => handleTagToggle(tag)}
-                    className={`text-[10px] px-2 py-1 rounded border transition-all duration-200 ${
-                      isActive
-                        ? 'bg-emerald-500 border-emerald-400 text-slate-950 font-bold shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                        : 'bg-slate-800/40 border-slate-700 text-slate-500 hover:border-slate-500 hover:text-slate-300'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="flex flex-wrap gap-1">
+            {popularTags.map(tag => (
+              <button
+                key={tag}
+                onClick={() => handleTagToggle(tag)}
+                className={`text-[9px] px-2 py-0.5 rounded border transition-all ${
+                  selectedTags.includes(tag) 
+                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' 
+                  : 'bg-slate-800/50 border-slate-700 text-slate-500 hover:border-slate-500'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         </div>
 
-        <nav className="space-y-8 mt-4">
-          {filteredCategories.length > 0 ? (
-            filteredCategories.map(category => (
-              <div key={category.id}>
-                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2 truncate">
-                  {category.title}
-                </h3>
-                <div className="space-y-1">
-                  {category.topics.map(topic => (
-                    <TopicCard 
-                      key={topic.id}
-                      topic={topic}
-                      isActive={selectedTopicId === topic.id}
-                      onClick={() => jumpToTopic(topic.id)}
-                    />
-                  ))}
-                </div>
+        <nav className="space-y-6">
+          {filteredCategories.map(cat => (
+            <div key={cat.id}>
+              <h3 className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 px-1">{cat.title}</h3>
+              <div className="space-y-1">
+                {cat.topics.map(t => (
+                  <TopicCard key={t.id} topic={t} isActive={selectedTopicId === t.id} onClick={() => jumpToTopic(t.id)} />
+                ))}
               </div>
-            ))
-          ) : (
-            <div className="text-center py-10 px-4">
-              <i className="fa-solid fa-filter-circle-xmark text-slate-700 text-3xl mb-3"></i>
-              <p className="text-slate-500 text-sm italic">Ничего не найдено</p>
-              <button 
-                onClick={clearFilters}
-                className="mt-4 text-emerald-500 text-xs font-bold hover:underline"
-              >
-                Сбросить фильтры
-              </button>
+            </div>
+          ))}
+          {filteredCategories.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-slate-500 text-xs italic">Ничего не найдено</p>
+              <button onClick={clearFilters} className="text-emerald-500 text-[10px] font-bold mt-2 uppercase">Сбросить</button>
             </div>
           )}
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Topic Header */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2 text-emerald-500 text-sm font-medium uppercase tracking-wide">
-                <i className="fa-solid fa-book-open"></i>
-                База знаний
-              </div>
-              <DifficultyBadge difficulty={currentTopic.difficulty} className="text-sm px-4 py-1" />
+      <main ref={contentRef} className="flex-1 overflow-y-auto bg-slate-950 p-4 md:p-12 scroll-smooth">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-10">
+            <div className="flex items-center justify-between mb-2">
+               <span className="text-emerald-500 text-xs font-bold uppercase tracking-widest">Тема</span>
+               <DifficultyBadge difficulty={currentTopic.difficulty} />
             </div>
-            <h2 className="text-4xl font-extrabold text-white mb-4 leading-tight">
-              {currentTopic.title}
-            </h2>
-            <p className="text-xl text-slate-400 leading-relaxed">
-              {currentTopic.description}
-            </p>
-          </div>
-
-          {/* Key Points */}
-          <div className="grid md:grid-cols-1 gap-6 mb-10">
-            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-              <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                <i className="fa-solid fa-list-check text-emerald-500"></i>
-                Ключевые моменты
-              </h4>
-              <ul className="space-y-3">
-                {currentTopic.keyPoints.map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-slate-300">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
-                    <span>{point}</span>
-                  </li>
-                ))}
-              </ul>
+            <h2 className="text-3xl font-extrabold text-white mb-4 leading-tight">{currentTopic.title}</h2>
+            <p className="text-lg text-slate-400 leading-relaxed">{currentTopic.description}</p>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {currentTopic.tags.map(tag => (
+                <span key={tag} className="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md border border-slate-700">#{tag}</span>
+              ))}
             </div>
           </div>
 
-          {/* Code Example */}
+          <div className="bg-slate-900/30 border border-slate-800 rounded-2xl p-6 mb-8">
+            <h4 className="text-white font-bold mb-4 flex items-center gap-2 text-sm">
+              <i className="fa-solid fa-star text-emerald-500"></i> Ключевые моменты
+            </h4>
+            <ul className="space-y-3">
+              {currentTopic.keyPoints.map((p, i) => (
+                <li key={i} className="flex gap-3 text-slate-300 text-sm">
+                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0"></span>
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {currentTopic.codeExample && (
-            <div className="mb-10 group">
-              <div className="flex items-center justify-between mb-2 px-1">
-                <div className="text-xs font-bold text-slate-500 uppercase tracking-widest">Пример кода</div>
-                <button 
-                   onClick={() => navigator.clipboard.writeText(currentTopic.codeExample!)}
-                   className="text-xs text-slate-500 hover:text-emerald-400 transition-colors"
-                >
-                  <i className="fa-regular fa-copy mr-1"></i> Копировать
-                </button>
-              </div>
-              <div className="bg-[#1e293b] rounded-2xl p-6 overflow-x-auto border border-slate-800 shadow-xl group-hover:border-emerald-500/30 transition-all duration-300">
-                <pre className="text-emerald-300 text-sm md:text-base leading-relaxed">
-                  <code>{currentTopic.codeExample}</code>
-                </pre>
+            <div className="mb-10">
+              <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Код для закрепления</div>
+              <div className="bg-[#1e293b] rounded-xl p-5 border border-slate-800 overflow-x-auto">
+                <pre className="text-emerald-300 text-sm font-mono leading-relaxed"><code>{currentTopic.codeExample}</code></pre>
               </div>
             </div>
           )}
 
-          {/* AI Interviewer Section */}
-          <div className="bg-gradient-to-br from-indigo-900/20 to-emerald-900/10 border border-slate-800 rounded-2xl p-8 mb-12 shadow-2xl relative">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="bg-emerald-500 w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
-                <i className="fa-solid fa-robot text-slate-950 text-xl"></i>
-              </div>
-              <div>
-                <h4 className="text-white font-bold text-lg">AI-Интервьюер</h4>
-                <p className="text-sm text-slate-400">Проверь свои знания. Расскажи или надиктуй ответ.</p>
-              </div>
+          {/* AI Section */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-12">
+            <h4 className="text-white font-bold mb-1 flex items-center gap-2">
+              <i className="fa-solid fa-robot text-emerald-500"></i> Проверка знаний
+            </h4>
+            <p className="text-xs text-slate-500 mb-4 italic">Напишите или надиктуйте объяснение темы, как на реальном собеседовании.</p>
+            
+            <div className="relative mb-4">
+              <textarea 
+                value={userAnswer} onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="Ваш ответ..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-sm text-slate-300 focus:ring-1 focus:ring-emerald-500 outline-none min-h-[120px]"
+              />
+              <button onClick={toggleRecording}
+                className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all ${isRecording ? 'bg-rose-500 text-white animate-pulse' : 'bg-slate-800 text-slate-500 hover:text-emerald-500'}`}>
+                <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'}`}></i>
+              </button>
             </div>
 
-            <div className="relative mb-4 group">
-              <textarea 
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Напиши свой ответ здесь или нажми на микрофон..."
-                className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[160px] transition-all"
-              />
-              
-              <button 
-                onClick={toggleRecording}
-                className={`absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
-                  isRecording 
-                    ? 'bg-rose-500 text-white animate-pulse' 
-                    : 'bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-slate-950 group-hover:scale-110'
-                }`}
-                title={isRecording ? "Остановить запись" : "Начать голосовой ввод"}
-              >
-                <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'} text-lg`}></i>
-              </button>
-              
-              {isRecording && (
-                <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-rose-500/30 animate-pulse">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                  Запись идет...
-                </div>
-              )}
-            </div>
-            
-            <button 
-              onClick={handleAskInterviewer}
-              disabled={isLoading || !userAnswer.trim()}
-              className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-emerald-500/20"
-            >
-              {isLoading ? (
-                <>
-                  <i className="fa-solid fa-circle-notch animate-spin"></i>
-                  Анализирую...
-                </>
-              ) : (
-                <>
-                  <i className="fa-solid fa-paper-plane"></i>
-                  Отправить ответ
-                </>
-              )}
+            <button onClick={handleAskInterviewer} disabled={isLoading || !userAnswer.trim()}
+              className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 rounded-lg transition-all text-sm disabled:opacity-50">
+              {isLoading ? <i className="fa-solid fa-spinner animate-spin"></i> : "Получить фидбек"}
             </button>
 
             {aiFeedback && (
-              <div className="mt-6 p-5 bg-slate-900 border-l-4 border-emerald-500 rounded-r-xl animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-lg">
-                <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-2 flex items-center gap-2">
-                  <i className="fa-solid fa-comment-dots"></i>
-                  Вердикт интервьюера
+              <div className="mt-6 p-4 bg-slate-950 border-l-2 border-emerald-500 rounded-r-lg">
+                <div className="text-[9px] font-bold text-emerald-500 uppercase tracking-tighter mb-2">Отзыв AI</div>
+                <p className="text-slate-300 text-sm whitespace-pre-wrap italic">{aiFeedback}</p>
+                <div className="mt-4 flex gap-2">
+                  <button onClick={() => handleFollowUpRequest('explain')} disabled={isFollowUpLoading} className="text-[10px] font-bold bg-slate-800 py-1.5 px-3 rounded hover:bg-slate-700 transition-colors">
+                    {isFollowUpLoading ? '...' : 'Разобрать детальнее'}
+                  </button>
+                  <button onClick={() => handleFollowUpRequest('tricky_question')} disabled={isFollowUpLoading} className="text-[10px] font-bold bg-slate-800 py-1.5 px-3 rounded hover:bg-slate-700 transition-colors">
+                    {isFollowUpLoading ? '...' : 'Сложный вопрос'}
+                  </button>
                 </div>
-                <p className="text-slate-300 leading-relaxed italic whitespace-pre-wrap">
-                  {aiFeedback}
-                </p>
               </div>
             )}
           </div>
 
-          {/* Related Topics */}
-          {currentTopic.relatedTopics.length > 0 && (
-            <div className="mb-20">
-              <h4 className="text-slate-500 font-bold text-xs uppercase tracking-widest mb-4">Связанные темы</h4>
-              <div className="flex flex-wrap gap-3">
-                {currentTopic.relatedTopics.map(relId => {
-                  const relTopic = flatTopics.find(t => t.id === relId);
-                  if (!relTopic) return null;
-                  return (
-                    <button
-                      key={relId}
-                      onClick={() => jumpToTopic(relId)}
-                      className="bg-slate-900 hover:bg-slate-800 border border-slate-800 py-2 px-4 rounded-full text-sm text-slate-400 hover:text-emerald-400 transition-all flex items-center gap-2"
-                    >
-                      {relTopic.title}
-                      <div className={`w-1 h-1 rounded-full ${
-                        relTopic.difficulty === 'beginner' ? 'bg-emerald-500' : 
-                        relTopic.difficulty === 'intermediate' ? 'bg-amber-500' : 'bg-rose-500'
-                      }`}></div>
-                    </button>
-                  );
-                })}
-              </div>
+          {/* Next Topic Recommendation */}
+          {nextTopic && (
+            <div className="mb-12">
+               <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.2em] mb-4 text-center">Рекомендуемый следующий шаг</h4>
+               <button 
+                onClick={() => jumpToTopic(nextTopic.id)}
+                className="w-full group bg-gradient-to-r from-slate-900 to-slate-900 hover:from-emerald-950 hover:to-slate-900 border border-slate-800 hover:border-emerald-500/50 p-6 rounded-2xl transition-all duration-300 text-left shadow-lg hover:shadow-emerald-500/5"
+               >
+                 <div className="flex items-center justify-between">
+                   <div className="space-y-1">
+                     <DifficultyBadge difficulty={nextTopic.difficulty} />
+                     <h5 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors">{nextTopic.title}</h5>
+                     <p className="text-sm text-slate-500 line-clamp-1">{nextTopic.description}</p>
+                   </div>
+                   <div className="w-10 h-10 rounded-full bg-slate-800 group-hover:bg-emerald-500 flex items-center justify-center transition-all group-hover:translate-x-1">
+                     <i className="fa-solid fa-arrow-right text-slate-400 group-hover:text-slate-950"></i>
+                   </div>
+                 </div>
+               </button>
             </div>
           )}
 
-          <footer className="text-center text-slate-600 text-sm border-t border-slate-900 pt-8 mb-12">
-            © 2024 JS Interview Pro • Подготовлено для успешного оффера
+          <footer className="text-center text-slate-700 text-[10px] font-bold tracking-widest border-t border-slate-900 pt-8 pb-12 uppercase">
+            JS Interview Pro • Learning Path System 1.0
           </footer>
         </div>
       </main>

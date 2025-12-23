@@ -23,6 +23,27 @@ export const askInterviewer = async (topicTitle: string, userKnowledge: string) 
   }
 };
 
+export const handleFollowUp = async (topicTitle: string, type: 'explain' | 'tricky_question', currentFeedback: string) => {
+  const prompts = {
+    explain: `На основе предыдущего разговора о "${topicTitle}" (предыдущий отзыв: "${currentFeedback}"), пожалуйста, объясни эту тему более подробно, приведи наглядный пример и разбери нюансы, которые часто спрашивают на интервью.`,
+    tricky_question: `На основе темы "${topicTitle}" и предыдущего отзыва ("${currentFeedback}"), задай пользователю один очень глубокий и сложный вопрос, который проверит его понимание работы движка или пограничных случаев.`
+  };
+
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: prompts[type],
+      config: {
+        temperature: 0.8,
+      }
+    });
+    return response.text;
+  } catch (error) {
+    console.error("Gemini Follow-up Error:", error);
+    return "Не удалось получить дополнительную информацию.";
+  }
+};
+
 export const getNextTopicsRecommendation = async (completedTopics: string[]) => {
     try {
       const response = await ai.models.generateContent({
