@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { KNOWLEDGE_BASE } from './constants';
 import { Topic, Difficulty } from './types';
 import { askInterviewer } from './geminiService';
@@ -54,6 +54,9 @@ const App: React.FC = () => {
   const [userAnswer, setUserAnswer] = useState('');
   const [aiFeedback, setAiFeedback] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  
+  const recognitionRef = useRef<any>(null);
 
   const flatTopics = useMemo(() => KNOWLEDGE_BASE.flatMap(c => c.topics), []);
   
@@ -65,20 +68,66 @@ const App: React.FC = () => {
     'this', 'closure', 'async', 'promise', 'hoisting', 'scope', 'const', 'let', 'event loop', 'microtasks', 'prototype', 'immutability'
   ];
 
+  useEffect(() => {
+    // Инициализация Web Speech API
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'ru-RU';
+
+      recognitionRef.current.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        setUserAnswer(prev => {
+            // Чтобы не дублировать текст, если мы просто продолжаем говорить
+            const lastPart = event.results[event.results.length - 1][0].transcript;
+            if (event.results[event.results.length - 1].isFinal) {
+                return prev + (prev.length > 0 ? ' ' : '') + lastPart;
+            }
+            return prev;
+        });
+      };
+
+      recognitionRef.current.onend = () => {
+        setIsRecording(false);
+      };
+
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        setIsRecording(false);
+      };
+    }
+  }, []);
+
+  const toggleRecording = () => {
+    if (!recognitionRef.current) {
+      alert('Ваш браузер не поддерживает распознавание речи.');
+      return;
+    }
+
+    if (isRecording) {
+      recognitionRef.current.stop();
+    } else {
+      setIsRecording(true);
+      recognitionRef.current.start();
+    }
+  };
+
   const filteredCategories = useMemo(() => {
     return KNOWLEDGE_BASE.map(cat => ({
       ...cat,
       topics: cat.topics.filter(t => {
-        // Текстовый поиск
         const matchesSearch = !searchQuery || 
           t.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
           t.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           t.keyPoints.some(kp => kp.toLowerCase().includes(searchQuery.toLowerCase()));
         
-        // Фильтр по сложности
         const matchesDifficulty = selectedDifficulty === 'all' || t.difficulty === selectedDifficulty;
         
-        // Фильтр по тегам (тема должна содержать ХОТЯ БЫ ОДИН из выбранных тегов, если они выбраны)
         const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => {
             const lowTag = tag.toLowerCase();
             return t.title.toLowerCase().includes(lowTag) || 
@@ -94,6 +143,9 @@ const App: React.FC = () => {
   const handleAskInterviewer = async () => {
     if (!userAnswer.trim()) return;
     setIsLoading(true);
+    if (isRecording) {
+      recognitionRef.current?.stop();
+    }
     const feedback = await askInterviewer(currentTopic.title, userAnswer);
     setAiFeedback(feedback || "Ошибка связи.");
     setIsLoading(false);
@@ -103,6 +155,7 @@ const App: React.FC = () => {
     setSelectedTopicId(id);
     setAiFeedback(null);
     setUserAnswer('');
+    if (isRecording) recognitionRef.current?.stop();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -168,7 +221,6 @@ const App: React.FC = () => {
             ))}
           </div>
 
-          {/* Облако тегов */}
           <div className="px-1">
             <div className="flex items-center justify-between mb-2">
                 <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
@@ -298,28 +350,49 @@ const App: React.FC = () => {
           )}
 
           {/* AI Interviewer Section */}
-          <div className="bg-gradient-to-br from-indigo-900/20 to-emerald-900/10 border border-slate-800 rounded-2xl p-8 mb-12 shadow-2xl">
+          <div className="bg-gradient-to-br from-indigo-900/20 to-emerald-900/10 border border-slate-800 rounded-2xl p-8 mb-12 shadow-2xl relative">
             <div className="flex items-center gap-4 mb-6">
               <div className="bg-emerald-500 w-12 h-12 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.3)]">
                 <i className="fa-solid fa-robot text-slate-950 text-xl"></i>
               </div>
               <div>
                 <h4 className="text-white font-bold text-lg">AI-Интервьюер</h4>
-                <p className="text-sm text-slate-400">Проверь свои знания. Расскажи кратко об этой теме.</p>
+                <p className="text-sm text-slate-400">Проверь свои знания. Расскажи или надиктуй ответ.</p>
               </div>
             </div>
 
-            <textarea 
-              value={userAnswer}
-              onChange={(e) => setUserAnswer(e.target.value)}
-              placeholder="Напиши свой ответ здесь..."
-              className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[120px] mb-4 transition-all"
-            />
+            <div className="relative mb-4 group">
+              <textarea 
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                placeholder="Напиши свой ответ здесь или нажми на микрофон..."
+                className="w-full bg-slate-900/80 border border-slate-700 rounded-xl p-4 text-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[160px] transition-all"
+              />
+              
+              <button 
+                onClick={toggleRecording}
+                className={`absolute bottom-4 right-4 w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${
+                  isRecording 
+                    ? 'bg-rose-500 text-white animate-pulse' 
+                    : 'bg-slate-800 text-slate-400 hover:bg-emerald-500 hover:text-slate-950 group-hover:scale-110'
+                }`}
+                title={isRecording ? "Остановить запись" : "Начать голосовой ввод"}
+              >
+                <i className={`fa-solid ${isRecording ? 'fa-stop' : 'fa-microphone'} text-lg`}></i>
+              </button>
+              
+              {isRecording && (
+                <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1 bg-rose-500/20 text-rose-400 text-[10px] font-bold uppercase tracking-wider rounded-full border border-rose-500/30 animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                  Запись идет...
+                </div>
+              )}
+            </div>
             
             <button 
               onClick={handleAskInterviewer}
               disabled={isLoading || !userAnswer.trim()}
-              className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2"
+              className="w-full md:w-auto bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold py-3 px-8 rounded-xl transition-all flex items-center justify-center gap-2 shadow-xl hover:shadow-emerald-500/20"
             >
               {isLoading ? (
                 <>
@@ -335,9 +408,13 @@ const App: React.FC = () => {
             </button>
 
             {aiFeedback && (
-              <div className="mt-6 p-5 bg-slate-900 border-l-4 border-emerald-500 rounded-r-xl animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <p className="text-slate-300 leading-relaxed italic">
-                  "{aiFeedback}"
+              <div className="mt-6 p-5 bg-slate-900 border-l-4 border-emerald-500 rounded-r-xl animate-in fade-in slide-in-from-bottom-2 duration-300 shadow-lg">
+                <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest mb-2 flex items-center gap-2">
+                  <i className="fa-solid fa-comment-dots"></i>
+                  Вердикт интервьюера
+                </div>
+                <p className="text-slate-300 leading-relaxed italic whitespace-pre-wrap">
+                  {aiFeedback}
                 </p>
               </div>
             )}
