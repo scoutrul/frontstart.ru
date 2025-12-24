@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
               <i className="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-[10px]"></i>
               <input 
                 type="text" 
-                placeholder="Поиск..." 
+                placeholder="Фильтр по темам и тегам" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className={`w-full bg-[#1e293b]/30 border border-slate-800/80 rounded-md py-1.5 text-[11px] text-slate-300 outline-none focus:border-emerald-500/40 transition-all placeholder:text-slate-700 ${searchQuery ? 'pl-8 pr-8' : 'pl-8 pr-3'}`}

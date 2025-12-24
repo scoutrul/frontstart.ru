@@ -14,12 +14,26 @@ export const useTopicsFilter = () => {
   const { isLearned } = useKnowledgeBaseStore();
 
   const filteredCategories = useMemo(() => {
+    // Разбиваем запрос на слова (минимум 3 символа)
+    // Разбиваем по пробелам, фильтруем слова >= 3 символов
+    const searchWords = searchQuery
+      .toLowerCase()
+      .split(/\s+/)
+      .map(word => word.trim())
+      .filter(word => word.length >= 3);
+    
     return KNOWLEDGE_BASE.map(cat => ({
       ...cat,
       topics: cat.topics
         .filter(t => {
-          const matchesSearch = !searchQuery || 
-            t.title.toLowerCase().includes(searchQuery.toLowerCase());
+          // Поиск по словам: хотя бы одно слово должно быть найдено в title, description или tags
+          const matchesSearch = !searchQuery || searchWords.length === 0 || 
+            searchWords.some(word => {
+              const titleMatch = t.title.toLowerCase().includes(word);
+              const descriptionMatch = t.description.toLowerCase().includes(word);
+              const tagsMatch = t.tags.some(tag => tag.toLowerCase().includes(word));
+              return titleMatch || descriptionMatch || tagsMatch;
+            });
           const matchesDifficulty = selectedDifficulty === 'all' || 
             t.difficulty === selectedDifficulty;
           const matchesTags = selectedTags.length === 0 || 
