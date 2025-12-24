@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Category, Difficulty } from '../../../core/types';
 import { Badge } from '../../../components/ui';
 import { POPULAR_TAGS } from '../../../core/constants';
@@ -18,6 +18,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = (props) => {
+  const [showAllTags, setShowAllTags] = useState(false);
+  const TAGS_LIMIT = 12;
   
   const renderDifficultyStars = (d: Difficulty | 'all') => {
     if (d === 'all') return 'BCE';
@@ -75,23 +77,34 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
               ))}
             </div>
 
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              {props.availableTags.length > 0 ? (
-                props.availableTags.slice(0, 11).map(tag => (
-                  <button
-                    key={tag}
-                    onClick={() => props.onTagToggle(tag)}
-                    className={`text-[9px] px-2 py-0.5 rounded border transition-all ${
-                      props.selectedTags.includes(tag) 
-                        ? 'bg-transparent border-slate-700 text-white' 
-                        : 'bg-transparent border-slate-800/60 text-slate-600 hover:border-slate-700'
-                    }`}
-                  >
-                    {tag}
-                  </button>
-                ))
-              ) : (
-                <div className="text-[9px] text-slate-600 italic">Нет доступных тегов</div>
+            <div className="space-y-2">
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {props.availableTags.length > 0 ? (
+                  (showAllTags ? props.availableTags : props.availableTags.slice(0, TAGS_LIMIT)).map(tag => (
+                    <button
+                      key={tag}
+                      onClick={() => props.onTagToggle(tag)}
+                      className={`text-[9px] px-2 py-0.5 rounded border transition-all ${
+                        props.selectedTags.includes(tag) 
+                          ? 'bg-transparent border-slate-700 text-white' 
+                          : 'bg-transparent border-slate-800/60 text-slate-600 hover:border-slate-700'
+                      }`}
+                    >
+                      {tag}
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-[9px] text-slate-600 italic">Нет доступных тегов</div>
+                )}
+              </div>
+              {props.availableTags.length > TAGS_LIMIT && (
+                <button
+                  onClick={() => setShowAllTags(!showAllTags)}
+                  className="text-[9px] text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1"
+                >
+                  <span>{showAllTags ? 'Скрыть' : 'Показать все'}</span>
+                  <i className={`fa-solid fa-chevron-${showAllTags ? 'up' : 'down'} text-[7px]`}></i>
+                </button>
               )}
             </div>
           </div>

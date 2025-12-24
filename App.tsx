@@ -34,16 +34,27 @@ const App: React.FC = () => {
     })).filter(cat => cat.topics.length > 0);
   }, [searchQuery, selectedDifficulty, selectedTags]);
 
-  // Получаем доступные теги из тем выбранного уровня сложности
+  // Получаем доступные теги из тем выбранного уровня сложности, отсортированные по популярности
   const availableTags = useMemo(() => {
     const topicsByDifficulty = KNOWLEDGE_BASE.flatMap(cat => cat.topics).filter(t => 
       selectedDifficulty === 'all' || t.difficulty === selectedDifficulty
     );
-    const allTags = new Set<string>();
+    
+    // Подсчитываем частоту использования каждого тега
+    const tagCounts = new Map<string, number>();
     topicsByDifficulty.forEach(topic => {
-      topic.tags.forEach(tag => allTags.add(tag));
+      topic.tags.forEach(tag => {
+        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      });
     });
-    return Array.from(allTags).sort();
+    
+    // Сортируем по популярности (частоте), затем по алфавиту
+    return Array.from(tagCounts.entries())
+      .sort((a, b) => {
+        if (b[1] !== a[1]) return b[1] - a[1]; // Сначала по частоте (убывание)
+        return a[0].localeCompare(b[0]); // Затем по алфавиту
+      })
+      .map(([tag]) => tag);
   }, [selectedDifficulty]);
 
   const handleTopicJump = (id: string) => {
