@@ -2,7 +2,8 @@
 import React, { useRef, useState } from 'react';
 import Sidebar from './features/knowledge-base/components/Sidebar';
 import Content from './features/knowledge-base/components/Content';
-import { useCurrentTopic } from './features/knowledge-base/hooks';
+import ContentSearch from './features/knowledge-base/components/ContentSearch';
+import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 
 const App: React.FC = () => {
@@ -10,6 +11,13 @@ const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { selectedTopicId, setSelectedTopicId } = useKnowledgeBaseStore();
   const { currentTopic, relatedTopics } = useCurrentTopic();
+  
+  const {
+    contentSearchQuery,
+    setContentSearchQuery,
+    searchResults,
+    searchAreaRef
+  } = useContentSearch(currentTopic?.id);
 
   const handleTopicJump = (id: string) => {
     setSelectedTopicId(id);
@@ -41,7 +49,16 @@ const App: React.FC = () => {
         onClose={() => setIsSidebarOpen(false)}
       />
       
-      <main ref={scrollContainerRef} className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative">
+      <main 
+        ref={scrollContainerRef} 
+        className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative"
+        onClick={(e) => {
+          // Закрываем поиск при клике вне области поиска (включая края)
+          if (contentSearchQuery !== null && searchAreaRef.current && !searchAreaRef.current.contains(e.target as Node)) {
+            setContentSearchQuery(null);
+          }
+        }}
+      >
         {/* Кнопка меню для мобильных */}
         <button
           onClick={() => setIsSidebarOpen(true)}
@@ -49,13 +66,27 @@ const App: React.FC = () => {
         >
           <i className="fa-solid fa-bars text-sm"></i>
         </button>
+
+        {/* Поиск по контенту */}
+        <ContentSearch
+          contentSearchQuery={contentSearchQuery}
+          setContentSearchQuery={setContentSearchQuery}
+          searchResults={searchResults}
+          searchAreaRef={searchAreaRef}
+          onTopicSelect={handleTopicJump}
+        />
         
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:clamp(2.5rem,4vw,3rem)_clamp(2.5rem,4vw,3rem)] pointer-events-none"></div>
-        <Content 
-          topic={currentTopic}
-          relatedTopics={relatedTopics}
-          onTopicJump={handleTopicJump}
-        />
+        <div className={contentSearchQuery !== null && searchResults.length > 0 ? 'pt-[calc(73px+min(60vh,400px))]' : contentSearchQuery !== null ? 'pt-[73px]' : ''}>
+          <Content 
+            topic={currentTopic}
+            relatedTopics={relatedTopics}
+            onTopicJump={handleTopicJump}
+            contentSearchQuery={contentSearchQuery}
+            setContentSearchQuery={setContentSearchQuery}
+            searchResults={searchResults}
+          />
+        </div>
       </main>
     </div>
   );

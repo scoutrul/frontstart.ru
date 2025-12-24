@@ -1,20 +1,28 @@
 
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { Topic } from '../../../core/types';
 import { Badge, CodeBlock } from '../../../components/ui';
 import ScopeChainVisualizer from '../visualizers/ScopeChainVisualizer';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
+import { KNOWLEDGE_BASE } from '../../../core/constants';
 
 interface ContentProps {
   topic: Topic;
   relatedTopics: Topic[];
   onTopicJump: (id: string) => void;
+  contentSearchQuery: string | null;
+  setContentSearchQuery: (query: string | null) => void;
+  searchResults: Topic[];
 }
 
 const Content: React.FC<ContentProps> = (props) => {
-  const { topic } = props;
+  const { topic, contentSearchQuery, searchResults } = props;
   const { isLearned, toggleLearned } = useKnowledgeBaseStore();
   const learned = isLearned(topic.id);
+
+  const relevantTopics = contentSearchQuery && contentSearchQuery.trim() 
+    ? searchResults 
+    : props.relatedTopics;
 
   return (
     <div key={topic.id} className="w-full max-w-[min(90vw,80rem)] mx-auto py-12 px-6 animate-content">
@@ -71,11 +79,13 @@ const Content: React.FC<ContentProps> = (props) => {
         <span className="text-sm font-bold">{learned ? 'Изучено' : 'Отметить как изученное'}</span>
       </button>
 
-      {props.relatedTopics.length > 0 && (
+      {relevantTopics.length > 0 && (
         <div className="mt-16">
-          <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">РЕЛЕВАНТНЫЕ ТЕМЫ</h3>
+          <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
+            {contentSearchQuery ? 'РЕЛЕВАНТНЫЕ ТЕМЫ (поиск)' : 'РЕЛЕВАНТНЫЕ ТЕМЫ'}
+          </h3>
           <div className="grid grid-cols-2 gap-3">
-            {props.relatedTopics.map(relatedTopic => (
+            {relevantTopics.map(relatedTopic => (
               <div
                 key={relatedTopic.id}
                 onClick={() => props.onTopicJump(relatedTopic.id)}
