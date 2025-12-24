@@ -7,14 +7,67 @@
     <title>JS Interview Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- PrismJS Dracula Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-dracula.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        pre, code { font-family: 'Fira Code', monospace; }
-        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
-        ::-webkit-scrollbar { width: 6px; }
+        pre, code { font-family: 'Fira Code', monospace !important; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+
+        .prose-custom {
+            line-height: 1.8;
+            color: #d1d5db;
+            font-size: 1.0625rem;
+        }
+        .prose-custom p { margin-bottom: 1.5rem; }
+        .prose-custom strong {
+            color: #ffffff;
+            font-weight: 700;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        .prose-custom ul { margin: 1.25rem 0; padding-left: 1.75rem; }
+        .prose-custom li { margin-bottom: 1rem; position: relative; }
+        .prose-custom ul li::before {
+            content: "→";
+            color: #10b981;
+            font-weight: bold;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.2em;
+        }
+
+        /* Кастомные правки для Prism, чтобы вписаться в дизайн */
+        pre[class*="language-"] {
+            margin: 0 !important;
+            background: transparent !important;
+            padding: 0 !important;
+        }
+        .code-block-container {
+            background: #282a36;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+            border: 1px solid #44475a;
+        }
+        .code-header {
+            background: #44475a;
+            padding: 10px 16px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .dot-container { display: flex; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot-red { background: #ff5555; }
+        .dot-yellow { background: #f1fa8c; }
+        .dot-green { background: #50fa7b; }
     </style>
 <script type="importmap">
 {
@@ -23,6 +76,7 @@
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "prismjs": "https://esm.sh/prismjs@1.29.0",
     "vite": "https://esm.sh/vite@^7.3.0",
     "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
@@ -31,7 +85,6 @@
 </head>
 <body class="bg-[#0f172a] text-slate-200 antialiased">
     <div id="root"></div>
-    <!-- Точка входа для сборщика Vite -->
     <script type="module" src="/index.tsx"></script>
 </body>
 </html>
