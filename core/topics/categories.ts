@@ -10,10 +10,22 @@ const getTopic = (id: string) => ALL_TOPICS.find(t => t.id === id);
 
 export const KNOWLEDGE_BASE: Category[] = [
   { 
+    id: 'basics', 
+    title: 'Основы JavaScript', 
+    topics: [
+      getTopic('data-types'),
+      getTopic('type-coercion'),
+      getTopic('comparison'),
+      getTopic('operators'),
+      getTopic('functions-types'),
+    ].filter((t): t is NonNullable<typeof t> => t !== undefined)
+  },
+  { 
     id: 'variables', 
     title: 'Переменные и Область видимости', 
     topics: [
       getTopic('var-let-const'),
+      getTopic('hoisting-basic'),
       getTopic('hoisting'),
       getTopic('tdz'),
       getTopic('scope-chain'),
