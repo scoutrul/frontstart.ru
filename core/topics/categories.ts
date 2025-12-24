@@ -20,9 +20,12 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('functions-types'),
       getTopic('arrays-basic'),
       getTopic('objects-basic'),
+      getTopic('object-methods'),
       getTopic('destructuring-basic'),
       getTopic('strings-methods'),
       getTopic('conditions-loops'),
+      getTopic('json-methods'),
+      getTopic('date-api'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -33,6 +36,7 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('hoisting-basic'),
       getTopic('tdz-basic'),
       getTopic('scope-chain'),
+      getTopic('strict-mode'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -42,6 +46,7 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('lexical-env'),
       getTopic('closures-basic'),
       getTopic('private-state'),
+      getTopic('iife'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -69,6 +74,7 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('promises'),
       getTopic('async-await'),
       getTopic('generators'),
+      getTopic('callbacks'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -76,6 +82,9 @@ export const KNOWLEDGE_BASE: Category[] = [
     title: 'Функциональные концепции', 
     topics: [
       getTopic('immutability'),
+      getTopic('higher-order-functions'),
+      getTopic('recursion'),
+      getTopic('currying'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -83,6 +92,7 @@ export const KNOWLEDGE_BASE: Category[] = [
     title: 'Коллекции и структуры данных', 
     topics: [
       getTopic('arrays-advanced'),
+      getTopic('array-methods-advanced'),
       getTopic('map-set'),
       getTopic('weakmap-weakset'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
@@ -94,6 +104,7 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('classes'),
       getTopic('modules'),
       getTopic('symbol'),
+      getTopic('design-patterns'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -106,6 +117,16 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('iterators-iterables'),
       getTopic('memory-management'),
       getTopic('regexp-advanced'),
+      getTopic('debounce-throttle'),
+      getTopic('memoization'),
+      getTopic('performance-optimization'),
+    ].filter((t): t is NonNullable<typeof t> => t !== undefined)
+  },
+  { 
+    id: 'browser-api', 
+    title: 'Browser API', 
+    topics: [
+      getTopic('web-storage'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   }
 ];

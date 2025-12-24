@@ -226,6 +226,122 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['strings-methods']
+  },
+  {
+    id: 'currying',
+    title: 'Currying и Partial Application',
+    difficulty: 'advanced',
+    description: 'Currying — преобразование функции с несколькими аргументами в цепочку функций с одним аргументом. Partial Application — фиксация части аргументов функции. Позволяет создавать специализированные функции, улучшает переиспользование кода. Основа функционального программирования.',
+    keyPoints: [
+      'Currying: f(a, b, c) → f(a)(b)(c).',
+      'Partial Application: фиксация части аргументов.',
+      'Создает специализированные функции из общих.',
+      'Улучшает переиспользование и композицию.',
+      'Основа функционального программирования.'
+    ],
+    tags: ['currying', 'functional', 'partial-application', 'patterns'],
+    examples: [
+      {
+        title: "Currying вручную",
+        code: `function add(a) {\n  return function(b) {\n    return function(c) {\n      return a + b + c;\n    };\n  };\n}\n\nadd(1)(2)(3); // 6\n\n// Arrow functions\nconst add = a => b => c => a + b + c;`
+      },
+      {
+        title: "Универсальный curry",
+        code: `function curry(fn) {\n  return function curried(...args) {\n    if (args.length >= fn.length) {\n      return fn.apply(this, args);\n    }\n    return function(...nextArgs) {\n      return curried.apply(this, args.concat(nextArgs));\n    };\n  };\n}\n\nconst multiply = (a, b, c) => a * b * c;\nconst curriedMultiply = curry(multiply);\n\ncurriedMultiply(2)(3)(4); // 24\ncurriedMultiply(2, 3)(4); // 24`
+      },
+      {
+        title: "Partial Application",
+        code: `function partial(fn, ...fixedArgs) {\n  return function(...remainingArgs) {\n    return fn(...fixedArgs, ...remainingArgs);\n  };\n}\n\nfunction greet(greeting, name) {\n  return \`\${greeting}, \${name}!\`;\n}\n\nconst sayHello = partial(greet, "Hello");\nsayHello("Alice"); // "Hello, Alice!"\n\nconst sayHi = partial(greet, "Hi");\nsayHi("Bob"); // "Hi, Bob!"`
+      }
+    ],
+    relatedTopics: ['higher-order-functions', 'closures-basic', 'functions-types']
+  },
+  {
+    id: 'memoization',
+    title: 'Мемоизация',
+    difficulty: 'advanced',
+    description: 'Мемоизация — кэширование результатов функции для одинаковых аргументов. При повторном вызове с теми же аргументами возвращается кэшированное значение. Ускоряет вычисления, особенно для рекурсивных функций. Используется в React.memo, useMemo.',
+    keyPoints: [
+      'Кэширование результатов функции.',
+      'Проверка: были ли такие аргументы ранее.',
+      'Возврат кэша или вычисление и сохранение.',
+      'Ускоряет повторные вычисления.',
+      'Используется в React.memo, useMemo.'
+    ],
+    tags: ['memoization', 'performance', 'optimization', 'caching'],
+    examples: [
+      {
+        title: "Простая мемоизация",
+        code: `function memoize(fn) {\n  const cache = {};\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (cache[key]) {\n      return cache[key];\n    }\n    const result = fn.apply(this, args);\n    cache[key] = result;\n    return result;\n  };\n}\n\nconst expensive = (n) => {\n  console.log("Computing...");\n  return n * 2;\n};\n\nconst memoized = memoize(expensive);\nmemoized(5); // Computing... 10\nmemoized(5); // 10 (из кэша)`
+      },
+      {
+        title: "Мемоизация факториала",
+        code: `const memoFactorial = memoize(function(n) {\n  if (n <= 1) return 1;\n  return n * memoFactorial(n - 1);\n});\n\nmemoFactorial(5); // Вычисляет 5, 4, 3, 2, 1\nmemoFactorial(6); // Использует кэш для 5, вычисляет только 6`
+      },
+      {
+        title: "Мемоизация с Map",
+        code: `function memoizeMap(fn) {\n  const cache = new Map();\n  return function(...args) {\n    const key = args.join(',');\n    if (cache.has(key)) {\n      return cache.get(key);\n    }\n    const result = fn.apply(this, args);\n    cache.set(key, result);\n    return result;\n  };\n}`
+      }
+    ],
+    relatedTopics: ['recursion', 'higher-order-functions', 'performance']
+  },
+  {
+    id: 'design-patterns',
+    title: 'Паттерны проектирования',
+    difficulty: 'advanced',
+    description: 'Singleton — один экземпляр класса. Factory — создание объектов через фабричную функцию. Observer — подписка на события, уведомление подписчиков. Паттерны решают типичные задачи проектирования, улучшают структуру кода.',
+    keyPoints: [
+      'Singleton: гарантирует один экземпляр объекта.',
+      'Factory: создание объектов через функцию, скрывает детали.',
+      'Observer: подписка/отписка, уведомление подписчиков.',
+      'Решают типичные задачи проектирования.',
+      'Улучшают структуру и переиспользование кода.'
+    ],
+    tags: ['patterns', 'design', 'singleton', 'factory', 'observer', 'architecture'],
+    examples: [
+      {
+        title: "Singleton",
+        code: `class Singleton {\n  constructor() {\n    if (Singleton.instance) {\n      return Singleton.instance;\n    }\n    Singleton.instance = this;\n  }\n}\n\nconst s1 = new Singleton();\nconst s2 = new Singleton();\ns1 === s2; // true\n\n// Или через замыкание\nconst Singleton = (function() {\n  let instance;\n  return function() {\n    if (!instance) instance = this;\n    return instance;\n  };\n})();`
+      },
+      {
+        title: "Factory",
+        code: `function createUser(type) {\n  switch(type) {\n    case 'admin':\n      return { role: 'admin', permissions: ['all'] };\n    case 'user':\n      return { role: 'user', permissions: ['read'] };\n    default:\n      throw new Error('Unknown user type');\n  }\n}\n\nconst admin = createUser('admin');\nconst user = createUser('user');`
+      },
+      {
+        title: "Observer",
+        code: `class EventEmitter {\n  constructor() {\n    this.events = {};\n  }\n  \n  on(event, callback) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push(callback);\n  }\n  \n  emit(event, data) {\n    if (this.events[event]) {\n      this.events[event].forEach(cb => cb(data));\n    }\n  }\n}\n\nconst emitter = new EventEmitter();\nemitter.on('click', (data) => console.log(data));\nemitter.emit('click', 'Hello'); // "Hello"`
+      }
+    ],
+    relatedTopics: ['classes', 'closures-basic', 'higher-order-functions']
+  },
+  {
+    id: 'performance-optimization',
+    title: 'Оптимизация производительности',
+    difficulty: 'advanced',
+    description: 'Профилирование через Performance API, DevTools. Оптимизация: избегать лишних вычислений, использовать мемоизацию, ленивые вычисления, виртуализацию списков. Оптимизация рендеринга: React.memo, useMemo, useCallback. Избегать утечек памяти, оптимизировать события.',
+    keyPoints: [
+      'Профилирование: Performance API, Chrome DevTools.',
+      'Мемоизация: кэширование результатов вычислений.',
+      'Ленивые вычисления: вычислять только при необходимости.',
+      'Виртуализация: рендерить только видимые элементы.',
+      'Оптимизация рендеринга: React.memo, useMemo, useCallback.'
+    ],
+    tags: ['performance', 'optimization', 'profiling', 'memory'],
+    examples: [
+      {
+        title: "Performance API",
+        code: `// Измерение времени выполнения\nconst start = performance.now();\n\n// Код для измерения\nfor (let i = 0; i < 1000000; i++) {\n  Math.sqrt(i);\n}\n\nconst end = performance.now();\nconsole.log(\`Execution time: \${end - start}ms\`);\n\n// Маркеры\nperformance.mark('start');\n// код\nperformance.mark('end');\nperformance.measure('duration', 'start', 'end');`
+      },
+      {
+        title: "Ленивые вычисления",
+        code: `function lazyCompute() {\n  let cached = null;\n  return function() {\n    if (cached === null) {\n      console.log("Computing...");\n      cached = expensiveOperation();\n    }\n    return cached;\n  };\n}\n\nconst getValue = lazyCompute();\ngetValue(); // Computing...\ngetValue(); // Из кэша`
+      },
+      {
+        title: "Оптимизация событий",
+        code: `// Плохо: создается новая функция при каждом рендере\n<button onClick={() => handleClick(id)}>Click</button>\n\n// Хорошо: мемоизированный callback\nconst handleClick = useCallback((id) => {\n  // обработка\n}, [dependencies]);\n\n<button onClick={handleClick}>Click</button>`
+      }
+    ],
+    relatedTopics: ['memoization', 'memory-management', 'debounce-throttle']
   }
 ];
 

@@ -441,6 +441,151 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['operators', 'comparison']
+  },
+  {
+    id: 'json-methods',
+    title: 'JSON методы',
+    difficulty: 'beginner',
+    description: 'JSON.parse() преобразует JSON строку в объект, JSON.stringify() — объект в JSON строку. При ошибке parse выбрасывает SyntaxError. stringify может принимать replacer и space для форматирования. undefined, функции, Symbol пропускаются при сериализации.',
+    keyPoints: [
+      'JSON.parse(str): преобразует JSON строку в объект.',
+      'JSON.stringify(obj): преобразует объект в JSON строку.',
+      'Ошибки: parse выбрасывает SyntaxError при невалидном JSON.',
+      'replacer: функция или массив для фильтрации свойств.',
+      'space: форматирование (отступы) в результирующей строке.'
+    ],
+    tags: ['json', 'serialization', 'parsing', 'data'],
+    examples: [
+      {
+        title: "Базовое использование",
+        code: `const obj = { name: "Alice", age: 30 };\nconst json = JSON.stringify(obj);\n// '{"name":"Alice","age":30}'\n\nconst parsed = JSON.parse(json);\n// { name: "Alice", age: 30 }`
+      },
+      {
+        title: "Обработка ошибок",
+        code: `try {\n  const obj = JSON.parse('invalid json');\n} catch (e) {\n  console.error("Parse error:", e.message);\n}\n\n// Безопасный парсинг\nfunction safeParse(str) {\n  try {\n    return JSON.parse(str);\n  } catch {\n    return null;\n  }\n}`
+      },
+      {
+        title: "replacer и space",
+        code: `const obj = { name: "Alice", age: 30, password: "secret" };\n\n// replacer: исключить password\nJSON.stringify(obj, ["name", "age"]);\n// '{"name":"Alice","age":30}'\n\n// space: форматирование\nJSON.stringify(obj, null, 2);\n// {\n//   "name": "Alice",\n//   "age": 30\n// }`
+      }
+    ],
+    relatedTopics: ['objects-basic', 'strings-methods']
+  },
+  {
+    id: 'object-methods',
+    title: 'Методы Object',
+    difficulty: 'beginner',
+    description: 'Object.keys() возвращает массив ключей, Object.values() — значений, Object.entries() — пар [ключ, значение]. Object.assign() копирует свойства, Object.freeze() делает объект неизменяемым. Object.hasOwnProperty() проверяет собственное свойство.',
+    keyPoints: [
+      'Object.keys(obj): массив ключей объекта.',
+      'Object.values(obj): массив значений объекта.',
+      'Object.entries(obj): массив пар [ключ, значение].',
+      'Object.assign(target, ...sources): копирует свойства в target.',
+      'Object.freeze(obj): делает объект неизменяемым.'
+    ],
+    tags: ['objects', 'methods', 'iteration', 'immutability'],
+    examples: [
+      {
+        title: "keys, values, entries",
+        code: `const obj = { a: 1, b: 2, c: 3 };\n\nObject.keys(obj); // ["a", "b", "c"]\nObject.values(obj); // [1, 2, 3]\nObject.entries(obj); // [["a", 1], ["b", 2], ["c", 3]]\n\n// Итерация через entries\nfor (const [key, value] of Object.entries(obj)) {\n  console.log(key, value);\n}`
+      },
+      {
+        title: "Object.assign",
+        code: `const target = { a: 1 };\nconst source1 = { b: 2 };\nconst source2 = { c: 3 };\n\nObject.assign(target, source1, source2);\n// target = { a: 1, b: 2, c: 3 }\n\n// Поверхностное копирование\nconst copy = Object.assign({}, target);`
+      },
+      {
+        title: "Object.freeze",
+        code: `const obj = { name: "Alice" };\nObject.freeze(obj);\n\nobj.name = "Bob"; // Игнорируется в strict mode\nobj.age = 30; // Игнорируется\n\nObject.isFrozen(obj); // true`
+      }
+    ],
+    relatedTopics: ['objects-basic', 'destructuring-basic', 'arrays-basic']
+  },
+  {
+    id: 'date-api',
+    title: 'Date API',
+    difficulty: 'beginner',
+    description: 'Date создает объект даты. new Date() — текущая дата, new Date(timestamp) — из timestamp, new Date(year, month, day) — из компонентов. Методы: getFullYear(), getMonth(), getDate(), getTime(). Месяцы начинаются с 0. Форматирование через toLocaleString(), toISOString().',
+    keyPoints: [
+      'new Date(): текущая дата и время.',
+      'new Date(timestamp): из миллисекунд с 1970-01-01.',
+      'new Date(year, month, day): из компонентов (месяц 0-11).',
+      'getTime(): timestamp в миллисекундах.',
+      'toISOString(): строка в формате ISO 8601.'
+    ],
+    tags: ['date', 'time', 'formatting', 'api'],
+    examples: [
+      {
+        title: "Создание дат",
+        code: `const now = new Date();\nconst timestamp = new Date(1609459200000); // 2021-01-01\nconst specific = new Date(2023, 11, 25); // 25 декабря 2023 (месяц 0-11)\n\nconsole.log(now); // текущая дата`
+      },
+      {
+        title: "Методы получения",
+        code: `const date = new Date(2023, 11, 25, 14, 30, 0);\n\ndate.getFullYear(); // 2023\ndate.getMonth(); // 11 (декабрь, 0-11)\ndate.getDate(); // 25\ndate.getDay(); // 1 (понедельник, 0-6)\ndate.getHours(); // 14\ndate.getMinutes(); // 30`
+      },
+      {
+        title: "Форматирование",
+        code: `const date = new Date();\n\ndate.toISOString(); // "2023-12-25T14:30:00.000Z"\ndate.toLocaleString('ru-RU'); // "25.12.2023, 14:30:00"\ndate.toLocaleDateString('ru-RU'); // "25.12.2023"\ndate.getTime(); // timestamp в миллисекундах`
+      }
+    ],
+    relatedTopics: ['objects-basic', 'strings-methods']
+  },
+  {
+    id: 'web-storage',
+    title: 'Web Storage API',
+    difficulty: 'beginner',
+    description: 'localStorage и sessionStorage хранят данные в браузере. localStorage сохраняется между сессиями, sessionStorage — только в текущей вкладке. Оба хранят только строки. Методы: setItem(), getItem(), removeItem(), clear(). Ограничение ~5-10MB.',
+    keyPoints: [
+      'localStorage: сохраняется между сессиями браузера.',
+      'sessionStorage: только в текущей вкладке.',
+      'Только строки: объекты через JSON.stringify/parse.',
+      'setItem(key, value), getItem(key), removeItem(key), clear().',
+      'Ограничение: ~5-10MB на домен.'
+    ],
+    tags: ['storage', 'localStorage', 'sessionStorage', 'browser', 'api'],
+    examples: [
+      {
+        title: "Базовое использование",
+        code: `// Сохранение\nlocalStorage.setItem('name', 'Alice');\nlocalStorage.setItem('age', '30');\n\n// Получение\nconst name = localStorage.getItem('name'); // "Alice"\nconst age = localStorage.getItem('age'); // "30"\n\n// Удаление\nlocalStorage.removeItem('age');\n\n// Очистка всего\nlocalStorage.clear();`
+      },
+      {
+        title: "Работа с объектами",
+        code: `const user = { name: "Alice", age: 30 };\n\n// Сохранение объекта\nlocalStorage.setItem('user', JSON.stringify(user));\n\n// Получение объекта\nconst saved = localStorage.getItem('user');\nconst userObj = JSON.parse(saved);\n// { name: "Alice", age: 30 }`
+      },
+      {
+        title: "localStorage vs sessionStorage",
+        code: `// localStorage - сохраняется после закрытия браузера\nlocalStorage.setItem('persistent', 'data');\n\n// sessionStorage - удаляется при закрытии вкладки\nsessionStorage.setItem('temporary', 'data');\n\n// Оба имеют одинаковый API\nsessionStorage.getItem('temporary');\nsessionStorage.removeItem('temporary');`
+      }
+    ],
+    relatedTopics: ['json-methods', 'objects-basic']
+  },
+  {
+    id: 'strict-mode',
+    title: 'Strict mode',
+    difficulty: 'beginner',
+    description: "'use strict' включает строгий режим. Запрещает неявное создание глобальных переменных, дублирование параметров, использование зарезервированных слов. this в функциях undefined вместо window. Помогает избежать ошибок и улучшает производительность.",
+    keyPoints: [
+      "'use strict': включается в начале файла или функции.",
+      'Запрещает неявные глобальные переменные (без var/let/const).',
+      'Запрещает дублирование параметров функции.',
+      'this в функциях = undefined (не window).',
+      'Улучшает производительность и помогает находить ошибки.'
+    ],
+    tags: ['strict-mode', 'best-practices', 'errors', 'performance'],
+    examples: [
+      {
+        title: "Включение strict mode",
+        code: `"use strict";\n\n// Файл целиком в strict mode\nfunction test() {\n  "use strict";\n  // Только функция в strict mode\n}`
+      },
+      {
+        title: "Запрет неявных глобальных",
+        code: `"use strict";\n\n// Ошибка: переменная не объявлена\nx = 10; // ReferenceError\n\n// В обычном режиме создалась бы глобальная переменная\n// В strict mode - ошибка`
+      },
+      {
+        title: "this в strict mode",
+        code: `"use strict";\n\nfunction test() {\n  console.log(this); // undefined\n}\n\ntest();\n\n// В обычном режиме this = window (в браузере)\n// В strict mode this = undefined`
+      }
+    ],
+    relatedTopics: ['var-let-const', 'this-basics', 'functions-types']
   }
 ];
 

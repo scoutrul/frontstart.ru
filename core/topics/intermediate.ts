@@ -477,6 +477,181 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['promises', 'async-await']
+  },
+  {
+    id: 'array-methods-advanced',
+    title: 'Методы массивов (продвинутые)',
+    difficulty: 'intermediate',
+    description: 'reduce() аккумулирует значение, flat() разворачивает вложенные массивы, flatMap() = map() + flat(). find() находит первый элемент, some() проверяет хотя бы один, every() проверяет все. reduce — самый мощный метод для трансформаций.',
+    keyPoints: [
+      'reduce(acc, item, index, arr): аккумулирует значение через callback.',
+      'flat(depth): разворачивает вложенные массивы на указанную глубину.',
+      'flatMap(fn): map() + flat(1) в одной операции.',
+      'find(predicate): первый элемент, удовлетворяющий условию.',
+      'some(predicate): true если хотя бы один элемент проходит проверку.',
+      'every(predicate): true если все элементы проходят проверку.'
+    ],
+    tags: ['arrays', 'methods', 'functional', 'reduce', 'iteration'],
+    examples: [
+      {
+        title: "reduce",
+        code: `const numbers = [1, 2, 3, 4];\n\n// Сумма\nnumbers.reduce((sum, n) => sum + n, 0); // 10\n\n// Группировка\nconst users = [\n  { age: 20 }, { age: 30 }, { age: 20 }\n];\nusers.reduce((acc, u) => {\n  acc[u.age] = (acc[u.age] || 0) + 1;\n  return acc;\n}, {});\n// { 20: 2, 30: 1 }`
+      },
+      {
+        title: "flat и flatMap",
+        code: `const nested = [1, [2, 3], [4, [5, 6]]];\n\nnested.flat(); // [1, 2, 3, 4, [5, 6]]\nnested.flat(2); // [1, 2, 3, 4, 5, 6]\n\n// flatMap = map + flat(1)\nconst words = ["hello world", "foo bar"];\nwords.flatMap(w => w.split(" "));\n// ["hello", "world", "foo", "bar"]`
+      },
+      {
+        title: "find, some, every",
+        code: `const numbers = [1, 2, 3, 4, 5];\n\nnumbers.find(n => n > 3); // 4\nnumbers.find(n => n > 10); // undefined\n\nnumbers.some(n => n > 4); // true\nnumbers.some(n => n > 10); // false\n\nnumbers.every(n => n > 0); // true\nnumbers.every(n => n > 3); // false`
+      }
+    ],
+    relatedTopics: ['arrays-basic', 'arrays-advanced', 'immutability']
+  },
+  {
+    id: 'iife',
+    title: 'IIFE (Immediately Invoked Function Expression)',
+    difficulty: 'intermediate',
+    description: 'IIFE — функция, которая выполняется сразу после объявления. Синтаксис: (function() {})() или (() => {})(). Создает изолированную область видимости, предотвращает загрязнение глобального scope. Используется для модулей до ES6, инкапсуляции кода.',
+    keyPoints: [
+      'Синтаксис: (function() {})() или (() => {})().',
+      'Создает изолированную область видимости.',
+      'Предотвращает загрязнение глобального scope.',
+      'Использовалось для модулей до ES6.',
+      'Может возвращать значение и присваиваться переменной.'
+    ],
+    tags: ['iife', 'scope', 'modules', 'encapsulation'],
+    examples: [
+      {
+        title: "Базовый IIFE",
+        code: `(function() {\n  const private = "hidden";\n  console.log("Executed immediately");\n})();\n\n// Arrow function IIFE\n(() => {\n  console.log("Arrow IIFE");\n})();`
+      },
+      {
+        title: "IIFE с возвратом значения",
+        code: `const result = (function() {\n  const x = 10;\n  return x * 2;\n})();\n\nconsole.log(result); // 20\n\n// Переменная x недоступна снаружи`
+      },
+      {
+        title: "IIFE с параметрами",
+        code: `(function(name) {\n  console.log(\`Hello, \${name}\`);\n})("Alice");\n\n// Использование для модулей\nconst module = (function() {\n  let private = 0;\n  return {\n    get: () => private,\n    set: (val) => { private = val; }\n  };\n})();`
+      }
+    ],
+    relatedTopics: ['scope-chain', 'closures-basic', 'modules']
+  },
+  {
+    id: 'callbacks',
+    title: 'Callback функции',
+    difficulty: 'intermediate',
+    description: 'Callback — функция, передаваемая как аргумент и вызываемая позже. Используется в асинхронных операциях, обработчиках событий, методах массивов. Callback hell — вложенные колбэки, делающие код нечитаемым. Решение: промисы, async/await.',
+    keyPoints: [
+      'Callback: функция, передаваемая как аргумент.',
+      'Используется в setTimeout, addEventListener, array methods.',
+      'Callback hell: глубоко вложенные колбэки.',
+      'Проблемы: сложность чтения, обработка ошибок.',
+      'Решение: промисы, async/await.'
+    ],
+    tags: ['callbacks', 'async', 'functions', 'patterns'],
+    examples: [
+      {
+        title: "Базовые callbacks",
+        code: `function processData(data, callback) {\n  // Симуляция асинхронной операции\n  setTimeout(() => {\n    const result = data.toUpperCase();\n    callback(result);\n  }, 1000);\n}\n\nprocessData("hello", (result) => {\n  console.log(result); // "HELLO"\n});`
+      },
+      {
+        title: "Callback hell",
+        code: `getData((data1) => {\n  processData(data1, (data2) => {\n    saveData(data2, (data3) => {\n      sendData(data3, (result) => {\n        console.log(result);\n        // Сложно читать и поддерживать\n      });\n    });\n  });\n});`
+      },
+      {
+        title: "Callbacks в методах массивов",
+        code: `const numbers = [1, 2, 3, 4];\n\nnumbers.map(n => n * 2); // [2, 4, 6, 8]\nnumbers.filter(n => n > 2); // [3, 4]\nnumbers.forEach(n => console.log(n));\n\n// Callback вызывается для каждого элемента`
+      }
+    ],
+    relatedTopics: ['promises', 'async-await', 'functions-types']
+  },
+  {
+    id: 'higher-order-functions',
+    title: 'Функции высшего порядка',
+    difficulty: 'intermediate',
+    description: 'Функция высшего порядка — принимает функции как аргументы или возвращает функции. Примеры: map, filter, reduce, setTimeout. Позволяет создавать абстракции, переиспользовать код, писать декларативный код. Основа функционального программирования.',
+    keyPoints: [
+      'Принимает функции как аргументы или возвращает функции.',
+      'Примеры: map, filter, reduce, setTimeout.',
+      'Создает абстракции и переиспользование кода.',
+      'Декларативный стиль вместо императивного.',
+      'Основа функционального программирования.'
+    ],
+    tags: ['functions', 'functional', 'abstraction', 'patterns'],
+    examples: [
+      {
+        title: "Функция, принимающая функцию",
+        code: `function operate(a, b, operation) {\n  return operation(a, b);\n}\n\noperate(5, 3, (x, y) => x + y); // 8\noperate(5, 3, (x, y) => x * y); // 15\noperate(5, 3, Math.max); // 5`
+      },
+      {
+        title: "Функция, возвращающая функцию",
+        code: `function multiply(x) {\n  return function(y) {\n    return x * y;\n  };\n}\n\nconst double = multiply(2);\ndouble(5); // 10\n\nconst triple = multiply(3);\ntriple(4); // 12`
+      },
+      {
+        title: "Встроенные HOF",
+        code: `const numbers = [1, 2, 3, 4];\n\n// map, filter, reduce - функции высшего порядка\nnumbers.map(n => n * 2);\nnumbers.filter(n => n > 2);\nnumbers.reduce((sum, n) => sum + n, 0);\n\n// setTimeout тоже HOF\nsetTimeout(() => console.log("Delayed"), 1000);`
+      }
+    ],
+    relatedTopics: ['functions-types', 'callbacks', 'closures-basic']
+  },
+  {
+    id: 'recursion',
+    title: 'Рекурсия',
+    difficulty: 'intermediate',
+    description: 'Рекурсия — функция вызывает саму себя. Нужен базовый случай для остановки. Используется для обхода деревьев, факториала, поиска. Стек вызовов ограничен (~10000). Хвостовая рекурсия оптимизируется в некоторых случаях. Можно заменить итерацией.',
+    keyPoints: [
+      'Функция вызывает саму себя.',
+      'Базовый случай: условие остановки рекурсии.',
+      'Рекурсивный случай: вызов с измененными параметрами.',
+      'Стек вызовов ограничен, возможен stack overflow.',
+      'Хвостовая рекурсия может оптимизироваться.'
+    ],
+    tags: ['recursion', 'algorithms', 'functions', 'stack'],
+    examples: [
+      {
+        title: "Факториал",
+        code: `function factorial(n) {\n  // Базовый случай\n  if (n <= 1) return 1;\n  \n  // Рекурсивный случай\n  return n * factorial(n - 1);\n}\n\nfactorial(5); // 120`
+      },
+      {
+        title: "Обход дерева",
+        code: `function traverse(node) {\n  if (!node) return;\n  \n  console.log(node.value);\n  traverse(node.left);\n  traverse(node.right);\n}\n\nconst tree = {\n  value: 1,\n  left: { value: 2 },\n  right: { value: 3 }\n};\n\ntraverse(tree);`
+      },
+      {
+        title: "Хвостовая рекурсия",
+        code: `// Обычная рекурсия\nfunction sum(n) {\n  if (n === 0) return 0;\n  return n + sum(n - 1);\n}\n\n// Хвостовая рекурсия (оптимизируется)\nfunction sumTail(n, acc = 0) {\n  if (n === 0) return acc;\n  return sumTail(n - 1, acc + n);\n}`
+      }
+    ],
+    relatedTopics: ['functions-types', 'callbacks', 'arrays-advanced']
+  },
+  {
+    id: 'debounce-throttle',
+    title: 'Debounce и Throttle',
+    difficulty: 'intermediate',
+    description: 'Debounce откладывает выполнение до паузы в вызовах. Throttle ограничивает частоту выполнения (максимум раз в N мс). Debounce для поиска, Throttle для скролла/ресайза. Оба оптимизируют производительность, уменьшая количество вызовов функций.',
+    keyPoints: [
+      'Debounce: выполнение после паузы в вызовах.',
+      'Throttle: выполнение максимум раз в N миллисекунд.',
+      'Debounce: поиск, валидация форм.',
+      'Throttle: скролл, ресайз, события мыши.',
+      'Оба уменьшают нагрузку и улучшают производительность.'
+    ],
+    tags: ['performance', 'optimization', 'events', 'patterns'],
+    examples: [
+      {
+        title: "Debounce",
+        code: `function debounce(fn, delay) {\n  let timeoutId;\n  return function(...args) {\n    clearTimeout(timeoutId);\n    timeoutId = setTimeout(() => fn.apply(this, args), delay);\n  };\n}\n\nconst search = debounce((query) => {\n  console.log("Searching:", query);\n}, 300);\n\n// Вызовется только после 300мс паузы\nsearch("a");\nsearch("ab");\nsearch("abc"); // Только этот вызов`
+      },
+      {
+        title: "Throttle",
+        code: `function throttle(fn, delay) {\n  let lastCall = 0;\n  return function(...args) {\n    const now = Date.now();\n    if (now - lastCall >= delay) {\n      lastCall = now;\n      fn.apply(this, args);\n    }\n  };\n}\n\nconst handleScroll = throttle(() => {\n  console.log("Scrolled");\n}, 100);\n\n// Вызовется максимум раз в 100мс`
+      },
+      {
+        title: "Использование",
+        code: `// Debounce для поиска\ninput.addEventListener('input', debounce((e) => {\n  searchAPI(e.target.value);\n}, 300));\n\n// Throttle для скролла\nwindow.addEventListener('scroll', throttle(() => {\n  updatePosition();\n}, 100));`
+      }
+    ],
+    relatedTopics: ['callbacks', 'higher-order-functions', 'performance']
   }
 ];
 
