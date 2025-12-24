@@ -5,14 +5,16 @@ export const BEGINNER_TOPICS: Topic[] = [
     id: 'data-types',
     title: 'Типы данных',
     difficulty: 'beginner',
-    description: 'JavaScript имеет 8 типов: 7 примитивов (number, string, boolean, null, undefined, symbol, bigint) и объекты. typeof возвращает строку с типом. null имеет тип "object" (баг языка). Примитивы передаются по значению, объекты по ссылке.',
+    description: 'JavaScript имеет 8 типов: 7 примитивов (number, string, boolean, null, undefined, symbol, bigint) и объекты. typeof возвращает строку с типом. null имеет тип "object" (баг языка). Примитивы передаются по значению (копируется само значение), объекты по ссылке (копируется ссылка на объект в памяти). При изменении объекта по ссылке меняется оригинал.',
     keyPoints: [
       'Примитивы: number, string, boolean, null, undefined, symbol, bigint.',
       'Объекты: все остальное (массивы, функции, даты — это объекты).',
       'typeof null возвращает "object" (исторический баг).',
-      'Примитивы иммутабельны, объекты мутабельны.'
+      'Примитивы иммутабельны, объекты мутабельны.',
+      'Передача по значению: примитивы копируются, изменения не влияют на оригинал.',
+      'Передача по ссылке: объекты копируется ссылка, изменения влияют на оригинал.'
     ],
-    tags: ['types', 'primitives', 'objects', 'basics'],
+    tags: ['types', 'primitives', 'objects', 'basics', 'references'],
     examples: [
       {
         title: "Проверка типов",
@@ -446,15 +448,19 @@ export const BEGINNER_TOPICS: Topic[] = [
     id: 'json-methods',
     title: 'JSON методы',
     difficulty: 'beginner',
-    description: 'JSON.parse() преобразует JSON строку в объект, JSON.stringify() — объект в JSON строку. При ошибке parse выбрасывает SyntaxError. stringify может принимать replacer и space для форматирования. undefined, функции, Symbol пропускаются при сериализации.',
+    description: 'JSON.parse() преобразует JSON строку в объект, JSON.stringify() — объект в JSON строку. При ошибке parse выбрасывает SyntaxError. stringify может принимать replacer и space для форматирования. Ограничения: undefined, функции, Symbol пропускаются при сериализации. Date преобразуется в строку. Циклические ссылки вызывают ошибку. BigInt не поддерживается.',
     keyPoints: [
       'JSON.parse(str): преобразует JSON строку в объект.',
       'JSON.stringify(obj): преобразует объект в JSON строку.',
       'Ошибки: parse выбрасывает SyntaxError при невалидном JSON.',
       'replacer: функция или массив для фильтрации свойств.',
-      'space: форматирование (отступы) в результирующей строке.'
+      'space: форматирование (отступы) в результирующей строке.',
+      'Пропускаются: undefined, функции, Symbol.',
+      'Date преобразуется в строку ISO, при parse остается строкой.',
+      'Циклические ссылки вызывают TypeError в stringify.',
+      'BigInt вызывает TypeError в stringify.'
     ],
-    tags: ['json', 'serialization', 'parsing', 'data'],
+    tags: ['json', 'serialization', 'parsing', 'data', 'objects-advanced'],
     examples: [
       {
         title: "Базовое использование",
@@ -467,23 +473,38 @@ export const BEGINNER_TOPICS: Topic[] = [
       {
         title: "replacer и space",
         code: `const obj = { name: "Alice", age: 30, password: "secret" };\n\n// replacer: исключить password\nJSON.stringify(obj, ["name", "age"]);\n// '{"name":"Alice","age":30}'\n\n// space: форматирование\nJSON.stringify(obj, null, 2);\n// {\n//   "name": "Alice",\n//   "age": 30\n// }`
+      },
+      {
+        title: "Пропускаемые значения",
+        code: `const obj = {\n  name: "Alice",\n  age: undefined, // пропускается\n  fn: function() {}, // пропускается\n  sym: Symbol("id"), // пропускается\n  date: new Date() // преобразуется в строку\n};\n\nJSON.stringify(obj);\n// '{"name":"Alice","date":"2023-12-25T10:00:00.000Z"}'\n\n// При parse Date остается строкой\nconst parsed = JSON.parse(JSON.stringify(obj));\nconsole.log(typeof parsed.date); // "string"`
+      },
+      {
+        title: "Циклические ссылки - ошибка",
+        code: `const obj = { name: "Alice" };\nobj.self = obj; // циклическая ссылка\n\n// TypeError: Converting circular structure to JSON\n// JSON.stringify(obj);\n\n// Решение: использовать replacer\nfunction removeCircular(obj, seen = new WeakSet()) {\n  return JSON.stringify(obj, (key, value) => {\n    if (typeof value === 'object' && value !== null) {\n      if (seen.has(value)) return '[Circular]';\n      seen.add(value);\n    }\n    return value;\n  });\n}`
+      },
+      {
+        title: "BigInt не поддерживается",
+        code: `const obj = { id: BigInt(123) };\n\n// TypeError: Do not know how to serialize a BigInt\n// JSON.stringify(obj);\n\n// Решение: преобразовать в строку\nconst obj2 = { id: String(BigInt(123)) };\nJSON.stringify(obj2); // '{"id":"123"}'`
       }
     ],
-    relatedTopics: ['objects-basic', 'strings-methods']
+    relatedTopics: ['objects-basic', 'strings-methods', 'object-copying']
   },
   {
     id: 'object-methods',
     title: 'Методы Object',
     difficulty: 'beginner',
-    description: 'Object.keys() возвращает массив ключей, Object.values() — значений, Object.entries() — пар [ключ, значение]. Object.assign() копирует свойства, Object.freeze() делает объект неизменяемым. Object.hasOwnProperty() проверяет собственное свойство.',
+    description: 'Object.keys() возвращает массив ключей, Object.values() — значений, Object.entries() — пар [ключ, значение]. Object.assign() копирует свойства, Object.freeze() делает объект неизменяемым (нельзя добавлять/удалять/изменять свойства). Object.seal() запрещает добавлять/удалять, но позволяет изменять. Object.preventExtensions() запрещает только добавление новых свойств.',
     keyPoints: [
       'Object.keys(obj): массив ключей объекта.',
       'Object.values(obj): массив значений объекта.',
       'Object.entries(obj): массив пар [ключ, значение].',
       'Object.assign(target, ...sources): копирует свойства в target.',
-      'Object.freeze(obj): делает объект неизменяемым.'
+      'Object.freeze(obj): полная блокировка (нельзя добавлять/удалять/изменять).',
+      'Object.seal(obj): нельзя добавлять/удалять, можно изменять существующие.',
+      'Object.preventExtensions(obj): нельзя добавлять новые свойства.',
+      'Проверка: isFrozen(), isSealed(), isExtensible().'
     ],
-    tags: ['objects', 'methods', 'iteration', 'immutability'],
+    tags: ['objects', 'methods', 'iteration', 'immutability', 'objects-advanced'],
     examples: [
       {
         title: "keys, values, entries",
@@ -494,11 +515,19 @@ export const BEGINNER_TOPICS: Topic[] = [
         code: `const target = { a: 1 };\nconst source1 = { b: 2 };\nconst source2 = { c: 3 };\n\nObject.assign(target, source1, source2);\n// target = { a: 1, b: 2, c: 3 }\n\n// Поверхностное копирование\nconst copy = Object.assign({}, target);`
       },
       {
-        title: "Object.freeze",
-        code: `const obj = { name: "Alice" };\nObject.freeze(obj);\n\nobj.name = "Bob"; // Игнорируется в strict mode\nobj.age = 30; // Игнорируется\n\nObject.isFrozen(obj); // true`
+        title: "Object.freeze - полная блокировка",
+        code: `const obj = { name: "Alice" };\nObject.freeze(obj);\n\nobj.name = "Bob"; // Игнорируется в strict mode (TypeError)\nobj.age = 30; // Игнорируется\ndelete obj.name; // Игнорируется\n\nObject.isFrozen(obj); // true\n\n// Вложенные объекты не замораживаются\nconst nested = { user: { name: "Alice" } };\nObject.freeze(nested);\nnested.user.name = "Bob"; // Работает! (поверхностное)`
+      },
+      {
+        title: "Object.seal - можно изменять, нельзя добавлять/удалять",
+        code: `const obj = { name: "Alice" };\nObject.seal(obj);\n\nobj.name = "Bob"; // OK (можно изменять)\nobj.age = 30; // Игнорируется (нельзя добавлять)\ndelete obj.name; // Игнорируется (нельзя удалять)\n\nObject.isSealed(obj); // true`
+      },
+      {
+        title: "Object.preventExtensions - только запрет добавления",
+        code: `const obj = { name: "Alice" };\nObject.preventExtensions(obj);\n\nobj.name = "Bob"; // OK (можно изменять)\ndelete obj.name; // OK (можно удалять)\nobj.age = 30; // Игнорируется (нельзя добавлять)\n\nObject.isExtensible(obj); // false`
       }
     ],
-    relatedTopics: ['objects-basic', 'destructuring-basic', 'arrays-basic']
+    relatedTopics: ['objects-basic', 'destructuring-basic', 'arrays-basic', 'object-copying']
   },
   {
     id: 'date-api',
@@ -595,15 +624,18 @@ export const BEGINNER_TOPICS: Topic[] = [
     id: 'fetch-api',
     title: 'Fetch API',
     difficulty: 'beginner',
-    description: 'Fetch API для HTTP запросов. fetch(url, options) возвращает Promise с Response. Методы: json(), text(), blob(). Обработка ошибок: проверка response.ok или try/catch. Заголовки через headers, методы GET/POST/PUT/DELETE через method. CORS ограничивает запросы к другим доменам.',
+    description: 'Fetch API для HTTP запросов. fetch(url, options) возвращает Promise с Response. Методы: json(), text(), blob(). Обработка ошибок: проверка response.ok или try/catch. Заголовки через headers, методы GET/POST/PUT/DELETE через method. CORS (Cross-Origin Resource Sharing) ограничивает запросы к другим доменам. Same-origin policy разрешает запросы только к тому же домену, протоколу и порту.',
     keyPoints: [
       'fetch(url, options): возвращает Promise<Response>.',
       'response.json(): парсит JSON, response.text(): текст, response.blob(): бинарные данные.',
       'Ошибки: проверять response.ok или использовать try/catch.',
       'Заголовки: headers: { "Content-Type": "application/json" }.',
-      'CORS: браузер блокирует запросы к другим доменам без разрешения.'
+      'CORS: браузер блокирует запросы к другим доменам без разрешения сервера.',
+      'Same-origin: протокол + домен + порт должны совпадать.',
+      'CORS заголовки: Access-Control-Allow-Origin на сервере разрешает запросы.',
+      'Preflight: OPTIONS запрос для сложных запросов (не GET/POST).'
     ],
-    tags: ['fetch', 'http', 'async', 'api', 'browser'],
+    tags: ['fetch', 'http', 'async', 'api', 'browser', 'security'],
     examples: [
       {
         title: "Базовый GET запрос",
@@ -616,9 +648,21 @@ export const BEGINNER_TOPICS: Topic[] = [
       {
         title: "Обработка ошибок",
         code: `async function fetchData() {\n  const response = await fetch('/api/data');\n  \n  // Проверка статуса\n  if (!response.ok) {\n    throw new Error(\`HTTP error! status: \${response.status}\`);\n  }\n  \n  const data = await response.json();\n  return data;\n}\n\n// Или через try/catch\ntry {\n  const data = await fetchData();\n} catch (error) {\n  console.error('Failed:', error);\n}`
+      },
+      {
+        title: "CORS - запрос к другому домену",
+        code: `// Запрос к другому домену\nfetch('https://api.other-domain.com/data')\n  .then(response => response.json())\n  .catch(error => {\n    // CORS error: блокируется браузером\n    // если сервер не вернул Access-Control-Allow-Origin\n    console.error('CORS error:', error);\n  });\n\n// Сервер должен вернуть:\n// Access-Control-Allow-Origin: *\n// или\n// Access-Control-Allow-Origin: https://yourdomain.com`
+      },
+      {
+        title: "CORS с credentials",
+        code: `// Отправка cookies с запросом\nfetch('https://api.example.com/data', {\n  credentials: 'include', // отправляет cookies\n  headers: {\n    'Authorization': 'Bearer token'\n  }\n});\n\n// Сервер должен вернуть:\n// Access-Control-Allow-Credentials: true\n// Access-Control-Allow-Origin: https://yourdomain.com (не *)`
+      },
+      {
+        title: "Preflight запрос",
+        code: `// Сложные запросы (не GET/POST) требуют preflight\nfetch('https://api.example.com/data', {\n  method: 'PUT',\n  headers: {\n    'Content-Type': 'application/json',\n    'X-Custom-Header': 'value'\n  },\n  body: JSON.stringify({ data: 'test' })\n});\n\n// Браузер сначала отправляет OPTIONS запрос\n// Сервер должен ответить разрешающими заголовками:\n// Access-Control-Allow-Methods: PUT\n// Access-Control-Allow-Headers: X-Custom-Header`
       }
     ],
-    relatedTopics: ['promises', 'async-await', 'json-methods']
+    relatedTopics: ['promises', 'async-await', 'json-methods', 'cors', 'same-origin-policy']
   },
   {
     id: 'event-api',

@@ -365,13 +365,16 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
     id: 'promises',
     title: 'Promises (Промисы)',
     difficulty: 'intermediate',
-    description: 'Промис — объект для асинхронных операций. Состояния: pending, fulfilled, rejected. Методы: then для успеха, catch для ошибок, finally всегда выполняется. Решает проблему Callback Hell. Promise.all для параллельного выполнения, Promise.race для первого результата.',
+    description: 'Промис — объект для асинхронных операций. Состояния: pending, fulfilled, rejected. Методы: then для успеха, catch для ошибок, finally всегда выполняется. Решает проблему Callback Hell. Promise.all ждет все промисы, Promise.allSettled ждет все (включая ошибки), Promise.race возвращает первый результат, Promise.any возвращает первый успешный.',
     keyPoints: [
       'Состояния: pending, fulfilled, rejected.',
       'Методы: then, catch, finally.',
-      'Promise.all для параллельного выполнения.'
+      'Promise.all: все должны успешно выполниться, иначе ошибка.',
+      'Promise.allSettled: ждет все промисы, возвращает результаты и ошибки.',
+      'Promise.race: возвращает первый завершенный (успех или ошибка).',
+      'Promise.any: возвращает первый успешный, ошибка только если все провалились.'
     ],
-    tags: ['promise', 'async', 'flow'],
+    tags: ['promise', 'async', 'flow', 'async-deep'],
     examples: [
       {
         title: "Цепочка промисов",
@@ -382,8 +385,20 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
         code: `const promise = new Promise((resolve, reject) => {\n  setTimeout(() => {\n    resolve("Success!");\n  }, 1000);\n});\n\npromise.then(result => console.log(result));`
       },
       {
-        title: "Promise.all и Promise.race",
-        code: `const p1 = Promise.resolve(1);\nconst p2 = Promise.resolve(2);\nconst p3 = Promise.resolve(3);\n\nPromise.all([p1, p2, p3]).then(console.log); // [1, 2, 3]\nPromise.race([p1, p2, p3]).then(console.log); // 1 (первый)`
+        title: "Promise.all - все должны успешно выполниться",
+        code: `const p1 = Promise.resolve(1);\nconst p2 = Promise.resolve(2);\nconst p3 = Promise.reject('Error');\n\nPromise.all([p1, p2, p3])\n  .then(console.log) // не выполнится\n  .catch(console.error); // "Error"\n\n// Если все успешны:\nPromise.all([p1, p2]).then(console.log); // [1, 2]`
+      },
+      {
+        title: "Promise.allSettled - ждет все промисы",
+        code: `const p1 = Promise.resolve(1);\nconst p2 = Promise.reject('Error');\nconst p3 = Promise.resolve(3);\n\nPromise.allSettled([p1, p2, p3]).then(results => {\n  console.log(results);\n  // [\n  //   { status: 'fulfilled', value: 1 },\n  //   { status: 'rejected', reason: 'Error' },\n  //   { status: 'fulfilled', value: 3 }\n  // ]\n});`
+      },
+      {
+        title: "Promise.race - первый завершенный",
+        code: `const fast = new Promise(resolve => setTimeout(() => resolve('Fast'), 100));\nconst slow = new Promise(resolve => setTimeout(() => resolve('Slow'), 500));\n\nPromise.race([fast, slow]).then(console.log); // "Fast"\n\n// С ошибкой:\nconst error = Promise.reject('Error');\nPromise.race([fast, error])\n  .then(console.log) // не выполнится\n  .catch(console.error); // "Error" (ошибка быстрее)`
+      },
+      {
+        title: "Promise.any - первый успешный",
+        code: `const p1 = Promise.reject('Error 1');\nconst p2 = Promise.resolve('Success 2');\nconst p3 = Promise.reject('Error 3');\n\nPromise.any([p1, p2, p3])\n  .then(console.log); // "Success 2"\n\n// Если все провалились:\nPromise.any([p1, p3])\n  .then(console.log) // не выполнится\n  .catch(err => console.error(err.errors)); // ['Error 1', 'Error 3']`
       }
     ],
     relatedTopics: ['event-loop', 'async-await'],
@@ -393,13 +408,16 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
     id: 'async-await',
     title: 'Async / Await',
     difficulty: 'intermediate',
-    description: 'async/await — синтаксический сахар над промисами. async функция всегда возвращает промис. await приостанавливает выполнение до разрешения промиса, не блокируя основной поток. Ошибки обрабатываются через try/catch. Код читается как синхронный.',
+    description: 'async/await — синтаксический сахар над промисами. async функция всегда возвращает промис. await приостанавливает выполнение до разрешения промиса, не блокируя основной поток. Ошибки обрабатываются через try/catch. Необработанные ошибки в async функциях создают rejected промис. Потерянные промисы (unhandled promise rejections) могут привести к проблемам.',
     keyPoints: [
       'async всегда возвращает промис.',
       'await приостанавливает функцию до выполнения промиса.',
-      'Обработка ошибок через try/catch.'
+      'Обработка ошибок через try/catch.',
+      'Необработанные ошибки создают rejected промис.',
+      'Потерянные промисы: забытый await или catch.',
+      'Всегда обрабатывай ошибки явно.'
     ],
-    tags: ['async', 'await', 'ES2017'],
+    tags: ['async', 'await', 'ES2017', 'async-deep'],
     examples: [
       {
         title: "Чистая асинхронность",
@@ -412,9 +430,21 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       {
         title: "Параллельное выполнение",
         code: `async function fetchData() {\n  const [users, posts] = await Promise.all([\n    fetch('/users').then(r => r.json()),\n    fetch('/posts').then(r => r.json())\n  ]);\n  return { users, posts };\n}`
+      },
+      {
+        title: "Обработка ошибок",
+        code: `async function riskyOperation() {\n  try {\n    const result = await mightFail();\n    return result;\n  } catch (error) {\n    console.error('Error:', error);\n    throw error; // пробрасываем дальше\n  }\n}\n\n// Или через catch промиса\nriskyOperation().catch(err => console.error(err));`
+      },
+      {
+        title: "Потерянные промисы",
+        code: `// Плохо: забыли await или catch\nasync function bad() {\n  fetch('/api'); // промис потерян, ошибка не обработана\n}\n\n// Хорошо: явная обработка\nasync function good() {\n  try {\n    await fetch('/api');\n  } catch (err) {\n    console.error(err);\n  }\n}\n\n// Или через catch\nasync function alsoGood() {\n  fetch('/api').catch(err => console.error(err));\n}`
+      },
+      {
+        title: "Ошибки в цепочке",
+        code: `async function chain() {\n  try {\n    const a = await step1();\n    const b = await step2(a);\n    return await step3(b);\n  } catch (error) {\n    // Поймает ошибку из любого шага\n    console.error('Chain failed:', error);\n    return null;\n  }\n}`
       }
     ],
-    relatedTopics: ['promises'],
+    relatedTopics: ['promises', 'error-handling'],
     nextTopicId: 'generators'
   },
   {
@@ -975,6 +1005,281 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['web-storage', 'async-await', 'promises']
+  },
+  {
+    id: 'object-copying',
+    title: 'Копирование объектов',
+    difficulty: 'intermediate',
+    description: 'Поверхностное копирование копирует только первый уровень свойств. Глубокое копирование копирует все вложенные объекты. Spread оператор и Object.assign делают поверхностное копирование. structuredClone делает глубокое копирование (современный способ). JSON.parse/stringify работает, но имеет ограничения (нет функций, Date становится строкой).',
+    keyPoints: [
+      'Поверхностное копирование: копируется только первый уровень, вложенные объекты ссылаются на оригинал.',
+      'Глубокое копирование: копируются все уровни, создаются новые объекты.',
+      'Spread и Object.assign: поверхностное копирование.',
+      'structuredClone: глубокое копирование (современный способ).',
+      'JSON.parse/stringify: глубокое, но с ограничениями (нет функций, Date, Symbol, BigInt).',
+      'Рекурсивное копирование: ручная реализация для полного контроля.'
+    ],
+    tags: ['objects', 'copying', 'immutability', 'objects-advanced'],
+    examples: [
+      {
+        title: "Поверхностное копирование",
+        code: `const original = { name: "Alice", address: { city: "Moscow" } };\n\n// Spread оператор\nconst shallow1 = { ...original };\n\n// Object.assign\nconst shallow2 = Object.assign({}, original);\n\n// Изменение вложенного объекта влияет на оригинал\nshallow1.address.city = "SPB";\nconsole.log(original.address.city); // "SPB" (изменилось!)\n\n// Изменение первого уровня не влияет\nshallow1.name = "Bob";\nconsole.log(original.name); // "Alice" (не изменилось)`
+      },
+      {
+        title: "Глубокое копирование через structuredClone",
+        code: `const original = { name: "Alice", address: { city: "Moscow" } };\n\n// structuredClone - современный способ\nconst deep = structuredClone(original);\n\ndeep.address.city = "SPB";\nconsole.log(original.address.city); // "Moscow" (не изменилось)\n\n// Поддерживает: объекты, массивы, Map, Set, Date, RegExp, и др.\nconst complex = {\n  date: new Date(),\n  map: new Map([['key', 'value']]),\n  set: new Set([1, 2, 3])\n};\nconst cloned = structuredClone(complex);`
+      },
+      {
+        title: "Глубокое копирование через JSON",
+        code: `const original = { name: "Alice", age: 30 };\n\nconst deep = JSON.parse(JSON.stringify(original));\n\ndeep.name = "Bob";\nconsole.log(original.name); // "Alice" (не изменилось)\n\n// Ограничения:\nconst withLimitations = {\n  date: new Date(),\n  fn: function() {},\n  sym: Symbol('id'),\n  bigint: BigInt(123),\n  undefined: undefined\n};\n\nconst cloned = JSON.parse(JSON.stringify(withLimitations));\n// date стал строкой, fn/sym/bigint/undefined пропали`
+      },
+      {
+        title: "Рекурсивное глубокое копирование",
+        code: `function deepClone(obj) {\n  if (obj === null || typeof obj !== 'object') {\n    return obj;\n  }\n  \n  if (obj instanceof Date) {\n    return new Date(obj);\n  }\n  \n  if (obj instanceof Array) {\n    return obj.map(item => deepClone(item));\n  }\n  \n  if (typeof obj === 'object') {\n    const cloned = {};\n    for (const key in obj) {\n      if (obj.hasOwnProperty(key)) {\n        cloned[key] = deepClone(obj[key]);\n      }\n    }\n    return cloned;\n  }\n}\n\nconst original = { a: 1, b: { c: 2 } };\nconst cloned = deepClone(original);`
+      }
+    ],
+    relatedTopics: ['objects-basic', 'object-methods', 'json-methods', 'structured-clone'],
+    nextTopicId: 'structured-clone'
+  },
+  {
+    id: 'structured-clone',
+    title: 'structuredClone',
+    difficulty: 'intermediate',
+    description: 'structuredClone() создает глубокую копию объекта. Поддерживает большинство типов: объекты, массивы, Map, Set, Date, RegExp, ArrayBuffer, TypedArray. Не поддерживает функции, Symbol, некоторые встроенные объекты. Более надежный чем JSON.parse/stringify, но не такой гибкий как ручное копирование.',
+    keyPoints: [
+      'structuredClone(value): создает глубокую копию.',
+      'Поддерживает: объекты, массивы, Map, Set, Date, RegExp, ArrayBuffer, TypedArray.',
+      'Не поддерживает: функции, Symbol, некоторые встроенные объекты (Error, DOM nodes).',
+      'Более надежный чем JSON.parse/stringify для сложных структур.',
+      'Работает синхронно, может быть медленным для больших объектов.'
+    ],
+    tags: ['objects', 'copying', 'structured-clone', 'objects-advanced'],
+    examples: [
+      {
+        title: "Базовое использование",
+        code: `const original = {\n  name: "Alice",\n  address: { city: "Moscow" },\n  tags: ["js", "react"]\n};\n\nconst cloned = structuredClone(original);\ncloned.address.city = "SPB";\nconsole.log(original.address.city); // "Moscow" (не изменилось)`
+      },
+      {
+        title: "Поддерживаемые типы",
+        code: `const complex = {\n  date: new Date(),\n  map: new Map([['key', 'value']]),\n  set: new Set([1, 2, 3]),\n  regexp: /test/g,\n  arrayBuffer: new ArrayBuffer(8),\n  typedArray: new Uint8Array([1, 2, 3])\n};\n\nconst cloned = structuredClone(complex);\n// Все типы скопированы правильно`
+      },
+      {
+        title: "Неподдерживаемые типы",
+        code: `const withUnsupported = {\n  fn: function() {}, // TypeError\n  sym: Symbol('id'), // TypeError\n  error: new Error('test'), // TypeError\n  node: document.body // TypeError (DOM node)\n};\n\n// structuredClone(withUnsupported); // TypeError`
+      },
+      {
+        title: "Клонирование с циклическими ссылками",
+        code: `const obj = { name: "Alice" };\nobj.self = obj; // циклическая ссылка\n\n// structuredClone обрабатывает циклические ссылки\nconst cloned = structuredClone(obj);\nconsole.log(cloned.self === cloned); // true`
+      }
+    ],
+    relatedTopics: ['object-copying', 'objects-basic', 'json-methods'],
+    nextTopicId: 'object-comparison'
+  },
+  {
+    id: 'object-comparison',
+    title: 'Сравнение объектов',
+    difficulty: 'intermediate',
+    description: 'Объекты сравниваются по ссылке, а не по значению. === и == сравнивают ссылки. Для сравнения по значению нужно сравнивать свойства вручную или использовать библиотеки. Глубокое сравнение проверяет все вложенные свойства. Object.is() сравнивает примитивы строже чем ===.',
+    keyPoints: [
+      '=== сравнивает ссылки, не значения объектов.',
+      'Два объекта с одинаковыми свойствами не равны (разные ссылки).',
+      'Object.is() строже чем === для примитивов (NaN, +0/-0).',
+      'Глубокое сравнение: проверка всех свойств рекурсивно.',
+      'Поверхностное сравнение: проверка только первого уровня.'
+    ],
+    tags: ['objects', 'comparison', 'equality', 'objects-advanced'],
+    examples: [
+      {
+        title: "Сравнение по ссылке",
+        code: `const obj1 = { name: "Alice" };\nconst obj2 = { name: "Alice" };\nconst obj3 = obj1;\n\nconsole.log(obj1 === obj2); // false (разные ссылки)\nconsole.log(obj1 === obj3); // true (одна ссылка)\n\n// Массивы тоже\nconst arr1 = [1, 2, 3];\nconst arr2 = [1, 2, 3];\nconsole.log(arr1 === arr2); // false`
+      },
+      {
+        title: "Object.is() для примитивов",
+        code: `// Object.is строже чем ===\nconsole.log(NaN === NaN); // false\nconsole.log(Object.is(NaN, NaN)); // true\n\nconsole.log(+0 === -0); // true\nconsole.log(Object.is(+0, -0)); // false\n\n// Для объектов работает как ===\nconst obj1 = {};\nconst obj2 = {};\nconsole.log(Object.is(obj1, obj2)); // false`
+      },
+      {
+        title: "Поверхностное сравнение",
+        code: `function shallowEqual(obj1, obj2) {\n  const keys1 = Object.keys(obj1);\n  const keys2 = Object.keys(obj2);\n  \n  if (keys1.length !== keys2.length) return false;\n  \n  for (const key of keys1) {\n    if (obj1[key] !== obj2[key]) return false;\n  }\n  \n  return true;\n}\n\nconst obj1 = { a: 1, b: 2 };\nconst obj2 = { a: 1, b: 2 };\nconsole.log(shallowEqual(obj1, obj2)); // true\n\n// Но не работает для вложенных объектов\nconst obj3 = { a: 1, b: { c: 2 } };\nconst obj4 = { a: 1, b: { c: 2 } };\nconsole.log(shallowEqual(obj3, obj4)); // false (b сравнивается по ссылке)`
+      },
+      {
+        title: "Глубокое сравнение",
+        code: `function deepEqual(obj1, obj2) {\n  if (obj1 === obj2) return true;\n  \n  if (obj1 == null || obj2 == null) return false;\n  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') return false;\n  \n  const keys1 = Object.keys(obj1);\n  const keys2 = Object.keys(obj2);\n  \n  if (keys1.length !== keys2.length) return false;\n  \n  for (const key of keys1) {\n    if (!keys2.includes(key)) return false;\n    if (!deepEqual(obj1[key], obj2[key])) return false;\n  }\n  \n  return true;\n}\n\nconst obj1 = { a: 1, b: { c: 2 } };\nconst obj2 = { a: 1, b: { c: 2 } };\nconsole.log(deepEqual(obj1, obj2)); // true`
+      }
+    ],
+    relatedTopics: ['objects-basic', 'object-copying', 'comparison'],
+    nextTopicId: 'abort-controller'
+  },
+  {
+    id: 'abort-controller',
+    title: 'AbortController',
+    difficulty: 'intermediate',
+    description: 'AbortController позволяет отменять асинхронные операции (fetch, промисы). Создается через new AbortController(), signal передается в fetch или другие API. abort() отменяет операцию. Используется для отмены запросов при размонтировании компонента, таймаутов, пользовательской отмены.',
+    keyPoints: [
+      'new AbortController(): создает контроллер отмены.',
+      'signal: передается в fetch или другие API.',
+      'abort(): отменяет операцию, вызывает AbortError.',
+      'Использование: отмена fetch запросов, промисов, таймаутов.',
+      'Один контроллер может отменить несколько операций.'
+    ],
+    tags: ['abort-controller', 'async', 'fetch', 'cancellation', 'async-deep'],
+    examples: [
+      {
+        title: "Отмена fetch запроса",
+        code: `const controller = new AbortController();\nconst signal = controller.signal;\n\nfetch('/api/data', { signal })\n  .then(response => response.json())\n  .then(data => console.log(data))\n  .catch(error => {\n    if (error.name === 'AbortError') {\n      console.log('Request aborted');\n    }\n  });\n\n// Отмена запроса\ncontroller.abort();`
+      },
+      {
+        title: "Отмена при размонтировании компонента",
+        code: `// React пример\nuseEffect(() => {\n  const controller = new AbortController();\n  \n  fetch('/api/data', { signal: controller.signal })\n    .then(res => res.json())\n    .then(setData);\n  \n  return () => {\n    controller.abort(); // отмена при размонтировании\n  };\n}, []);`
+      },
+      {
+        title: "Отмена промиса",
+        code: `function cancellablePromise(promise, signal) {\n  return new Promise((resolve, reject) => {\n    signal.addEventListener('abort', () => {\n      reject(new DOMException('Aborted', 'AbortError'));\n    });\n    \n    promise.then(resolve, reject);\n  });\n}\n\nconst controller = new AbortController();\nconst promise = new Promise(resolve => setTimeout(() => resolve('Done'), 5000));\n\ncancellablePromise(promise, controller.signal)\n  .then(console.log)\n  .catch(err => console.error(err.name)); // "AbortError"\n\ncontroller.abort();`
+      },
+      {
+        title: "Таймаут для запроса",
+        code: `function fetchWithTimeout(url, timeout = 5000) {\n  const controller = new AbortController();\n  \n  const timeoutId = setTimeout(() => {\n    controller.abort();\n  }, timeout);\n  \n  return fetch(url, { signal: controller.signal })\n    .finally(() => clearTimeout(timeoutId));\n}\n\nfetchWithTimeout('/api/data', 3000)\n  .then(res => res.json())\n  .catch(err => {\n    if (err.name === 'AbortError') {\n      console.log('Request timeout');\n    }\n  });`
+      }
+    ],
+    relatedTopics: ['fetch-api', 'promises', 'async-await'],
+    nextTopicId: 'xss'
+  },
+  {
+    id: 'xss',
+    title: 'XSS (Cross-Site Scripting)',
+    difficulty: 'intermediate',
+    description: 'XSS — уязвимость, когда злоумышленник внедряет вредоносный JavaScript код на страницу. Типы: Reflected (отражается в ответе), Stored (сохраняется на сервере), DOM-based (в браузере). Защита: экранирование HTML (escaping), использование textContent вместо innerHTML, Content Security Policy (CSP), валидация и санитизация входных данных.',
+    keyPoints: [
+      'XSS: внедрение вредоносного JavaScript кода.',
+      'Reflected XSS: код в URL или параметрах, отражается в ответе.',
+      'Stored XSS: код сохраняется на сервере (БД, комментарии).',
+      'DOM-based XSS: код выполняется в браузере без отправки на сервер.',
+      'Защита: экранирование, textContent, CSP, валидация.',
+      'Опасность: кража cookies, сессий, перенаправление на фишинговые сайты.'
+    ],
+    tags: ['security', 'xss', 'browser', 'safety'],
+    examples: [
+      {
+        title: "Reflected XSS пример",
+        code: `// Уязвимый код\nconst name = new URLSearchParams(window.location.search).get('name');\ndocument.getElementById('greeting').innerHTML = 'Hello, ' + name;\n\n// Атака: ?name=<script>alert('XSS')</script>\n// Код выполнится\n\n// Защита: экранирование\nfunction escapeHtml(text) {\n  const div = document.createElement('div');\n  div.textContent = text;\n  return div.innerHTML;\n}\n\ndocument.getElementById('greeting').innerHTML = 'Hello, ' + escapeHtml(name);\n\n// Или лучше: textContent\nconst element = document.getElementById('greeting');\nelement.textContent = 'Hello, ' + name;`
+      },
+      {
+        title: "Stored XSS пример",
+        code: `// Уязвимый код: комментарии сохраняются в БД\nfunction displayComment(comment) {\n  document.getElementById('comments').innerHTML += comment;\n}\n\n// Атака: комментарий содержит <script>...</script>\n// Код выполнится для всех пользователей\n\n// Защита: санитизация\nfunction sanitizeHtml(html) {\n  const div = document.createElement('div');\n  div.textContent = html;\n  return div.innerHTML;\n}\n\ndisplayComment(sanitizeHtml(comment));`
+      },
+      {
+        title: "DOM-based XSS",
+        code: `// Уязвимый код\nconst hash = window.location.hash.slice(1);\neval(hash); // ОПАСНО!\n\n// Атака: #alert('XSS')\n\n// Защита: не использовать eval, опасные функции\neval = null; // отключить eval\n\n// Использовать безопасные методы\nconst data = JSON.parse(hash); // если нужен JSON`
+      },
+      {
+        title: "Content Security Policy (CSP)",
+        code: `// В HTTP заголовках или meta теге\n// Content-Security-Policy: default-src 'self'; script-src 'self'\n\n// Запрещает выполнение inline скриптов\n// Запрещает eval()\n// Разрешает загрузку скриптов только с того же домена\n\n// Пример meta тега\n<meta http-equiv="Content-Security-Policy" \n      content="default-src 'self'; script-src 'self'">`
+      }
+    ],
+    relatedTopics: ['dom-api', 'security', 'cookies'],
+    nextTopicId: 'same-origin-policy'
+  },
+  {
+    id: 'same-origin-policy',
+    title: 'Same-Origin Policy',
+    difficulty: 'intermediate',
+    description: 'Same-Origin Policy ограничивает доступ скриптов к ресурсам другого домена. Origin определяется протоколом, доменом и портом. Одинаковый origin: протокол + домен + порт совпадают. CORS позволяет обойти это ограничение с разрешения сервера. Используется для защиты от XSS и CSRF атак.',
+    keyPoints: [
+      'Origin: протокол + домен + порт (например: https://example.com:443).',
+      'Same-origin: все три компонента совпадают.',
+      'Разные origin: разные протоколы, домены или порты.',
+      'Ограничения: чтение cookies, localStorage, выполнение скриптов, AJAX запросы.',
+      'CORS: механизм для разрешения cross-origin запросов.',
+      'Защита: предотвращает доступ злонамеренных скриптов к данным.'
+    ],
+    tags: ['security', 'cors', 'browser', 'same-origin'],
+    examples: [
+      {
+        title: "Определение origin",
+        code: `// Одинаковый origin\nhttps://example.com/page1\nhttps://example.com/page2\n// ✅ Одинаковый (протокол, домен, порт совпадают)\n\n// Разный origin\nhttps://example.com\nhttp://example.com\n// ❌ Разный (протокол)\n\nhttps://example.com\nhttps://subdomain.example.com\n// ❌ Разный (домен)\n\nhttps://example.com\nhttps://example.com:8080\n// ❌ Разный (порт)`
+      },
+      {
+        title: "Ограничения same-origin",
+        code: `// Чтение cookies\n// document.cookie читает только cookies своего домена\n\n// localStorage/sessionStorage\n// Доступ только к своему origin\n\n// AJAX запросы\nfetch('https://other-domain.com/api')\n  .catch(err => {\n    // CORS error если сервер не разрешил\n  });\n\n// Чтение iframe\n// Нельзя читать содержимое iframe другого origin`
+      },
+      {
+        title: "CORS обходит same-origin",
+        code: `// Запрос к другому домену\nfetch('https://api.example.com/data', {\n  method: 'GET',\n  headers: {\n    'Content-Type': 'application/json'\n  }\n})\n  .then(res => res.json())\n  .then(console.log);\n\n// Сервер должен вернуть:\n// Access-Control-Allow-Origin: *\n// или\n// Access-Control-Allow-Origin: https://yourdomain.com`
+      },
+      {
+        title: "Проверка origin",
+        code: `// Получить текущий origin\nconst origin = window.location.origin;\nconsole.log(origin); // "https://example.com:443"\n\n// Проверить совпадение\nfunction isSameOrigin(url) {\n  const a = document.createElement('a');\n  a.href = url;\n  return a.origin === window.location.origin;\n}\n\nconsole.log(isSameOrigin('https://example.com/page')); // true\nconsole.log(isSameOrigin('https://other.com/page')); // false`
+      }
+    ],
+    relatedTopics: ['fetch-api', 'cors', 'xss', 'csrf'],
+    nextTopicId: 'csrf'
+  },
+  {
+    id: 'csrf',
+    title: 'CSRF (Cross-Site Request Forgery)',
+    difficulty: 'intermediate',
+    description: 'CSRF — атака, когда злоумышленник заставляет пользователя выполнить нежелательное действие на сайте, где пользователь аутентифицирован. Защита: CSRF токены (синхронизированные токены), SameSite cookies, проверка Referer/Origin заголовков, двойная отправка cookies.',
+    keyPoints: [
+      'CSRF: выполнение действий от имени пользователя без его ведома.',
+      'Атака: пользователь залогинен на сайте, переходит на вредоносную страницу.',
+      'Вредоносная страница отправляет запрос на сайт с cookies пользователя.',
+      'Защита: CSRF токены, SameSite cookies, проверка заголовков.',
+      'CSRF токен: уникальный токен для каждой сессии, проверяется сервером.'
+    ],
+    tags: ['security', 'csrf', 'cookies', 'browser'],
+    examples: [
+      {
+        title: "CSRF атака пример",
+        code: `// Пользователь залогинен на bank.com\n// Переходит на evil.com, который содержит:\n\n<form action="https://bank.com/transfer" method="POST">\n  <input type="hidden" name="to" value="attacker-account">\n  <input type="hidden" name="amount" value="1000">\n</form>\n<script>document.forms[0].submit();</script>\n\n// Запрос отправляется с cookies пользователя\n// Деньги переводятся без ведома пользователя`
+      },
+      {
+        title: "Защита: CSRF токен",
+        code: `// Сервер генерирует токен при загрузке формы\nconst csrfToken = generateToken(); // сохраняется в сессии\n\n// Форма содержит токен\n<form action="/transfer" method="POST">\n  <input type="hidden" name="csrf_token" value="\${csrfToken}">\n  <input type="text" name="to">\n  <input type="number" name="amount">\n</form>\n\n// Сервер проверяет токен\nif (request.body.csrf_token !== session.csrf_token) {\n  return error('Invalid CSRF token');\n}`
+      },
+      {
+        title: "Защита: SameSite cookies",
+        code: `// Cookie с флагом SameSite\nSet-Cookie: session=abc123; SameSite=Strict\n\n// Strict: cookie не отправляется в cross-site запросах\n// Lax: отправляется только в GET запросах (безопаснее)\n// None: отправляется всегда (требует Secure флаг)\n\n// Защищает от CSRF, но может сломать некоторые интеграции`
+      },
+      {
+        title: "Защита: проверка заголовков",
+        code: `// Проверка Origin или Referer\nfunction checkOrigin(req) {\n  const origin = req.headers.origin;\n  const referer = req.headers.referer;\n  \n  const allowedOrigins = ['https://yourdomain.com'];\n  \n  if (!allowedOrigins.includes(origin)) {\n    throw new Error('Invalid origin');\n  }\n}\n\n// Защищает от простых CSRF атак`
+      }
+    ],
+    relatedTopics: ['fetch-api', 'cors', 'same-origin-policy', 'cookies'],
+    nextTopicId: 'cookies'
+  },
+  {
+    id: 'cookies',
+    title: 'Cookies',
+    difficulty: 'intermediate',
+    description: 'Cookies — небольшие данные, хранящиеся в браузере и отправляемые с каждым запросом. Используются для сессий, аутентификации, отслеживания. Управление: document.cookie для чтения/записи, HttpOnly (только HTTP, не доступен из JS), Secure (только HTTPS), SameSite (защита от CSRF), Expires/Max-Age (время жизни).',
+    keyPoints: [
+      'document.cookie: строка со всеми cookies, чтение и запись.',
+      'HttpOnly: cookie недоступен из JavaScript, защита от XSS.',
+      'Secure: cookie отправляется только по HTTPS.',
+      'SameSite: Strict/Lax/None, защита от CSRF.',
+      'Expires/Max-Age: время жизни cookie.',
+      'Path и Domain: область действия cookie.'
+    ],
+    tags: ['cookies', 'storage', 'security', 'browser', 'api'],
+    examples: [
+      {
+        title: "Чтение и запись cookies",
+        code: `// Чтение всех cookies\nconst allCookies = document.cookie;\n// "name=value; other=value2"\n\n// Запись cookie\ndocument.cookie = "username=Alice; path=/; max-age=3600";\n\n// Удаление (установка в прошлое)\ndocument.cookie = "username=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";\n\n// Функция для удобной работы\nfunction setCookie(name, value, days) {\n  const expires = new Date();\n  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);\n  document.cookie = \`\${name}=\${value};expires=\${expires.toUTCString()};path=/\`;\n}\n\nfunction getCookie(name) {\n  const value = \`; \${document.cookie}\`;\n  const parts = value.split(\`; \${name}=\`);\n  if (parts.length === 2) return parts.pop().split(';').shift();\n}`
+      },
+      {
+        title: "Безопасные cookies",
+        code: `// HttpOnly: устанавливается сервером, недоступен из JS\n// Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Strict\n\n// Secure: только HTTPS\n// Set-Cookie: token=xyz; Secure\n\n// SameSite: защита от CSRF\n// Set-Cookie: session=abc; SameSite=Strict  // не отправляется в cross-site\n// Set-Cookie: session=abc; SameSite=Lax    // только GET в cross-site\n// Set-Cookie: session=abc; SameSite=None; Secure  // всегда (требует Secure)`
+      },
+      {
+        title: "Path и Domain",
+        code: `// Path: область действия\n// Set-Cookie: name=value; path=/admin\n// Доступен только на /admin/*\n\n// Domain: поддомены\n// Set-Cookie: name=value; domain=.example.com\n// Доступен на example.com и *.example.com\n\n// Без domain: только текущий домен\n// Set-Cookie: name=value\n// Доступен только на текущем домене`
+      },
+      {
+        title: "Работа с cookies в запросах",
+        code: `// Cookies автоматически отправляются с запросами\nfetch('/api/data')\n  .then(res => res.json());\n// Cookies отправляются автоматически\n\n// Отключение отправки cookies\nfetch('/api/data', {\n  credentials: 'omit' // не отправлять cookies\n});\n\n// Включение (для cross-origin)\nfetch('https://api.example.com/data', {\n  credentials: 'include' // отправлять cookies\n});\n// Требует CORS с Access-Control-Allow-Credentials: true`
+      }
+    ],
+    relatedTopics: ['web-storage', 'xss', 'csrf', 'same-origin-policy']
   }
 ];
 

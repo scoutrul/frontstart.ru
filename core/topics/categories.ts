@@ -81,6 +81,10 @@ export const KNOWLEDGE_BASE: Category[] = [
     title: 'Продвинутый JavaScript', 
     topics: [
       getTopic('event-loop'),
+      getTopic('call-stack'),
+      getTopic('stack-heap'),
+      getTopic('blocking-non-blocking'),
+      getTopic('concurrency-parallelism'),
       getTopic('promises'),
       getTopic('async-await'),
       getTopic('generators'),
@@ -126,6 +130,10 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('proxy-reflect'),
       getTopic('iterators-iterables'),
       getTopic('memory-management'),
+      getTopic('object-copying'),
+      getTopic('structured-clone'),
+      getTopic('object-comparison'),
+      getTopic('to-primitive'),
       getTopic('regexp-advanced'),
       getTopic('debounce-throttle'),
       getTopic('memoization'),
@@ -153,6 +161,17 @@ export const KNOWLEDGE_BASE: Category[] = [
       getTopic('geolocation-api'),
       getTopic('mediadevices-api'),
       getTopic('page-visibility-api'),
+      getTopic('abort-controller'),
+    ].filter((t): t is NonNullable<typeof t> => t !== undefined)
+  },
+  { 
+    id: 'security', 
+    title: 'Безопасность', 
+    topics: [
+      getTopic('xss'),
+      getTopic('same-origin-policy'),
+      getTopic('csrf'),
+      getTopic('cookies'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   }
 ];
