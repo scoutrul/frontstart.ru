@@ -1,11 +1,10 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
 
 const SYSTEM_PROMPT = "Всегда используй Markdown для структурирования ответа: используй жирный шрифт для ключевых терминов, списки для перечислений и разделяй мысли абзацами. Отвечай на русском языке.";
 
+// Initialize AI instance before usage with directly accessed API key
 export const askInterviewer = async (topicTitle: string, userKnowledge: string) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -26,6 +25,7 @@ export const askInterviewer = async (topicTitle: string, userKnowledge: string) 
 };
 
 export const handleFollowUp = async (topicTitle: string, type: 'explain' | 'tricky_question', currentFeedback: string) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const prompts = {
     explain: `На основе предыдущего разговора о "${topicTitle}" (предыдущий отзыв: "${currentFeedback}"), ${SYSTEM_PROMPT} Пожалуйста, объясни эту тему более подробно, приведи наглядный пример и разбери нюансы, которые часто спрашивают на интервью.`,
     tricky_question: `На основе темы "${topicTitle}" и предыдущего отзыва ("${currentFeedback}"), ${SYSTEM_PROMPT} Задай пользователю один очень глубокий и сложный вопрос, который проверит его понимание работы движка или пограничных случаев.`
@@ -47,6 +47,7 @@ export const handleFollowUp = async (topicTitle: string, type: 'explain' | 'tric
 };
 
 export const generateSelfTestQuestions = async (topicTitle: string, keyPoints: string[]) => {
+  const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   try {
     const response = await ai.models.generateContent({
       model: "gemini-3-flash-preview",
@@ -66,9 +67,10 @@ export const generateSelfTestQuestions = async (topicTitle: string, keyPoints: s
 };
 
 export const getNextTopicsRecommendation = async (completedTopics: string[]) => {
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: 'gemini-3-flash-preview',
         contents: `Список пройденных тем JavaScript: ${completedTopics.join(', ')}. 
         Предложи следующие 3 логически вытекающие темы для изучения к фронтенд-собеседованию. 
         Формат: только список названий через запятую.`,
