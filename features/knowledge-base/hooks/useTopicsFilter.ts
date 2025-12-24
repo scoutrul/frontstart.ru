@@ -29,8 +29,10 @@ export const useTopicsFilter = () => {
         .sort((a, b) => {
           const aLearned = isLearned(a.id);
           const bLearned = isLearned(b.id);
-          if (aLearned === bLearned) return 0;
-          return aLearned ? 1 : -1;
+          // Изученные темы в конец списка
+          if (aLearned && !bLearned) return 1;
+          if (!aLearned && bLearned) return -1;
+          return 0; // Сохраняем исходный порядок для тем с одинаковым статусом
         })
     })).filter(cat => cat.topics.length > 0);
   }, [searchQuery, selectedDifficulty, selectedTags, isLearned]);

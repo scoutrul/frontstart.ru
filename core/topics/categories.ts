@@ -64,6 +64,16 @@ export const KNOWLEDGE_BASE: Category[] = [
     title: 'Прототипы и ООП', 
     topics: [
       getTopic('prototype-chain'),
+      getTopic('constructors'),
+      getTopic('object-create'),
+      getTopic('hasownproperty-in'),
+      getTopic('instanceof'),
+      getTopic('getprototypeof-setprototypeof'),
+      getTopic('getters-setters'),
+      getTopic('getownpropertynames-keys'),
+      getTopic('mixins'),
+      getTopic('super-prototypes'),
+      getTopic('prototypes-vs-classes'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   },
   { 
@@ -127,6 +137,22 @@ export const KNOWLEDGE_BASE: Category[] = [
     title: 'Browser API', 
     topics: [
       getTopic('web-storage'),
+      getTopic('dom-api'),
+      getTopic('fetch-api'),
+      getTopic('event-api'),
+      getTopic('history-api'),
+      getTopic('file-api'),
+      getTopic('clipboard-api'),
+      getTopic('intersection-observer'),
+      getTopic('web-workers'),
+      getTopic('resize-observer'),
+      getTopic('mutation-observer'),
+      getTopic('indexeddb'),
+      getTopic('service-workers'),
+      getTopic('websocket-api'),
+      getTopic('geolocation-api'),
+      getTopic('mediadevices-api'),
+      getTopic('page-visibility-api'),
     ].filter((t): t is NonNullable<typeof t> => t !== undefined)
   }
 ];

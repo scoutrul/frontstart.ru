@@ -110,6 +110,176 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'classes'],
+    nextTopicId: 'getters-setters'
+  },
+  {
+    id: 'getters-setters',
+    title: 'Геттеры и сеттеры',
+    difficulty: 'advanced',
+    description: 'Геттеры и сеттеры — функции, вызываемые при чтении/записи свойства. Определяются через Object.defineProperty() или в объектах/классах через get/set. Позволяют контролировать доступ к свойствам, валидацию, вычисляемые свойства. В прототипах доступны всем экземплярам.',
+    keyPoints: [
+      'get prop() {}: вызывается при чтении свойства.',
+      'set prop(value) {}: вызывается при записи свойства.',
+      'Object.defineProperty(obj, prop, {get, set}): определение геттера/сеттера.',
+      'Использование: валидация, вычисляемые свойства, контроль доступа.',
+      'В прототипах: геттеры/сеттеры доступны всем экземплярам.'
+    ],
+    tags: ['getters', 'setters', 'properties', 'prototype', 'oop'],
+    examples: [
+      {
+        title: "Геттеры и сеттеры в объектах",
+        code: `const user = {\n  firstName: "John",\n  lastName: "Doe",\n  \n  get fullName() {\n    return \`\${this.firstName} \${this.lastName}\`;\n  },\n  \n  set fullName(value) {\n    [this.firstName, this.lastName] = value.split(" ");\n  }\n};\n\nconsole.log(user.fullName); // "John Doe" (вызван геттер)\nuser.fullName = "Jane Smith"; // вызван сеттер\nconsole.log(user.firstName); // "Jane"`
+      },
+      {
+        title: "Object.defineProperty",
+        code: `const obj = {};\nlet _value = 0;\n\nObject.defineProperty(obj, 'count', {\n  get() {\n    return _value;\n  },\n  set(value) {\n    if (value < 0) {\n      throw new Error("Count cannot be negative");\n    }\n    _value = value;\n  },\n  enumerable: true,\n  configurable: true\n});\n\nobj.count = 5;\nconsole.log(obj.count); // 5\nobj.count = -1; // Error`
+      },
+      {
+        title: "В прототипах",
+        code: `function User(firstName, lastName) {\n  this.firstName = firstName;\n  this.lastName = lastName;\n}\n\nUser.prototype = {\n  get fullName() {\n    return \`\${this.firstName} \${this.lastName}\`;\n  },\n  set fullName(value) {\n    [this.firstName, this.lastName] = value.split(" ");\n  }\n};\n\nconst user = new User("Alice", "Smith");\nconsole.log(user.fullName); // "Alice Smith"\nuser.fullName = "Bob Johnson";\nconsole.log(user.firstName); // "Bob"`
+      },
+      {
+        title: "В классах",
+        code: `class User {\n  constructor(firstName, lastName) {\n    this.firstName = firstName;\n    this.lastName = lastName;\n  }\n  \n  get fullName() {\n    return \`\${this.firstName} \${this.lastName}\`;\n  }\n  \n  set fullName(value) {\n    [this.firstName, this.lastName] = value.split(" ");\n  }\n}\n\nconst user = new User("John", "Doe");\nconsole.log(user.fullName); // "John Doe"`
+      }
+    ],
+    relatedTopics: ['prototype-chain', 'constructors', 'classes'],
+    nextTopicId: 'getownpropertynames-keys'
+  },
+  {
+    id: 'getownpropertynames-keys',
+    title: 'Object.getOwnPropertyNames vs Object.keys',
+    difficulty: 'advanced',
+    description: 'Object.keys() возвращает только enumerable собственные свойства. Object.getOwnPropertyNames() возвращает все собственные свойства (включая non-enumerable). Object.getOwnPropertyDescriptors() возвращает дескрипторы всех свойств. Разница важна при работе с прототипами и скрытыми свойствами.',
+    keyPoints: [
+      'Object.keys(obj): только enumerable собственные свойства.',
+      'Object.getOwnPropertyNames(obj): все собственные свойства (включая non-enumerable).',
+      'Object.getOwnPropertyDescriptors(obj): дескрипторы всех свойств.',
+      'Разница: enumerable vs все свойства, включая скрытые.',
+      'Использование: глубокий анализ объектов, работа с прототипами.'
+    ],
+    tags: ['object.keys', 'getownpropertynames', 'properties', 'prototype', 'oop'],
+    examples: [
+      {
+        title: "Разница keys и getOwnPropertyNames",
+        code: `const obj = {};\n\nObject.defineProperty(obj, 'visible', {\n  value: 1,\n  enumerable: true\n});\n\nObject.defineProperty(obj, 'hidden', {\n  value: 2,\n  enumerable: false\n});\n\nconsole.log(Object.keys(obj)); // ["visible"]\nconsole.log(Object.getOwnPropertyNames(obj)); // ["visible", "hidden"]`
+      },
+      {
+        title: "С встроенными объектами",
+        code: `const arr = [1, 2, 3];\n\n// Только индексы (enumerable)\nObject.keys(arr); // ["0", "1", "2"]\n\n// Все свойства, включая length\nObject.getOwnPropertyNames(arr); // ["0", "1", "2", "length"]\n\n// length - non-enumerable\narr.propertyIsEnumerable('length'); // false`
+      },
+      {
+        title: "getOwnPropertyDescriptors",
+        code: `const obj = {};\n\nObject.defineProperty(obj, 'x', {\n  value: 1,\n  writable: false,\n  enumerable: true,\n  configurable: true\n});\n\nObject.defineProperty(obj, 'y', {\n  get() { return 2; },\n  enumerable: false\n});\n\nconst descriptors = Object.getOwnPropertyDescriptors(obj);\nconsole.log(descriptors);\n// {\n//   x: { value: 1, writable: false, enumerable: true, configurable: true },\n//   y: { get: [Function: get], enumerable: false, configurable: true }\n// }`
+      },
+      {
+        title: "Копирование с дескрипторами",
+        code: `const source = {};\nObject.defineProperty(source, 'x', {\n  value: 1,\n  writable: false,\n  enumerable: true\n});\n\n// Обычное копирование теряет дескрипторы\nconst copy1 = { ...source };\nObject.getOwnPropertyDescriptor(copy1, 'x');\n// { value: 1, writable: true, enumerable: true, configurable: true }\n\n// Копирование с дескрипторами\nconst copy2 = Object.defineProperties({}, Object.getOwnPropertyDescriptors(source));\nObject.getOwnPropertyDescriptor(copy2, 'x');\n// { value: 1, writable: false, enumerable: true, configurable: true }`
+      }
+    ],
+    relatedTopics: ['hasownproperty-in', 'prototype-chain'],
+    nextTopicId: 'mixins'
+  },
+  {
+    id: 'mixins',
+    title: 'Mixins (Множественное наследование)',
+    difficulty: 'advanced',
+    description: 'Mixins позволяют эмулировать множественное наследование в JavaScript. Объект может наследовать методы от нескольких источников. Реализуется через Object.assign() или копирование методов в прототип. Используется для композиции функциональности без глубокой иерархии классов.',
+    keyPoints: [
+      'Mixin: объект с методами, которые копируются в другой объект.',
+      'Object.assign(target, ...mixins): копирует свойства из mixins в target.',
+      'Позволяет комбинировать функциональность из нескольких источников.',
+      'Альтернатива глубокой иерархии классов.',
+      'Использование: композиция вместо наследования.'
+    ],
+    tags: ['mixins', 'inheritance', 'composition', 'oop', 'patterns'],
+    examples: [
+      {
+        title: "Базовый mixin",
+        code: `const CanFly = {\n  fly() {\n    return "Flying!";\n  }\n};\n\nconst CanSwim = {\n  swim() {\n    return "Swimming!";\n  }\n};\n\n// Применяем mixins\nconst Duck = Object.assign({}, CanFly, CanSwim);\n\nconst duck = Object.create(Duck);\nduck.fly(); // "Flying!"\nduck.swim(); // "Swimming!"`
+      },
+      {
+        title: "Mixin в классы",
+        code: `// Mixin функции\nconst CanFly = (Base) => class extends Base {\n  fly() {\n    return "Flying!";\n  }\n};\n\nconst CanSwim = (Base) => class extends Base {\n  swim() {\n    return "Swimming!";\n  }\n};\n\nclass Animal {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\n// Применяем mixins\nclass Duck extends CanFly(CanSwim(Animal)) {\n  speak() {\n    return "Quack!";\n  }\n}\n\nconst duck = new Duck("Donald");\nduck.fly(); // "Flying!"\nduck.swim(); // "Swimming!"\nduck.speak(); // "Quack!"`
+      },
+      {
+        title: "Mixin в прототипы",
+        code: `function User(name) {\n  this.name = name;\n}\n\n// Mixin с методами\nconst Loggable = {\n  log() {\n    console.log(\`[\${this.constructor.name}] \${this.name}\`);\n  }\n};\n\nconst Serializable = {\n  serialize() {\n    return JSON.stringify(this);\n  }\n};\n\n// Применяем к прототипу\nObject.assign(User.prototype, Loggable, Serializable);\n\nconst user = new User("Alice");\nuser.log(); // "[User] Alice"\nuser.serialize(); // '{"name":"Alice"}'`
+      },
+      {
+        title: "Утилита для mixins",
+        code: `function mixin(...mixins) {\n  return function(Base) {\n    return mixins.reduce((Class, mixin) => mixin(Class), Base);\n  };\n}\n\nconst CanFly = (Base) => class extends Base {\n  fly() { return "Flying!"; }\n};\n\nconst CanSwim = (Base) => class extends Base {\n  swim() { return "Swimming!"; }\n};\n\nclass Animal {}\n\n// Применяем несколько mixins\nclass Duck extends mixin(CanFly, CanSwim)(Animal) {}\n\nconst duck = new Duck();\nduck.fly(); // "Flying!"\nduck.swim(); // "Swimming!"`
+      }
+    ],
+    relatedTopics: ['prototype-chain', 'classes', 'object-create'],
+    nextTopicId: 'super-prototypes'
+  },
+  {
+    id: 'super-prototypes',
+    title: 'super в прототипах',
+    difficulty: 'advanced',
+    description: 'super в классах вызывает методы родительского класса. Под капотом использует [[HomeObject]] для определения родителя. В обычных функциях super недоступен. В методах объектов super работает через __proto__. Понимание super важно для работы с наследованием и переопределением методов.',
+    keyPoints: [
+      'super.method(): вызывает метод родительского класса/прототипа.',
+      'super в конструкторе: вызывает родительский конструктор.',
+      '[[HomeObject]]: внутреннее свойство, определяющее родителя для super.',
+      'В обычных функциях super недоступен, только в методах.',
+      'super работает через цепочку прототипов.'
+    ],
+    tags: ['super', 'inheritance', 'prototype', 'classes', 'oop'],
+    examples: [
+      {
+        title: "super в классах",
+        code: `class Animal {\n  speak() {\n    return "Some sound";\n  }\n}\n\nclass Dog extends Animal {\n  speak() {\n    return super.speak() + " - Woof!";\n  }\n}\n\nconst dog = new Dog();\nconsole.log(dog.speak()); // "Some sound - Woof!"`
+      },
+      {
+        title: "super в конструкторе",
+        code: `class Animal {\n  constructor(name) {\n    this.name = name;\n  }\n}\n\nclass Dog extends Animal {\n  constructor(name, breed) {\n    super(name); // вызывает Animal.constructor\n    this.breed = breed;\n  }\n}\n\nconst dog = new Dog("Rex", "Labrador");\nconsole.log(dog.name); // "Rex"\nconsole.log(dog.breed); // "Labrador"`
+      },
+      {
+        title: "super в методах объектов",
+        code: `const animal = {\n  speak() {\n    return "Some sound";\n  }\n};\n\nconst dog = {\n  __proto__: animal,\n  speak() {\n    return super.speak() + " - Woof!";\n  }\n};\n\nconsole.log(dog.speak()); // "Some sound - Woof!"\n\n// super работает только в методах, не в функциях\nconst speakFunc = dog.speak;\n// speakFunc(); // ошибка: super недоступен`
+      },
+      {
+        title: "[[HomeObject]]",
+        code: `// super использует [[HomeObject]] для определения родителя\nconst animal = {\n  name: "Animal",\n  getName() {\n    return this.name;\n  }\n};\n\nconst dog = {\n  __proto__: animal,\n  name: "Dog",\n  getName() {\n    // super.getName() эквивалентно:\n    // Object.getPrototypeOf(Object.getPrototypeOf(this)).getName.call(this)\n    return super.getName();\n  }\n};\n\nconsole.log(dog.getName()); // "Dog" (this = dog)`
+      }
+    ],
+    relatedTopics: ['prototype-chain', 'classes', 'constructors'],
+    nextTopicId: 'prototypes-vs-classes'
+  },
+  {
+    id: 'prototypes-vs-classes',
+    title: 'Прототипы vs Классы',
+    difficulty: 'advanced',
+    description: 'Классы — синтаксический сахар над прототипами. Под капотом классы используют прототипное наследование. Разница: синтаксис, hoisting (классы не всплывают), strict mode (классы всегда в strict). Понимание что классы = прототипы важно для отладки и работы с наследованием.',
+    keyPoints: [
+      'Классы — синтаксический сахар над прототипами.',
+      'class extends использует прототипное наследование.',
+      'Разница: синтаксис, hoisting, strict mode.',
+      'Под капотом: классы создают функции-конструкторы и прототипы.',
+      'Понимание эквивалентности важно для отладки.'
+    ],
+    tags: ['classes', 'prototypes', 'inheritance', 'oop', 'comparison'],
+    examples: [
+      {
+        title: "Эквивалентность",
+        code: `// Класс\nclass User {\n  constructor(name) {\n    this.name = name;\n  }\n  greet() {\n    return "Hello, " + this.name;\n  }\n}\n\n// Эквивалентный код через прототипы\nfunction User(name) {\n  this.name = name;\n}\nUser.prototype.greet = function() {\n  return "Hello, " + this.name;\n};\n\n// Оба работают одинаково\nconst user1 = new User("Alice");\nconst user2 = new User("Bob");\nconsole.log(user1.greet()); // "Hello, Alice"`
+      },
+      {
+        title: "Наследование",
+        code: `// Классы\nclass Animal {\n  speak() { return "Sound"; }\n}\nclass Dog extends Animal {\n  speak() { return "Woof"; }\n}\n\n// Эквивалент через прототипы\nfunction Animal() {}\nAnimal.prototype.speak = function() { return "Sound"; };\n\nfunction Dog() {}\nDog.prototype = Object.create(Animal.prototype);\nDog.prototype.constructor = Dog;\nDog.prototype.speak = function() { return "Woof"; };\n\n// Проверка\nconst dog1 = new Dog();\nconst dog2 = new Dog();\nconsole.log(dog1.speak()); // "Woof"\nconsole.log(Object.getPrototypeOf(dog1) === Dog.prototype); // true`
+      },
+      {
+        title: "Различия",
+        code: `// Hoisting\n// Классы не всплывают\n// new User(); // ReferenceError\nclass User {}\n\n// Функции-конструкторы всплывают\nnew UserFunc(); // OK\nfunction UserFunc() {}\n\n// Strict mode\nclass Test {\n  // Весь код в strict mode\n  method() {\n    x = 1; // ReferenceError\n  }\n}\n\n// Функции-конструкторы - зависит от контекста`
+      },
+      {
+        title: "Что под капотом",
+        code: `class User {\n  constructor(name) {\n    this.name = name;\n  }\n  static create() {\n    return new User("Default");\n  }\n}\n\n// Проверяем что создалось\nconsole.log(typeof User); // "function" (класс = функция)\nconsole.log(User.prototype); // { constructor: User, ... }\nconsole.log(User.create); // function (static метод)\n\n// Прототипная цепочка\nconst user = new User("Alice");\nconsole.log(user.__proto__ === User.prototype); // true\nconsole.log(User.prototype.constructor === User); // true`
+      }
+    ],
+    relatedTopics: ['prototype-chain', 'classes', 'constructors'],
     nextTopicId: 'weakmap-weakset'
   },
   {
@@ -342,6 +512,155 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['memoization', 'memory-management', 'debounce-throttle']
+  },
+  {
+    id: 'service-workers',
+    title: 'Service Workers',
+    difficulty: 'advanced',
+    description: 'Service Worker — прокси между браузером и сетью. Работает в фоне, может перехватывать запросы, кэшировать ресурсы, работать офлайн. Регистрация через navigator.serviceWorker.register(). События: install (установка), activate (активация), fetch (перехват запросов). Используется для PWA, офлайн-режима.',
+    keyPoints: [
+      'navigator.serviceWorker.register(script): регистрация воркера.',
+      'Работает в отдельном потоке, может работать офлайн.',
+      'События: install (кэширование), activate (очистка старого кэша), fetch (перехват запросов).',
+      'Cache API: кэширование ресурсов для офлайн-доступа.',
+      'Использование: PWA, офлайн-режим, push-уведомления.'
+    ],
+    tags: ['service-workers', 'pwa', 'offline', 'caching', 'browser', 'api'],
+    examples: [
+      {
+        title: "Регистрация Service Worker",
+        code: `// main.js\nif ('serviceWorker' in navigator) {\n  navigator.serviceWorker.register('/sw.js')\n    .then(registration => {\n      console.log('SW registered:', registration);\n    })\n    .catch(error => {\n      console.error('SW registration failed:', error);\n    });\n}\n\n// sw.js\nself.addEventListener('install', (event) => {\n  console.log('Service Worker installing');\n  event.waitUntil(\n    caches.open('v1').then(cache => {\n      return cache.addAll([\n        '/',\n        '/index.html',\n        '/styles.css',\n        '/app.js'\n      ]);\n    })\n  );\n});`
+      },
+      {
+        title: "Кэширование и офлайн",
+        code: `// sw.js\nself.addEventListener('fetch', (event) => {\n  event.respondWith(\n    caches.match(event.request)\n      .then(response => {\n        // Возвращаем из кэша или делаем запрос\n        return response || fetch(event.request);\n      })\n  );\n});\n\n// Стратегия: Cache First\nself.addEventListener('fetch', (event) => {\n  event.respondWith(\n    caches.match(event.request)\n      .then(response => response || fetch(event.request))\n  );\n});\n\n// Стратегия: Network First\nself.addEventListener('fetch', (event) => {\n  event.respondWith(\n    fetch(event.request)\n      .then(response => {\n        const clone = response.clone();\n        caches.open('v1').then(cache => cache.put(event.request, clone));\n        return response;\n      })\n      .catch(() => caches.match(event.request))\n  );\n});`
+      },
+      {
+        title: "Активация и обновление",
+        code: `// sw.js\nself.addEventListener('activate', (event) => {\n  console.log('Service Worker activating');\n  \n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames.map(cacheName => {\n          if (cacheName !== 'v2') { // удаляем старые кэши\n            return caches.delete(cacheName);\n          }\n        })\n      );\n    })\n  );\n});`
+      }
+    ],
+    relatedTopics: ['web-workers', 'fetch-api', 'web-storage']
+  },
+  {
+    id: 'websocket-api',
+    title: 'WebSocket API',
+    difficulty: 'advanced',
+    description: 'WebSocket API для двусторонней связи в реальном времени. new WebSocket(url) создает соединение. События: open (соединение установлено), message (получено сообщение), error (ошибка), close (закрыто). send() отправляет данные, close() закрывает. Используется для чатов, игр, стриминга.',
+    keyPoints: [
+      'new WebSocket(url): создает WebSocket соединение (ws:// или wss://).',
+      'События: open, message, error, close.',
+      'send(data): отправка данных (текст, Blob, ArrayBuffer).',
+      'close(code, reason): закрытие соединения.',
+      'Использование: чаты, игры, стриминг, реальное время.'
+    ],
+    tags: ['websocket', 'realtime', 'networking', 'browser', 'api'],
+    examples: [
+      {
+        title: "Базовое соединение",
+        code: `const ws = new WebSocket('wss://echo.websocket.org');\n\nws.onopen = () => {\n  console.log('Connected');\n  ws.send('Hello Server!');\n};\n\nws.onmessage = (event) => {\n  console.log('Received:', event.data);\n};\n\nws.onerror = (error) => {\n  console.error('Error:', error);\n};\n\nws.onclose = () => {\n  console.log('Disconnected');\n};\n\n// Закрытие\nws.close();`
+      },
+      {
+        title: "Чат приложение",
+        code: `class ChatClient {\n  constructor(url) {\n    this.ws = new WebSocket(url);\n    this.setupHandlers();\n  }\n  \n  setupHandlers() {\n    this.ws.onopen = () => {\n      console.log('Connected to chat');\n    };\n    \n    this.ws.onmessage = (event) => {\n      const message = JSON.parse(event.data);\n      this.displayMessage(message);\n    };\n    \n    this.ws.onclose = () => {\n      console.log('Disconnected, reconnecting...');\n      setTimeout(() => this.reconnect(), 1000);\n    };\n  }\n  \n  sendMessage(text) {\n    if (this.ws.readyState === WebSocket.OPEN) {\n      this.ws.send(JSON.stringify({ text, timestamp: Date.now() }));\n    }\n  }\n  \n  reconnect() {\n    this.ws = new WebSocket(this.url);\n    this.setupHandlers();\n  }\n}`
+      },
+      {
+        title: "Отправка разных типов данных",
+        code: `const ws = new WebSocket('wss://example.com');\n\nws.onopen = () => {\n  // Текст\n  ws.send('Hello');\n  \n  // JSON\n  ws.send(JSON.stringify({ type: 'message', data: 'Hello' }));\n  \n  // Blob\n  const blob = new Blob(['Binary data'], { type: 'text/plain' });\n  ws.send(blob);\n  \n  // ArrayBuffer\n  const buffer = new ArrayBuffer(8);\n  ws.send(buffer);\n};\n\nws.onmessage = (event) => {\n  if (event.data instanceof Blob) {\n    // обработка Blob\n  } else if (typeof event.data === 'string') {\n    // обработка текста\n  }\n};`
+      }
+    ],
+    relatedTopics: ['fetch-api', 'async-await', 'event-api']
+  },
+  {
+    id: 'geolocation-api',
+    title: 'Geolocation API',
+    difficulty: 'advanced',
+    description: 'Geolocation API получает географическое положение устройства. navigator.geolocation.getCurrentPosition() получает позицию один раз, watchPosition() отслеживает изменения. Требует разрешения пользователя. Возвращает координаты (latitude, longitude), точность, высоту. Используется для карт, навигации, геолокации.',
+    keyPoints: [
+      'navigator.geolocation.getCurrentPosition(success, error, options): получает позицию.',
+      'watchPosition(): отслеживает изменения позиции, возвращает ID.',
+      'clearWatch(id): останавливает отслеживание.',
+      'Требует разрешения пользователя (HTTPS или localhost).',
+      'Возвращает: latitude, longitude, accuracy, altitude.'
+    ],
+    tags: ['geolocation', 'location', 'maps', 'browser', 'api'],
+    examples: [
+      {
+        title: "Получение текущей позиции",
+        code: `if ('geolocation' in navigator) {\n  navigator.geolocation.getCurrentPosition(\n    (position) => {\n      const { latitude, longitude, accuracy } = position.coords;\n      console.log(\`Lat: \${latitude}, Lng: \${longitude}\`);\n      console.log(\`Accuracy: \${accuracy} meters\`);\n    },\n    (error) => {\n      console.error('Error:', error.message);\n      // error.code: 1 (PERMISSION_DENIED), 2 (POSITION_UNAVAILABLE), 3 (TIMEOUT)\n    },\n    {\n      enableHighAccuracy: true,\n      timeout: 5000,\n      maximumAge: 0\n    }\n  );\n}`
+      },
+      {
+        title: "Отслеживание позиции",
+        code: `let watchId;\n\nfunction startTracking() {\n  watchId = navigator.geolocation.watchPosition(\n    (position) => {\n      const { latitude, longitude } = position.coords;\n      updateMap(latitude, longitude);\n    },\n    (error) => {\n      console.error('Tracking error:', error);\n    },\n    {\n      enableHighAccuracy: true,\n      maximumAge: 1000 // обновлять не чаще раза в секунду\n    }\n  );\n}\n\nfunction stopTracking() {\n  if (watchId) {\n    navigator.geolocation.clearWatch(watchId);\n  }\n}`
+      },
+      {
+        title: "Интеграция с картами",
+        code: `async function getLocation() {\n  return new Promise((resolve, reject) => {\n    navigator.geolocation.getCurrentPosition(\n      (position) => {\n        resolve({\n          lat: position.coords.latitude,\n          lng: position.coords.longitude\n        });\n      },\n      reject,\n      { enableHighAccuracy: true }\n    );\n  });\n}\n\n// Использование\nconst location = await getLocation();\n// Отправка на карту или API\nmap.setCenter([location.lat, location.lng]);`
+      }
+    ],
+    relatedTopics: ['async-await', 'promises', 'dom-api']
+  },
+  {
+    id: 'mediadevices-api',
+    title: 'MediaDevices API',
+    difficulty: 'advanced',
+    description: 'MediaDevices API получает доступ к камере и микрофону. navigator.mediaDevices.getUserMedia(constraints) запрашивает доступ. Возвращает MediaStream. video/audio элементы могут отображать поток. Используется для видеозвонков, записи, стриминга. Требует HTTPS и разрешения пользователя.',
+    keyPoints: [
+      'navigator.mediaDevices.getUserMedia(constraints): запрашивает доступ к медиа.',
+      'constraints: { video: true/false, audio: true/false } или объект с настройками.',
+      'Возвращает Promise<MediaStream> с треками (video/audio).',
+      'getTracks() получает треки, stop() останавливает.',
+      'Требует HTTPS (кроме localhost) и разрешения пользователя.'
+    ],
+    tags: ['mediadevices', 'camera', 'microphone', 'streaming', 'browser', 'api'],
+    examples: [
+      {
+        title: "Доступ к камере",
+        code: `async function startCamera() {\n  try {\n    const stream = await navigator.mediaDevices.getUserMedia({\n      video: true,\n      audio: false\n    });\n    \n    const video = document.querySelector('video');\n    video.srcObject = stream;\n    \n    console.log('Camera started');\n  } catch (error) {\n    console.error('Error accessing camera:', error);\n    // error.name: NotAllowedError, NotFoundError, etc.\n  }\n}\n\n// Остановка\nfunction stopCamera(stream) {\n  stream.getTracks().forEach(track => track.stop());\n}`
+      },
+      {
+        title: "Настройки камеры",
+        code: `const constraints = {\n  video: {\n    width: { ideal: 1280 },\n    height: { ideal: 720 },\n    facingMode: 'user' // или 'environment' для задней камеры\n  },\n  audio: {\n    echoCancellation: true,\n    noiseSuppression: true\n  }\n};\n\nconst stream = await navigator.mediaDevices.getUserMedia(constraints);`
+      },
+      {
+        title: "Запись видео",
+        code: `let mediaRecorder;\nlet recordedChunks = [];\n\nasync function startRecording() {\n  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });\n  \n  mediaRecorder = new MediaRecorder(stream);\n  \n  mediaRecorder.ondataavailable = (event) => {\n    if (event.data.size > 0) {\n      recordedChunks.push(event.data);\n    }\n  };\n  \n  mediaRecorder.onstop = () => {\n    const blob = new Blob(recordedChunks, { type: 'video/webm' });\n    const url = URL.createObjectURL(blob);\n    // Сохранить или отправить\n  };\n  \n  mediaRecorder.start();\n}\n\nfunction stopRecording() {\n  mediaRecorder.stop();\n}`
+      }
+    ],
+    relatedTopics: ['file-api', 'async-await', 'dom-api']
+  },
+  {
+    id: 'page-visibility-api',
+    title: 'Page Visibility API',
+    difficulty: 'advanced',
+    description: 'Page Visibility API определяет видимость страницы. document.visibilityState: "visible" (видима), "hidden" (скрыта). Событие visibilitychange срабатывает при изменении. Используется для оптимизации: пауза видео/анимаций при скрытии, остановка таймеров, экономия ресурсов.',
+    keyPoints: [
+      'document.visibilityState: "visible" или "hidden".',
+      'document.hidden: boolean, true если страница скрыта.',
+      'visibilitychange: событие при изменении видимости.',
+      'Использование: пауза видео/анимаций, остановка таймеров, экономия ресурсов.',
+      'Оптимизация производительности и батареи.'
+    ],
+    tags: ['page-visibility', 'performance', 'optimization', 'browser', 'api'],
+    examples: [
+      {
+        title: "Базовое использование",
+        code: `// Проверка текущего состояния\nif (document.hidden) {\n  console.log('Page is hidden');\n} else {\n  console.log('Page is visible');\n}\n\n// Слушаем изменения\ndocument.addEventListener('visibilitychange', () => {\n  if (document.hidden) {\n    console.log('Page became hidden');\n    pauseVideo();\n    stopAnimations();\n  } else {\n    console.log('Page became visible');\n    resumeVideo();\n    startAnimations();\n  }\n});`
+      },
+      {
+        title: "Оптимизация видео",
+        code: `const video = document.querySelector('video');\n\ndocument.addEventListener('visibilitychange', () => {\n  if (document.hidden) {\n    // Пауза при скрытии\n    video.pause();\n  } else {\n    // Возобновление при показе\n    video.play();\n  }\n});`
+      },
+      {
+        title: "Остановка таймеров и запросов",
+        code: `let intervalId;\nlet animationFrameId;\n\nfunction startUpdates() {\n  intervalId = setInterval(updateData, 1000);\n  animationFrameId = requestAnimationFrame(animate);\n}\n\nfunction stopUpdates() {\n  clearInterval(intervalId);\n  cancelAnimationFrame(animationFrameId);\n}\n\ndocument.addEventListener('visibilitychange', () => {\n  if (document.hidden) {\n    stopUpdates(); // экономия ресурсов\n  } else {\n    startUpdates(); // возобновление\n  }\n});`
+      },
+      {
+        title: "Отправка аналитики",
+        code: `let startTime = Date.now();\n\nfunction trackVisibility() {\n  document.addEventListener('visibilitychange', () => {\n    if (document.hidden) {\n      // Страница скрыта - отправляем время просмотра\n      const viewTime = Date.now() - startTime;\n      sendAnalytics({ viewTime, event: 'page_hidden' });\n    } else {\n      // Страница видна - начинаем отсчет\n      startTime = Date.now();\n      sendAnalytics({ event: 'page_visible' });\n    }\n  });\n}`
+      }
+    ],
+    relatedTopics: ['event-api', 'performance-optimization', 'dom-api']
   }
 ];
 

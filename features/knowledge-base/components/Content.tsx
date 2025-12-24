@@ -19,19 +19,8 @@ const Content: React.FC<ContentProps> = (props) => {
   return (
     <div key={topic.id} className="w-full max-w-[min(90vw,80rem)] mx-auto py-12 px-6 animate-content">
       <header className="mb-10 relative">
-        <div className="flex items-start justify-between mb-2">
+        <div className="flex items-start mb-2">
           <Badge variant={topic.difficulty} className="px-3 py-1.5" />
-          <button
-            onClick={() => toggleLearned(topic.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg border transition-all ${
-              learned
-                ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/20'
-                : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/40 hover:text-slate-300'
-            }`}
-          >
-            <i className={`fa-solid ${learned ? 'fa-check-circle' : 'fa-circle'} text-sm`}></i>
-            <span className="text-xs font-bold">{learned ? 'Изучено' : 'Отметить как изученное'}</span>
-          </button>
         </div>
         <div className="flex items-center gap-3 mb-4">
           <h2 className="text-4xl font-black text-white tracking-tight leading-tight">{topic.title}</h2>
@@ -69,6 +58,18 @@ const Content: React.FC<ContentProps> = (props) => {
       </div>
 
       {topic.id === 'scope-chain' && <ScopeChainVisualizer />}
+
+      <button
+        onClick={() => toggleLearned(topic.id)}
+        className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border transition-all ${
+          learned
+            ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/20'
+            : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/40 hover:text-slate-300'
+        }`}
+      >
+        <i className={`fa-solid ${learned ? 'fa-check-circle' : 'fa-circle'} text-base`}></i>
+        <span className="text-sm font-bold">{learned ? 'Изучено' : 'Отметить как изученное'}</span>
+      </button>
 
       {props.relatedTopics.length > 0 && (
         <div className="mt-16">

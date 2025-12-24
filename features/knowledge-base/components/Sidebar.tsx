@@ -95,8 +95,17 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                 placeholder="Поиск..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-[#1e293b]/30 border border-slate-800/80 rounded-md py-1.5 pl-8 pr-3 text-[11px] text-slate-300 outline-none focus:border-emerald-500/40 transition-all placeholder:text-slate-700"
+                className={`w-full bg-[#1e293b]/30 border border-slate-800/80 rounded-md py-1.5 text-[11px] text-slate-300 outline-none focus:border-emerald-500/40 transition-all placeholder:text-slate-700 ${searchQuery ? 'pl-8 pr-8' : 'pl-8 pr-3'}`}
               />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors"
+                  title="Очистить"
+                >
+                  <i className="fa-solid fa-times text-[10px]"></i>
+                </button>
+              )}
             </div>
 
             <div className="flex bg-[#0a0f1d] p-0.5 rounded-md border border-slate-800/80 shadow-inner">
@@ -147,6 +156,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
           </div>
 
           {(() => {
+            // Не показываем блок прогресса, если есть активный поиск
+            if (searchQuery) return null;
+            
             const totalTopics = filteredCategories.reduce((sum, cat) => sum + cat.topics.length, 0);
             const learnedInFiltered = filteredCategories.reduce(
               (sum, cat) => sum + cat.topics.filter(t => isLearned(t.id)).length,
@@ -229,8 +241,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                         className={`w-full text-left px-3 py-2.5 rounded-lg transition-all border flex items-center justify-between group ${
                           isActive 
                             ? `${activeColors?.bg} ${activeColors?.border} ${activeColors?.text} ${activeColors?.shadow}` 
+                            : topicLearned
+                            ? 'bg-slate-800/30 border-slate-700/40 text-slate-500 hover:bg-slate-800/40 hover:text-slate-400'
                             : 'bg-[#1e293b]/20 border-slate-800/80 text-slate-400 hover:bg-slate-800/40 hover:text-slate-300'
-                        } ${topicLearned ? 'opacity-60' : ''}`}
+                        }`}
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           {topicLearned && (
