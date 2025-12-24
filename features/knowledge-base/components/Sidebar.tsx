@@ -1,25 +1,30 @@
 
 import React, { useState } from 'react';
-import { Category, Difficulty } from '../../../core/types';
+import { Difficulty } from '../../../core/types';
 import { Badge } from '../../../components/ui';
-import { POPULAR_TAGS } from '../../../core/constants';
+import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
+import { useTopicsFilter, useTags } from '../hooks';
 
 interface SidebarProps {
-  categories: Category[];
-  selectedTopicId: string;
   onTopicSelect: (id: string) => void;
-  searchQuery: string;
-  onSearchChange: (val: string) => void;
-  selectedDifficulty: Difficulty | 'all';
-  onDifficultyChange: (val: Difficulty | 'all') => void;
-  selectedTags: string[];
-  onTagToggle: (tag: string) => void;
-  availableTags: string[];
 }
 
-const Sidebar: React.FC<SidebarProps> = (props) => {
+const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect }) => {
   const [showAllTags, setShowAllTags] = useState(false);
   const TAGS_LIMIT = 12;
+  
+  const { 
+    selectedTopicId, 
+    searchQuery, 
+    selectedDifficulty, 
+    selectedTags,
+    setSearchQuery,
+    setSelectedDifficulty,
+    toggleTag
+  } = useKnowledgeBaseStore();
+  
+  const { filteredCategories } = useTopicsFilter();
+  const { availableTags } = useTags();
   
   const renderDifficultyStars = (d: Difficulty | 'all') => {
     if (d === 'all') return 'BCE';
@@ -57,8 +62,8 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
               <input 
                 type="text" 
                 placeholder="Поиск..." 
-                value={props.searchQuery}
-                onChange={(e) => props.onSearchChange(e.target.value)}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full bg-[#1e293b]/30 border border-slate-800/80 rounded-md py-1.5 pl-8 pr-3 text-[11px] text-slate-300 outline-none focus:border-emerald-500/40 transition-all placeholder:text-slate-700"
               />
             </div>
@@ -67,9 +72,9 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
               {(['all', 'beginner', 'intermediate', 'advanced'] as const).map(d => (
                 <button 
                   key={d} 
-                  onClick={() => props.onDifficultyChange(d)}
+                  onClick={() => setSelectedDifficulty(d)}
                   className={`flex-1 flex justify-center items-center text-[9px] font-bold py-1.5 rounded transition-all ${
-                    props.selectedDifficulty === d ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-600 hover:text-slate-400'
+                    selectedDifficulty === d ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-600 hover:text-slate-400'
                   }`}
                 >
                   {renderDifficultyStars(d)}
@@ -79,15 +84,15 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
 
             <div className="space-y-2">
               <div className="flex flex-wrap gap-1.5 pt-1">
-                {props.availableTags.length > 0 ? (
-                  (showAllTags ? props.availableTags : props.availableTags.slice(0, TAGS_LIMIT)).map(tag => (
+                {availableTags.length > 0 ? (
+                  (showAllTags ? availableTags : availableTags.slice(0, TAGS_LIMIT)).map(tag => (
                     <button
                       key={tag}
-                      onClick={() => props.onTagToggle(tag)}
-                      className={`text-[9px] px-2 py-0.5 rounded border transition-all ${
-                        props.selectedTags.includes(tag) 
-                          ? 'bg-transparent border-slate-700 text-white' 
-                          : 'bg-transparent border-slate-800/60 text-slate-600 hover:border-slate-700'
+                      onClick={() => toggleTag(tag)}
+                      className={`text-[12px] px-2 py-0.5 rounded border transition-all ${
+                        selectedTags.includes(tag) 
+                          ? 'bg-transparent border-white text-white' 
+                          : 'bg-transparent border-slate-800/60 text-slate-400 hover:border-slate-700'
                       }`}
                     >
                       {tag}
@@ -96,27 +101,28 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
                 ) : (
                   <div className="text-[9px] text-slate-600 italic">Нет доступных тегов</div>
                 )}
+                {availableTags.length > TAGS_LIMIT && (
+                  <button
+                    onClick={() => setShowAllTags(!showAllTags)}
+                    className="text-[9px] text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1"
+                  >
+                    <span>{showAllTags ? '' : '...'}</span>
+                    <i className={`fa-solid fa-chevron-${showAllTags ? 'up' : 'down'} text-[9px]`}></i>
+                  </button>
+                )}
               </div>
-              {props.availableTags.length > TAGS_LIMIT && (
-                <button
-                  onClick={() => setShowAllTags(!showAllTags)}
-                  className="text-[9px] text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1"
-                >
-                  <span>{showAllTags ? 'Скрыть' : 'Показать все'}</span>
-                  <i className={`fa-solid fa-chevron-${showAllTags ? 'up' : 'down'} text-[7px]`}></i>
-                </button>
-              )}
+
             </div>
           </div>
 
           <nav className="pt-4 border-t border-slate-800/40">
-            {props.categories.length > 0 ? (
-              props.categories.map(cat => (
+            {filteredCategories.length > 0 ? (
+              filteredCategories.map(cat => (
               <div key={cat.id} className="mb-8 last:mb-0">
                 <h3 className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-3 px-1">{cat.title}</h3>
                 <div className="space-y-2">
                   {cat.topics.map(topic => {
-                    const isActive = props.selectedTopicId === topic.id;
+                    const isActive = selectedTopicId === topic.id;
                     const difficultyColors: Record<Difficulty, { bg: string; border: string; text: string; shadow: string }> = {
                       beginner: {
                         bg: 'bg-emerald-500/5',
@@ -142,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = (props) => {
                     return (
                       <button
                         key={topic.id}
-                        onClick={() => props.onTopicSelect(topic.id)}
+                        onClick={() => onTopicSelect(topic.id)}
                         className={`w-full text-left px-3 py-2.5 rounded-lg transition-all border flex items-center justify-between group ${
                           isActive 
                             ? `${activeColors?.bg} ${activeColors?.border} ${activeColors?.text} ${activeColors?.shadow}` 

@@ -1,61 +1,14 @@
 
-import React, { useState, useMemo, useRef } from 'react';
-import { KNOWLEDGE_BASE } from './core/constants';
-import { Topic, Difficulty } from './core/types';
+import React, { useRef } from 'react';
 import Sidebar from './features/knowledge-base/components/Sidebar';
 import Content from './features/knowledge-base/components/Content';
+import { useCurrentTopic } from './features/knowledge-base/hooks';
+import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 
 const App: React.FC = () => {
-  const [selectedTopicId, setSelectedTopicId] = useState<string>('var-let-const');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | 'all'>('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  const flatTopics = useMemo(() => KNOWLEDGE_BASE.flatMap(c => c.topics), []);
-  const currentTopic = useMemo(() => {
-    const topic = flatTopics.find(t => t.id === selectedTopicId) || flatTopics[0];
-    if (!topic) {
-      console.error('No topics found in KNOWLEDGE_BASE');
-    }
-    return topic;
-  }, [selectedTopicId, flatTopics]);
-
-  const filteredCategories = useMemo(() => {
-    return KNOWLEDGE_BASE.map(cat => ({
-      ...cat,
-      topics: cat.topics.filter(t => {
-        const matchesSearch = !searchQuery || t.title.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesDifficulty = selectedDifficulty === 'all' || t.difficulty === selectedDifficulty;
-        const matchesTags = selectedTags.length === 0 || selectedTags.some(tag => t.tags.includes(tag));
-        return matchesSearch && matchesDifficulty && matchesTags;
-      })
-    })).filter(cat => cat.topics.length > 0);
-  }, [searchQuery, selectedDifficulty, selectedTags]);
-
-  // Получаем доступные теги из тем выбранного уровня сложности, отсортированные по популярности
-  const availableTags = useMemo(() => {
-    const topicsByDifficulty = KNOWLEDGE_BASE.flatMap(cat => cat.topics).filter(t => 
-      selectedDifficulty === 'all' || t.difficulty === selectedDifficulty
-    );
-    
-    // Подсчитываем частоту использования каждого тега
-    const tagCounts = new Map<string, number>();
-    topicsByDifficulty.forEach(topic => {
-      topic.tags.forEach(tag => {
-        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
-      });
-    });
-    
-    // Сортируем по популярности (частоте), затем по алфавиту
-    return Array.from(tagCounts.entries())
-      .sort((a, b) => {
-        if (b[1] !== a[1]) return b[1] - a[1]; // Сначала по частоте (убывание)
-        return a[0].localeCompare(b[0]); // Затем по алфавиту
-      })
-      .map(([tag]) => tag);
-  }, [selectedDifficulty]);
+  const { selectedTopicId, setSelectedTopicId } = useKnowledgeBaseStore();
+  const { currentTopic, relatedTopics } = useCurrentTopic();
 
   const handleTopicJump = (id: string) => {
     setSelectedTopicId(id);
@@ -72,24 +25,12 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-[#0a0f1d] overflow-hidden">
-      <Sidebar 
-        categories={filteredCategories}
-        selectedTopicId={selectedTopicId}
-        onTopicSelect={handleTopicJump}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        selectedDifficulty={selectedDifficulty}
-        onDifficultyChange={setSelectedDifficulty}
-        selectedTags={selectedTags}
-        onTagToggle={(tag) => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
-        availableTags={availableTags}
-      />
-      <main ref={scrollContainerRef} className="flex-1 overflow-y-auto bg-[#0a0f1d] relative">
+      <Sidebar onTopicSelect={handleTopicJump} />
+      <main ref={scrollContainerRef} className="flex-1 overflow-y-auto bg-[#1e293b] relative">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:44px_44px] pointer-events-none"></div>
         <Content 
           topic={currentTopic}
-          nextTopic={currentTopic.nextTopicId ? flatTopics.find(t => t.id === currentTopic.nextTopicId) : null}
-          relatedTopics={currentTopic.relatedTopics.map(id => flatTopics.find(t => t.id === id)).filter(Boolean) as Topic[]}
+          relatedTopics={relatedTopics}
           onTopicJump={handleTopicJump}
         />
       </main>
