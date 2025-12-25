@@ -1,9 +1,10 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Difficulty } from '../../../core/types';
 import { Badge } from '../../../components/ui';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 import { useTopicsFilter, useTags } from '../hooks';
+import { META_CATEGORIES } from '../../../core/metaCategories';
 
 interface SidebarProps {
   onTopicSelect: (id: string) => void;
@@ -12,14 +13,12 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose }) => {
-  const [showAllTags, setShowAllTags] = useState(false);
-  const TAGS_LIMIT = 12;
-  
   const { 
     selectedTopicId, 
     searchQuery, 
     selectedDifficulty, 
     selectedTags,
+    selectedMetaCategory,
     setSearchQuery,
     setSelectedDifficulty,
     toggleTag,
@@ -28,8 +27,27 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
     learnedTopics
   } = useKnowledgeBaseStore();
   
+  const [showAllTags, setShowAllTags] = useState(false);
+  const [tagsCategory, setTagsCategory] = useState<string>(selectedMetaCategory);
+  const TAGS_LIMIT = 12;
+  
   const { filteredCategories } = useTopicsFilter();
   const { availableTags } = useTags();
+
+  // Получаем текущую категорию для иконки
+  const currentCategory = META_CATEGORIES.find(c => c.id === selectedMetaCategory);
+  const categoryIcon = currentCategory?.icon || 'fa-brands fa-js';
+
+  // Сворачиваем теги при переключении категории (синхронно, без мигания)
+  useEffect(() => {
+    if (tagsCategory !== selectedMetaCategory) {
+      setShowAllTags(false);
+      setTagsCategory(selectedMetaCategory);
+    }
+  }, [selectedMetaCategory, tagsCategory]);
+
+  // Вычисляем актуальное состояние тегов - всегда false при смене категории
+  const actualShowAllTags = tagsCategory === selectedMetaCategory ? showAllTags : false;
   
   const renderDifficultyStars = (d: Difficulty | 'all') => {
     if (d === 'all') return 'BCE';
@@ -62,10 +80,13 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       <div className="flex items-center justify-between p-5 border-b border-slate-800/80 lg:hidden">
         <div className="flex items-center gap-3">
           <div className="bg-emerald-500 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/10">
-            <i className="fa-brands fa-js text-slate-950 text-base"></i>
+            <i className={`${categoryIcon} text-slate-950 text-base`}></i>
           </div>
           <h1 className="font-bold text-white text-lg tracking-tight">
-            JS Interview <span className="text-emerald-500">Pro</span>
+            Frontender <span className="text-emerald-500">Pro</span>
+            {selectedMetaCategory && (
+              <span className="text-slate-500 text-sm font-normal"> / {META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title}</span>
+            )}
           </h1>
         </div>
         <button
@@ -77,13 +98,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       </div>
       
       <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="p-5">
+        <div key={selectedMetaCategory} className="p-5 animate-sidebar">
           <div className="hidden lg:flex items-center gap-3 mb-6">
             <div className="bg-emerald-500 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/10">
-              <i className="fa-brands fa-js text-slate-950 text-base"></i>
+              <i className={`${categoryIcon} text-slate-950 text-base`}></i>
             </div>
             <h1 className="font-bold text-white text-lg tracking-tight">
-              JS Interview <span className="text-emerald-500">Pro</span>
+              Frontender <span className="text-emerald-500">Pro</span>
+              {selectedMetaCategory && (
+                <span className="text-slate-500 text-sm font-normal"> / {META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title}</span>
+              )}
             </h1>
           </div>
 
@@ -122,10 +146,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
               ))}
             </div>
 
-            <div className="space-y-2">
+            <div key={selectedMetaCategory} className="space-y-2">
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {availableTags.length > 0 ? (
-                  (showAllTags ? availableTags : availableTags.slice(0, TAGS_LIMIT)).map(tag => (
+                  (actualShowAllTags ? availableTags : availableTags.slice(0, TAGS_LIMIT)).map(tag => (
                     <button
                       key={tag}
                       onClick={() => toggleTag(tag)}
@@ -143,11 +167,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                 )}
                 {availableTags.length > TAGS_LIMIT && (
                   <button
-                    onClick={() => setShowAllTags(!showAllTags)}
+                    onClick={() => setShowAllTags(!actualShowAllTags)}
                     className="text-[9px] text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1"
                   >
-                    <span>{showAllTags ? '' : '...'}</span>
-                    <i className={`fa-solid fa-chevron-${showAllTags ? 'up' : 'down'} text-[9px]`}></i>
+                    <span>{actualShowAllTags ? '' : '...'}</span>
+                    <i className={`fa-solid fa-chevron-${actualShowAllTags ? 'up' : 'down'} text-[9px]`}></i>
                   </button>
                 )}
               </div>
@@ -161,10 +185,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
             
             const totalTopics = filteredCategories.reduce((sum, cat) => sum + cat.topics.length, 0);
             const learnedInFiltered = filteredCategories.reduce(
-              (sum, cat) => sum + cat.topics.filter(t => isLearned(t.id)).length,
+              (sum, cat) => sum + cat.topics.filter(t => isLearned(t.id, selectedMetaCategory)).length,
               0
             );
-            const hasLearned = learnedTopics.length > 0;
+            const categoryLearned = learnedTopics[selectedMetaCategory] || [];
+            const hasLearned = categoryLearned.length > 0;
             
             if (totalTopics === 0 && !hasLearned) return null;
             
@@ -189,7 +214,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                     <button
                       onClick={() => {
                         if (confirm('Очистить все отметки об изученных темах?')) {
-                          clearAllLearned();
+                          clearAllLearned(selectedMetaCategory);
                         }
                       }}
                       className="w-6 h-6 flex items-center justify-center bg-slate-800/40 border border-slate-700/50 rounded text-slate-400 hover:text-slate-300 hover:bg-slate-700/40 transition-all flex-shrink-0"
@@ -211,7 +236,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                 <div className="space-y-2">
                   {cat.topics.map(topic => {
                     const isActive = selectedTopicId === topic.id;
-                    const topicLearned = isLearned(topic.id);
+                    const topicLearned = isLearned(topic.id, selectedMetaCategory);
                     const difficultyColors: Record<Difficulty, { bg: string; border: string; text: string; shadow: string }> = {
                       beginner: {
                         bg: 'bg-emerald-500/5',

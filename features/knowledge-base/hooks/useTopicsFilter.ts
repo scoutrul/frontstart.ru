@@ -1,14 +1,19 @@
 import { useMemo } from 'react';
-import { KNOWLEDGE_BASE } from '../../../core/constants';
+import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Category, Difficulty } from '../../../core/types';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 
 export const useTopicsFilter = () => {
-  const { searchQuery, selectedDifficulty, selectedTags } = useKnowledgeBaseStore();
+  const { searchQuery, selectedDifficulty, selectedTags, selectedMetaCategory } = useKnowledgeBaseStore();
+
+  const knowledgeBase = useMemo(
+    () => getKnowledgeBaseByCategory(selectedMetaCategory),
+    [selectedMetaCategory]
+  );
 
   const flatTopics = useMemo(
-    () => KNOWLEDGE_BASE.flatMap(c => c.topics),
-    []
+    () => knowledgeBase.flatMap(c => c.topics),
+    [knowledgeBase]
   );
 
   const { isLearned } = useKnowledgeBaseStore();
@@ -22,7 +27,7 @@ export const useTopicsFilter = () => {
       .map(word => word.trim())
       .filter(word => word.length >= 3);
     
-    return KNOWLEDGE_BASE.map(cat => ({
+    return knowledgeBase.map(cat => ({
       ...cat,
       topics: cat.topics
         .filter(t => {
@@ -41,15 +46,15 @@ export const useTopicsFilter = () => {
           return matchesSearch && matchesDifficulty && matchesTags;
         })
         .sort((a, b) => {
-          const aLearned = isLearned(a.id);
-          const bLearned = isLearned(b.id);
+          const aLearned = isLearned(a.id, selectedMetaCategory);
+          const bLearned = isLearned(b.id, selectedMetaCategory);
           // Изученные темы в конец списка
           if (aLearned && !bLearned) return 1;
           if (!aLearned && bLearned) return -1;
           return 0; // Сохраняем исходный порядок для тем с одинаковым статусом
         })
     })).filter(cat => cat.topics.length > 0);
-  }, [searchQuery, selectedDifficulty, selectedTags, isLearned]);
+  }, [searchQuery, selectedDifficulty, selectedTags, isLearned, knowledgeBase, selectedMetaCategory]);
 
   return { flatTopics, filteredCategories };
 };

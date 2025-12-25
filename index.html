@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JS Interview Pro</title>
+    <title>Frontender Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- PrismJS Dracula Theme -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism-themes/1.9.0/prism-dracula.min.css">
@@ -41,13 +41,22 @@
             margin-left: -1.2em;
         }
 
-        /* Анимация появления */
+        /* Анимация появления контента */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .animate-content {
             animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Анимация появления сайдбара (горизонтальная) */
+        @keyframes fadeInSidebar {
+            from { opacity: 0; transform: translateX(-12px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .animate-sidebar {
+            animation: fadeInSidebar 0.4s ease-out forwards;
         }
 
         /* Кастомные правки для Prism, чтобы вписаться в дизайн */

@@ -1,33 +1,50 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Difficulty } from '../core/types';
+import { MetaCategoryId, DEFAULT_META_CATEGORY } from '../core/metaCategories';
 
 interface KnowledgeBaseState {
+  selectedMetaCategory: MetaCategoryId;
   selectedTopicId: string;
   searchQuery: string;
   selectedDifficulty: Difficulty | 'all';
   selectedTags: string[];
-  learnedTopics: string[];
+  learnedTopics: Record<MetaCategoryId, string[]>;
   
+  setSelectedMetaCategory: (category: MetaCategoryId) => void;
   setSelectedTopicId: (id: string) => void;
   setSearchQuery: (query: string) => void;
   setSelectedDifficulty: (difficulty: Difficulty | 'all') => void;
   toggleTag: (tag: string) => void;
   clearFilters: () => void;
-  toggleLearned: (topicId: string) => void;
-  isLearned: (topicId: string) => boolean;
-  clearAllLearned: () => void;
+  toggleLearned: (topicId: string, metaCategory?: MetaCategoryId) => void;
+  isLearned: (topicId: string, metaCategory?: MetaCategoryId) => boolean;
+  clearAllLearned: (metaCategory?: MetaCategoryId) => void;
+  getProgress: (metaCategory: MetaCategoryId, totalTopics: number) => number;
 }
+
+const getInitialLearnedTopics = (): Record<MetaCategoryId, string[]> => ({
+  javascript: [],
+  markup: [],
+  frameworks: [],
+  typescript: [],
+  architecture: [],
+  security: [],
+  tools: [],
+  network: []
+});
 
 export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
   persist(
     (set, get) => ({
+      selectedMetaCategory: DEFAULT_META_CATEGORY,
       selectedTopicId: 'var-let-const',
       searchQuery: '',
       selectedDifficulty: 'all',
       selectedTags: [],
-      learnedTopics: [],
+      learnedTopics: getInitialLearnedTopics(),
       
+      setSelectedMetaCategory: (category) => set({ selectedMetaCategory: category }),
       setSelectedTopicId: (id) => set({ selectedTopicId: id }),
       setSearchQuery: (query) => set({ searchQuery: query }),
       setSelectedDifficulty: (difficulty) => set({ selectedDifficulty: difficulty }),
@@ -41,17 +58,49 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
         selectedDifficulty: 'all', 
         selectedTags: [] 
       }),
-      toggleLearned: (topicId) => set((state) => ({
-        learnedTopics: state.learnedTopics.includes(topicId)
-          ? state.learnedTopics.filter(id => id !== topicId)
-          : [...state.learnedTopics, topicId]
-      })),
-      isLearned: (topicId) => get().learnedTopics.includes(topicId),
-      clearAllLearned: () => set({ learnedTopics: [] }),
+      toggleLearned: (topicId, metaCategory) => {
+        const category = metaCategory || get().selectedMetaCategory;
+        set((state) => {
+          const categoryTopics = state.learnedTopics[category] || [];
+          return {
+            learnedTopics: {
+              ...state.learnedTopics,
+              [category]: categoryTopics.includes(topicId)
+                ? categoryTopics.filter(id => id !== topicId)
+                : [...categoryTopics, topicId]
+            }
+          };
+        });
+      },
+      isLearned: (topicId, metaCategory) => {
+        const category = metaCategory || get().selectedMetaCategory;
+        const categoryTopics = get().learnedTopics[category] || [];
+        return categoryTopics.includes(topicId);
+      },
+      clearAllLearned: (metaCategory) => {
+        if (metaCategory) {
+          set((state) => ({
+            learnedTopics: {
+              ...state.learnedTopics,
+              [metaCategory]: []
+            }
+          }));
+        } else {
+          set({ learnedTopics: getInitialLearnedTopics() });
+        }
+      },
+      getProgress: (metaCategory, totalTopics) => {
+        const learned = get().learnedTopics[metaCategory] || [];
+        return totalTopics > 0 ? Math.round((learned.length / totalTopics) * 100) : 0;
+      },
     }),
     {
-      name: 'js-interview-pro-storage',
-      partialize: (state) => ({ learnedTopics: state.learnedTopics }),
+      name: 'frontender-pro-storage',
+      partialize: (state) => ({ 
+        learnedTopics: state.learnedTopics,
+        selectedMetaCategory: state.selectedMetaCategory,
+        selectedTopicId: state.selectedTopicId
+      }),
     }
   )
 );

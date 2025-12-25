@@ -17,8 +17,8 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = (props) => {
   const { topic, contentSearchQuery, searchResults } = props;
-  const { isLearned, toggleLearned } = useKnowledgeBaseStore();
-  const learned = isLearned(topic.id);
+  const { isLearned, toggleLearned, selectedMetaCategory } = useKnowledgeBaseStore();
+  const learned = isLearned(topic.id, selectedMetaCategory);
 
   const relevantTopics = contentSearchQuery && contentSearchQuery.trim() 
     ? searchResults 
@@ -68,7 +68,7 @@ const Content: React.FC<ContentProps> = (props) => {
       {topic.id === 'scope-chain' && <ScopeChainVisualizer />}
 
       <button
-        onClick={() => toggleLearned(topic.id)}
+        onClick={() => toggleLearned(topic.id, selectedMetaCategory)}
         className={`w-full flex items-center justify-center gap-2 px-6 py-3 rounded-lg border transition-all ${
           learned
             ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 hover:bg-emerald-500/20'

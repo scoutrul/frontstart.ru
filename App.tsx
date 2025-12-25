@@ -3,6 +3,7 @@ import React, { useRef, useState } from 'react';
 import Sidebar from './features/knowledge-base/components/Sidebar';
 import Content from './features/knowledge-base/components/Content';
 import ContentSearch from './features/knowledge-base/components/ContentSearch';
+import KnowledgePath from './features/knowledge-base/components/KnowledgePath';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 
@@ -34,7 +35,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#0a0f1d] overflow-hidden">
+    <div className="flex h-screen bg-[#0a0f1d] overflow-hidden pb-16">
       {/* Overlay для мобильных */}
       {isSidebarOpen && (
         <div 
@@ -88,6 +89,9 @@ const App: React.FC = () => {
           />
         </div>
       </main>
+      
+      {/* Панель переключения метакатегорий */}
+      <KnowledgePath />
     </div>
   );
 };
