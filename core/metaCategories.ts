@@ -6,7 +6,8 @@ export type MetaCategoryId =
   | "architecture"
   | "security"
   | "tools"
-  | "network";
+  | "network"
+  | "optimization";
 
 export interface MetaCategory {
   id: MetaCategoryId;
@@ -63,6 +64,12 @@ export const META_CATEGORIES: MetaCategory[] = [
     title: "Сеть",
     icon: "fa-solid fa-network-wired",
     description: "HTTP, WebSocket, REST, GraphQL",
+  },
+  {
+    id: "optimization",
+    title: "Оптимизация",
+    icon: "fa-solid fa-gauge-high",
+    description: "Производительность, оптимизация кода, метрики",
   },
 ];
 

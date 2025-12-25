@@ -79,8 +79,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
     `}>
       <div className="flex items-center justify-between p-5 border-b border-slate-800/80 lg:hidden">
         <div className="flex items-center gap-3">
-          <div className="bg-emerald-500 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/10">
-            <i className={`${categoryIcon} text-slate-950 text-base`}></i>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-emerald-500">
+            <i className={`${categoryIcon} text-emerald-500 text-base`}></i>
           </div>
           <h1 className="font-bold text-white text-lg tracking-tight">
             Frontender <span className="text-emerald-500">Pro</span>
@@ -100,8 +100,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         <div key={selectedMetaCategory} className="p-5 animate-sidebar">
           <div className="hidden lg:flex items-center gap-3 mb-6">
-            <div className="bg-emerald-500 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg shadow-emerald-500/10">
-              <i className={`${categoryIcon} text-slate-950 text-base`}></i>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-emerald-500">
+              <i className={`${categoryIcon} text-emerald-500 text-base`}></i>
             </div>
             <h1 className="font-bold text-white text-lg tracking-tight">
               Frontender <span className="text-emerald-500">Pro</span>

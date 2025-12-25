@@ -242,6 +242,38 @@ const NETWORK_TOPICS: Topic[] = [
   )
 ];
 
+// OPTIMIZATION категория
+const OPTIMIZATION_TOPICS: Topic[] = [
+  createSimpleTopic(
+    'performance-basics',
+    'Основы производительности',
+    'Метрики, профилирование, бенчмарки',
+    'beginner',
+    ['performance', 'metrics', 'profiling']
+  ),
+  createSimpleTopic(
+    'code-optimization',
+    'Оптимизация кода',
+    'Алгоритмы, структуры данных, оптимизация циклов',
+    'intermediate',
+    ['optimization', 'algorithms', 'performance']
+  ),
+  createSimpleTopic(
+    'bundle-optimization',
+    'Оптимизация бандла',
+    'Code splitting, tree shaking, lazy loading',
+    'intermediate',
+    ['bundling', 'webpack', 'optimization']
+  ),
+  createSimpleTopic(
+    'runtime-optimization',
+    'Оптимизация рантайма',
+    'Мемоизация, дебаунс, троттлинг, виртуализация',
+    'advanced',
+    ['performance', 'optimization', 'runtime']
+  )
+];
+
 // Данные по категориям
 export const META_CATEGORIES_DATA: Record<MetaCategoryId, Category[]> = {
   javascript: [], // Будет заполнено динамически из существующего KNOWLEDGE_BASE
@@ -322,6 +354,13 @@ export const META_CATEGORIES_DATA: Record<MetaCategoryId, Category[]> = {
       id: 'protocols',
       title: 'Протоколы и API',
       topics: NETWORK_TOPICS
+    }
+  ],
+  optimization: [
+    {
+      id: 'performance',
+      title: 'Производительность',
+      topics: OPTIMIZATION_TOPICS
     }
   ]
 };
