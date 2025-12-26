@@ -34,3 +34,4 @@ export const highlightText = (text: string, query: string | null): React.ReactNo
   });
 };
 
+

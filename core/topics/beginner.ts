@@ -29,8 +29,7 @@ export const BEGINNER_TOPICS: Topic[] = [
         code: `const arr = [1, 2];\narr.prop = "test";\nconsole.log(arr.prop); // "test"\n\nfunction fn() {}\nfn.prop = "test";\nconsole.log(fn.prop); // "test"`
       }
     ],
-    relatedTopics: ['type-coercion', 'functions-types'],
-    nextTopicId: 'type-coercion'
+    relatedTopics: ['type-coercion', 'functions-types']
   },
   {
     id: 'type-coercion',
@@ -58,8 +57,7 @@ export const BEGINNER_TOPICS: Topic[] = [
         code: `if ("text") { } // truthy\nif (0) { } // falsy\nif ([]) { } // truthy (массив)\nif ({}) { } // truthy (объект)`
       }
     ],
-    relatedTopics: ['data-types', 'comparison'],
-    nextTopicId: 'comparison'
+    relatedTopics: ['data-types', 'comparison']
   },
   {
     id: 'comparison',
@@ -87,8 +85,7 @@ export const BEGINNER_TOPICS: Topic[] = [
         code: `NaN === NaN; // false\nisNaN(NaN); // true\nNumber.isNaN(NaN); // true\n\nObject.is(NaN, NaN); // true`
       }
     ],
-    relatedTopics: ['type-coercion', 'operators'],
-    nextTopicId: 'operators'
+    relatedTopics: ['type-coercion', 'operators']
   },
   {
     id: 'operators',
@@ -125,7 +122,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['comparison', 'functions-types'],
-    nextTopicId: 'functions-types'
   },
   {
     id: 'functions-types',
@@ -158,7 +154,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'hoisting-basic', 'this-basics'],
-    nextTopicId: 'var-let-const'
   },
   {
     id: 'var-let-const',
@@ -186,7 +181,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['functions-types', 'hoisting-basic', 'tdz-basic'],
-    nextTopicId: 'hoisting-basic'
   },
   {
     id: 'hoisting-basic',
@@ -214,7 +208,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['var-let-const', 'tdz-basic'],
-    nextTopicId: 'tdz-basic'
   },
   {
     id: 'tdz-basic',
@@ -242,7 +235,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['hoisting-basic', 'var-let-const'],
-    nextTopicId: 'scope-chain'
   },
   {
     id: 'scope-chain',
@@ -269,7 +261,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['hoisting-basic', 'lexical-env', 'closures-basic'],
-    nextTopicId: 'this-basics'
   },
   {
     id: 'this-basics',
@@ -297,7 +288,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['arrow-functions', 'context-loss'],
-    nextTopicId: 'arrays-basic'
   },
   {
     id: 'arrays-basic',
@@ -327,7 +317,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'operators'],
-    nextTopicId: 'objects-basic'
   },
   {
     id: 'objects-basic',
@@ -356,7 +345,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'arrays-basic'],
-    nextTopicId: 'destructuring-basic'
   },
   {
     id: 'destructuring-basic',
@@ -385,7 +373,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['arrays-basic', 'objects-basic'],
-    nextTopicId: 'strings-methods'
   },
   {
     id: 'strings-methods',
@@ -414,7 +401,6 @@ export const BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'operators'],
-    nextTopicId: 'conditions-loops'
   },
   {
     id: 'conditions-loops',
@@ -862,7 +848,6 @@ git branch`
       }
     ],
     relatedTopics: ['git-add-commit', 'git-status-log'],
-    nextTopicId: 'git-add-commit'
   },
   {
     id: 'git-add-commit',
@@ -920,7 +905,6 @@ git commit -m "Обновить зависимости до версии 2.0"`
       }
     ],
     relatedTopics: ['git-init-clone', 'git-status-log'],
-    nextTopicId: 'git-status-log'
   },
   {
     id: 'git-status-log',
@@ -987,7 +971,6 @@ git diff file.js`
       }
     ],
     relatedTopics: ['git-add-commit', 'git-branches'],
-    nextTopicId: 'git-branches'
   },
   {
     id: 'git-branches',
@@ -1050,7 +1033,6 @@ git branch --no-merged`
       }
     ],
     relatedTopics: ['git-status-log', 'git-merge'],
-    nextTopicId: 'git-merge'
   },
   {
     id: 'git-merge',
@@ -1105,7 +1087,6 @@ git mergetool`
       }
     ],
     relatedTopics: ['git-branches', 'git-remote'],
-    nextTopicId: 'git-remote'
   },
   {
     id: 'git-remote',

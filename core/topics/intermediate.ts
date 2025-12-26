@@ -26,7 +26,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['var-let-const', 'tdz-basic', 'scope-chain'],
-    nextTopicId: 'closures-basic'
   },
   {
     id: 'closures-basic',
@@ -53,7 +52,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['lexical-env', 'private-state'],
-    nextTopicId: 'private-state'
   },
   {
     id: 'private-state',
@@ -80,7 +78,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['closures-basic'],
-    nextTopicId: 'this-basics'
   },
   {
     id: 'arrow-functions',
@@ -107,7 +104,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['this-basics'],
-    nextTopicId: 'context-loss'
   },
   {
     id: 'context-loss',
@@ -134,7 +130,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['bind-call-apply'],
-    nextTopicId: 'bind-call-apply'
   },
   {
     id: 'bind-call-apply',
@@ -162,7 +157,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['this-basics'],
-    nextTopicId: 'prototype-chain'
   },
   {
     id: 'prototype-chain',
@@ -189,7 +183,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['this-basics'],
-    nextTopicId: 'constructors'
   },
   {
     id: 'constructors',
@@ -223,7 +216,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'this-basics', 'classes'],
-    nextTopicId: 'object-create'
   },
   {
     id: 'object-create',
@@ -257,7 +249,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'constructors'],
-    nextTopicId: 'hasownproperty-in'
   },
   {
     id: 'hasownproperty-in',
@@ -291,7 +282,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'objects-basic'],
-    nextTopicId: 'instanceof'
   },
   {
     id: 'instanceof',
@@ -325,7 +315,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'constructors', 'classes'],
-    nextTopicId: 'getprototypeof-setprototypeof'
   },
   {
     id: 'getprototypeof-setprototypeof',
@@ -359,7 +348,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'object-create'],
-    nextTopicId: 'event-loop'
   },
   {
     id: 'promises',
@@ -402,7 +390,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['event-loop', 'async-await'],
-    nextTopicId: 'async-await'
   },
   {
     id: 'async-await',
@@ -445,7 +432,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['promises', 'error-handling'],
-    nextTopicId: 'generators'
   },
   {
     id: 'immutability',
@@ -473,7 +459,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['closures-basic'],
-    nextTopicId: 'arrays-advanced'
   },
   {
     id: 'arrays-advanced',
@@ -503,7 +488,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['arrays-basic', 'immutability'],
-    nextTopicId: 'classes'
   },
   {
     id: 'classes',
@@ -532,7 +516,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'this-basics'],
-    nextTopicId: 'map-set'
   },
   {
     id: 'map-set',
@@ -561,7 +544,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'arrays-basic'],
-    nextTopicId: 'destructuring-advanced'
   },
   {
     id: 'destructuring-advanced',
@@ -590,7 +572,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['destructuring-basic', 'functions-types'],
-    nextTopicId: 'modules'
   },
   {
     id: 'modules',
@@ -619,7 +600,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['functions-types', 'classes'],
-    nextTopicId: 'symbol'
   },
   {
     id: 'symbol',
@@ -648,7 +628,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'objects-basic'],
-    nextTopicId: 'error-handling'
   },
   {
     id: 'error-handling',
@@ -1039,7 +1018,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'object-methods', 'json-methods', 'structured-clone'],
-    nextTopicId: 'structured-clone'
   },
   {
     id: 'structured-clone',
@@ -1073,7 +1051,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['object-copying', 'objects-basic', 'json-methods'],
-    nextTopicId: 'object-comparison'
   },
   {
     id: 'object-comparison',
@@ -1107,7 +1084,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'object-copying', 'comparison'],
-    nextTopicId: 'abort-controller'
   },
   {
     id: 'abort-controller',
@@ -1141,7 +1117,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'promises', 'async-await'],
-    nextTopicId: 'xss'
   },
   {
     id: 'xss',
@@ -1176,7 +1151,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['dom-api', 'security', 'cookies'],
-    nextTopicId: 'same-origin-policy'
   },
   {
     id: 'same-origin-policy',
@@ -1211,7 +1185,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'cors', 'xss', 'csrf'],
-    nextTopicId: 'csrf'
   },
   {
     id: 'csrf',
@@ -1245,7 +1218,6 @@ export const INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'cors', 'same-origin-policy', 'cookies'],
-    nextTopicId: 'cookies'
   },
   {
     id: 'cookies',
@@ -1346,7 +1318,6 @@ git config --global merge.tool vscode`
       }
     ],
     relatedTopics: ['git-merge', 'git-rebase'],
-    nextTopicId: 'git-rebase'
   },
   {
     id: 'git-rebase',
@@ -1420,7 +1391,6 @@ git merge feature
       }
     ],
     relatedTopics: ['git-conflicts', 'git-reset-revert'],
-    nextTopicId: 'git-reset-revert'
   },
   {
     id: 'git-reset-revert',
@@ -1496,7 +1466,6 @@ git reset --hard abc123`
       }
     ],
     relatedTopics: ['git-rebase', 'git-history'],
-    nextTopicId: 'git-history'
   },
   {
     id: 'git-history',
@@ -1588,7 +1557,6 @@ git blame -M file.js`
       }
     ],
     relatedTopics: ['git-reset-revert', 'git-stash'],
-    nextTopicId: 'git-stash'
   },
   {
     id: 'git-stash',
@@ -1667,7 +1635,6 @@ git stash branch new-feature stash@{0}
       }
     ],
     relatedTopics: ['git-history', 'git-remote-advanced'],
-    nextTopicId: 'git-remote-advanced'
   },
   {
     id: 'git-remote-advanced',
@@ -1754,8 +1721,7 @@ git merge upstream/main
 git push origin main`
       }
     ],
-    relatedTopics: ['git-stash', 'git-remote'],
-    nextTopicId: null
+    relatedTopics: ['git-stash', 'git-remote']
   }
 ];
 

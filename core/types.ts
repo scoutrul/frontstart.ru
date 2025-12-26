@@ -15,7 +15,6 @@ export interface Topic {
   keyPoints: string[];
   tags: string[];         
   relatedTopics: string[]; 
-  nextTopicId?: string;    
 }
 
 export interface Category {

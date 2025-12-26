@@ -26,7 +26,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['scope-chain', 'closures-basic'],
-    nextTopicId: 'closures-basic'
   },
   {
     id: 'event-loop',
@@ -66,7 +65,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['promises', 'async-await', 'call-stack'],
-    nextTopicId: 'promises'
   },
   {
     id: 'generators',
@@ -93,7 +91,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['async-await'],
-    nextTopicId: 'proxy-reflect'
   },
   {
     id: 'proxy-reflect',
@@ -122,7 +119,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'classes'],
-    nextTopicId: 'getters-setters'
   },
   {
     id: 'getters-setters',
@@ -156,7 +152,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'constructors', 'classes'],
-    nextTopicId: 'getownpropertynames-keys'
   },
   {
     id: 'getownpropertynames-keys',
@@ -190,7 +185,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['hasownproperty-in', 'prototype-chain'],
-    nextTopicId: 'mixins'
   },
   {
     id: 'mixins',
@@ -224,7 +218,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'classes', 'object-create'],
-    nextTopicId: 'super-prototypes'
   },
   {
     id: 'super-prototypes',
@@ -258,7 +251,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'classes', 'constructors'],
-    nextTopicId: 'prototypes-vs-classes'
   },
   {
     id: 'prototypes-vs-classes',
@@ -292,7 +284,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'classes', 'constructors'],
-    nextTopicId: 'weakmap-weakset'
   },
   {
     id: 'weakmap-weakset',
@@ -321,7 +312,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['map-set', 'memory-management'],
-    nextTopicId: 'iterators-iterables'
   },
   {
     id: 'iterators-iterables',
@@ -350,7 +340,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['generators', 'symbol', 'arrays-basic'],
-    nextTopicId: 'memory-management'
   },
   {
     id: 'memory-management',
@@ -393,7 +382,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['weakmap-weakset', 'closures-basic', 'stack-heap'],
-    nextTopicId: 'regexp-advanced'
   },
   {
     id: 'regexp-advanced',
@@ -721,7 +709,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['event-loop', 'stack-heap', 'recursion'],
-    nextTopicId: 'stack-heap'
   },
   {
     id: 'stack-heap',
@@ -760,7 +747,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['memory-management', 'call-stack', 'event-loop'],
-    nextTopicId: 'blocking-non-blocking'
   },
   {
     id: 'blocking-non-blocking',
@@ -799,7 +785,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['event-loop', 'call-stack', 'web-workers', 'async-await'],
-    nextTopicId: 'concurrency-parallelism'
   },
   {
     id: 'concurrency-parallelism',
@@ -838,7 +823,6 @@ export const ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['event-loop', 'web-workers', 'blocking-non-blocking', 'call-stack'],
-    nextTopicId: 'to-primitive'
   },
   {
     id: 'to-primitive',
@@ -948,7 +932,6 @@ git cherry-pick feature-commit1 feature-commit2`
       }
     ],
     relatedTopics: ['git-rebase', 'git-reflog'],
-    nextTopicId: 'git-reflog'
   },
   {
     id: 'git-reflog',
@@ -1031,7 +1014,6 @@ git gc --prune=now
       }
     ],
     relatedTopics: ['git-cherry-pick', 'git-hooks'],
-    nextTopicId: 'git-hooks'
   },
   {
     id: 'git-hooks',
@@ -1132,7 +1114,6 @@ npx husky add .husky/commit-msg 'npx --no -- commitlint --edit "$1"'
       }
     ],
     relatedTopics: ['git-reflog', 'git-submodules'],
-    nextTopicId: 'git-submodules'
   },
   {
     id: 'git-submodules',
@@ -1218,7 +1199,6 @@ git commit -m "Удалить submodule"`
       }
     ],
     relatedTopics: ['git-hooks', 'git-workflow'],
-    nextTopicId: 'git-workflow'
   },
   {
     id: 'git-workflow',
@@ -1316,7 +1296,6 @@ git commit -m "docs: обновить README"`
       }
     ],
     relatedTopics: ['git-submodules', 'git-remote-advanced'],
-    nextTopicId: null
-  }
+   }
 ];
 
