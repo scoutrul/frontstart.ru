@@ -1,7 +1,11 @@
 import React from 'react';
 
 // Функция для подсветки найденных слов в тексте
-export const highlightText = (text: string, query: string | null): React.ReactNode => {
+export const highlightText = (text: string | undefined, query: string | null): React.ReactNode => {
+  if (!text) {
+    return '';
+  }
+
   if (!query || query.trim().length < 3) {
     return text;
   }

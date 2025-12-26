@@ -1,12 +1,11 @@
 import React from 'react';
-import { Topic } from '../../../core/types';
-import { Badge } from '../../../components/ui';
-import { highlightText } from '../utils/highlightText';
+import { TopicWithMeta } from '../hooks/useContentSearch';
+import TopicCard from './TopicCard';
 
 interface ContentSearchProps {
   contentSearchQuery: string | null;
   setContentSearchQuery: (query: string | null) => void;
-  searchResults: Topic[];
+  searchResults: TopicWithMeta[];
   searchAreaRef: React.RefObject<HTMLDivElement | null>;
   onTopicSelect: (id: string) => void;
 }
@@ -63,32 +62,20 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
             РЕЗУЛЬТАТЫ ПОИСКА ({searchResults.length})
           </h3>
           <div className="grid grid-cols-2 gap-3 px-4">
-            {searchResults.map(resultTopic => (
-              <div
-                key={resultTopic.id}
+            {searchResults.map(({ topic, metaCategoryId, category }) => (
+              <TopicCard
+                key={topic.id}
+                topic={topic}
                 onClick={() => {
-                  onTopicSelect(resultTopic.id);
+                  onTopicSelect(topic.id);
                   setContentSearchQuery(null);
                 }}
-                className="text-left bg-[#334155] border border-slate-800/60 rounded-xl p-4 hover:border-emerald-500/30 transition-all cursor-pointer group"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Badge variant={resultTopic.difficulty} className="px-2 py-0.5" />
-                      <h4 className="text-sm font-black text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
-                        {resultTopic.title}
-                      </h4>
-                    </div>
-                    <p className="text-slate-400 text-xs line-clamp-2">
-                      {contentSearchQuery ? highlightText(resultTopic.description, contentSearchQuery) : resultTopic.description}
-                    </p>
-                  </div>
-                  <div className="w-6 h-6 rounded-full bg-slate-800/40 flex items-center justify-center text-slate-500 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all flex-shrink-0">
-                    <i className="fa-solid fa-arrow-right text-[9px]"></i>
-                  </div>
-                </div>
-              </div>
+                highlightQuery={contentSearchQuery}
+                metaCategoryId={metaCategoryId}
+                category={category}
+                padding="p-4"
+                descriptionLines={2}
+              />
             ))}
           </div>
         </div>

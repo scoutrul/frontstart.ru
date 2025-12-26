@@ -1,14 +1,20 @@
 import { useState, useMemo, useRef } from 'react';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
-import { Topic } from '../../../core/types';
+import { Topic, Category } from '../../../core/types';
 import { MetaCategoryId } from '../../../core/metaCategories';
+
+export interface TopicWithMeta {
+  topic: Topic;
+  metaCategoryId: MetaCategoryId;
+  category: Category;
+}
 
 export const useContentSearch = (currentTopicId: string | undefined) => {
   const [contentSearchQuery, setContentSearchQuery] = useState<string | null>(null);
   const searchAreaRef = useRef<HTMLDivElement | null>(null);
 
-  // Получаем все темы из всех категорий
-  const allTopics = useMemo(() => {
+  // Получаем все темы из всех категорий с информацией о метакатегории и категории
+  const allTopicsWithMeta = useMemo(() => {
     const allCategories: MetaCategoryId[] = [
       'javascript',
       'markup',
@@ -21,10 +27,22 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
       'optimization'
     ];
     
-    return allCategories.flatMap(categoryId => {
-      const categories = getKnowledgeBaseByCategory(categoryId);
-      return categories.flatMap(cat => cat.topics);
+    const result: TopicWithMeta[] = [];
+    
+    allCategories.forEach(metaCategoryId => {
+      const categories = getKnowledgeBaseByCategory(metaCategoryId);
+      categories.forEach(category => {
+        category.topics.forEach(topic => {
+          result.push({
+            topic,
+            metaCategoryId,
+            category
+          });
+        });
+      });
     });
+    
+    return result;
   }, []);
 
   const searchResults = useMemo(() => {
@@ -44,21 +62,18 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
     }
 
     // Ищем темы, где хотя бы одно слово найдено в контенте
-    return allTopics.filter(t => {
+    return allTopicsWithMeta.filter(({ topic }) => {
       const searchText = [
-        t.title,
-        t.description,
-        ...t.keyPoints,
-        ...(t.examples?.map(ex => `${ex.title} ${ex.code}`) || []),
-        ...t.tags
+        topic.title,
+        topic.description,
+        ...topic.keyPoints,
+        ...(topic.examples?.map(ex => `${ex.title} ${ex.code}`) || []),
+        ...topic.tags
       ].join(' ').toLowerCase();
 
       return searchWords.some(word => searchText.includes(word));
     });
-  }, [contentSearchQuery, allTopics, currentTopicId]);
-
-  // Закрытие поиска при клике вне области поиска
-  // Обработчик вынесен в компонент для более точного контроля
+  }, [contentSearchQuery, allTopicsWithMeta, currentTopicId]);
 
   return {
     contentSearchQuery,
