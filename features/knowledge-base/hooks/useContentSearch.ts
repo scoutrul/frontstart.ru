@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react';
-import { KNOWLEDGE_BASE, getKnowledgeBaseByCategory } from '../../../core/constants';
+import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Topic } from '../../../core/types';
 import { MetaCategoryId } from '../../../core/metaCategories';
 

@@ -1,6 +1,4 @@
-export { KNOWLEDGE_BASE } from './topics/categories';
-export { BEGINNER_TOPICS, INTERMEDIATE_TOPICS, ADVANCED_TOPICS } from './topics';
-import { KNOWLEDGE_BASE } from './topics/categories';
+import { JS_KNOWLEDGE_BASE } from './topics/javascript';
 import { META_CATEGORIES_DATA } from './metaCategoriesData';
 import { MetaCategoryId } from './metaCategories';
 import { Category } from './types';
@@ -23,7 +21,7 @@ export const POPULAR_TAGS = [
 // Получить данные для выбранной meta-категории
 export const getKnowledgeBaseByCategory = (categoryId: MetaCategoryId): Category[] => {
   if (categoryId === 'javascript') {
-    return KNOWLEDGE_BASE;
+    return JS_KNOWLEDGE_BASE;
   }
   return META_CATEGORIES_DATA[categoryId] || [];
 };

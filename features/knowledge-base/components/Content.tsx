@@ -4,7 +4,6 @@ import { Topic } from '../../../core/types';
 import { Badge, CodeBlock } from '../../../components/ui';
 import ScopeChainVisualizer from '../visualizers/ScopeChainVisualizer';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
-import { KNOWLEDGE_BASE } from '../../../core/constants';
 import { highlightText } from '../utils/highlightText';
 
 interface ContentProps {
@@ -66,7 +65,7 @@ const Content: React.FC<ContentProps> = (props) => {
       </section>
 
       <div className="mb-10">
-        <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">КОД ДЛЯ ЗАКРЕПЛЕНИЯ</h3>
+        <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">ПРИМЕРЫ</h3>
         {topic.examples?.map((ex, i) => (
           <CodeBlock key={i} title={ex.title} code={ex.code} />
         ))}

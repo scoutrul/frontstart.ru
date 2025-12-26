@@ -39,7 +39,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
   persist(
     (set, get) => ({
       selectedMetaCategory: DEFAULT_META_CATEGORY,
-      selectedTopicId: 'var-let-const',
+      selectedTopicId: 'data-types',
       searchQuery: '',
       selectedDifficulty: 'all',
       selectedTags: [],
@@ -96,7 +96,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
       },
     }),
     {
-      name: 'frontender-pro-storage',
+      name: 'frontender-pro-storage-v3', // Изменили имя для сброса кэша
       partialize: (state) => ({ 
         learnedTopics: state.learnedTopics,
         selectedMetaCategory: state.selectedMetaCategory,
