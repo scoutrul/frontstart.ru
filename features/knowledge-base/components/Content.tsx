@@ -6,9 +6,12 @@ import ScopeChainVisualizer from '../visualizers/ScopeChainVisualizer';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 import { highlightText } from '../utils/highlightText';
 import { TopicWithMeta } from '../hooks/useContentSearch';
+import TopicCard from './TopicCard';
+import { findTopicMeta } from '../utils/findTopicMeta';
 
 interface ContentProps {
   topic: Topic;
+  relatedTopics: Topic[];
   onTopicJump: (id: string) => void;
   contentSearchQuery: string | null;
   setContentSearchQuery: (query: string | null) => void;
@@ -26,6 +29,17 @@ const Content: React.FC<ContentProps> = (props) => {
   const highlightQuery = savedSearchQuery && savedSearchQuery.trim() 
     ? savedSearchQuery 
     : (contentSearchQuery && contentSearchQuery.trim() ? contentSearchQuery : null);
+
+  // Определяем, используем ли мы результаты поиска или релевантные темы
+  const isSearchMode = contentSearchQuery && contentSearchQuery.trim();
+  const relevantTopics: Topic[] = isSearchMode 
+    ? searchResults.map(item => item.topic)
+    : props.relatedTopics;
+  
+  // Создаем мапу метаданных для результатов поиска
+  const searchResultsMeta = isSearchMode 
+    ? new Map(searchResults.map(item => [item.topic.id, { metaCategoryId: item.metaCategoryId, category: item.category }]))
+    : null;
 
 
   // Получение слова из выделения после двойного клика
@@ -59,8 +73,9 @@ const Content: React.FC<ContentProps> = (props) => {
       return null;
     }
 
-    // Очищаем от пунктуации в начале и конце
-    const cleanedWord = selectedText.replace(/^[^\w]+|[^\w]+$/g, '');
+    // Очищаем от пунктуации в начале и конце (с поддержкой Unicode/кириллицы)
+    const cleanedWord = selectedText.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
+    
     if (cleanedWord.length < 2) {
       return null;
     }
@@ -177,6 +192,35 @@ const Content: React.FC<ContentProps> = (props) => {
         <i className={`fa-solid ${learned ? 'fa-check-circle' : 'fa-circle'} text-base`}></i>
         <span className="text-sm font-bold">{learned ? 'Изучено' : 'Отметить как изученное'}</span>
       </button>
+
+      {relevantTopics.length > 0 && (
+        <div className="mt-16">
+          <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
+            {contentSearchQuery ? 'РЕЛЕВАНТНЫЕ ТЕМЫ (поиск)' : 'РЕЛЕВАНТНЫЕ ТЕМЫ'}
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {relevantTopics.map((relatedTopic, index) => {
+              // Если это режим поиска, используем метаданные из searchResults, иначе ищем их
+              const meta = isSearchMode && searchResultsMeta 
+                ? searchResultsMeta.get(relatedTopic.id)
+                : findTopicMeta(relatedTopic.id);
+              
+              return (
+                <TopicCard
+                  key={relatedTopic.id || `topic-${index}`}
+                  topic={relatedTopic}
+                  onClick={() => props.onTopicJump(relatedTopic.id)}
+                  highlightQuery={highlightQuery}
+                  metaCategoryId={meta?.metaCategoryId || undefined}
+                  category={meta?.category || undefined}
+                  padding="p-5"
+                  descriptionLines={3}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -30,10 +30,17 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
   }
 
   return (
-    <div 
-      ref={searchAreaRef}
-      className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[min(90vw,80rem)] px-6"
-    >
+    <>
+      {/* Backdrop overlay с blur эффектом */}
+      <div 
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-all"
+        onClick={() => setContentSearchQuery(null)}
+      />
+      
+      <div 
+        ref={searchAreaRef}
+        className="fixed top-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-[min(90vw,80rem)] px-6"
+      >
       <div className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-800/80 shadow-xl py-4 rounded-b-lg">
         <div className="relative px-4">
           <i className="fa-solid fa-search absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 text-sm"></i>
@@ -81,6 +88,7 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
         </div>
       )}
     </div>
+    </>
   );
 };
 
