@@ -105,16 +105,18 @@ const Content: React.FC<ContentProps> = (props) => {
           // Снимаем выделение
           window.getSelection()?.removeAllRanges();
         }
-      }, 50);
+      }, 250);
     };
 
     const element = contentRef.current;
     element.addEventListener('dblclick', handleDoubleClick);
 
     return () => {
-      element.removeEventListener('dblclick', handleDoubleClick);
+      if (element) {
+        element.removeEventListener('dblclick', handleDoubleClick);
+      }
     };
-  }, [setContentSearchQuery]);
+  }, [setContentSearchQuery, topic.id]);
 
 
   return (
