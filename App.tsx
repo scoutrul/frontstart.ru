@@ -5,6 +5,7 @@ import Content from './features/knowledge-base/components/Content';
 import ContentSearch from './features/knowledge-base/components/ContentSearch';
 import KnowledgePath from './features/knowledge-base/components/KnowledgePath';
 import ProjectInfoModal from './components/ui/ProjectInfoModal';
+import NotesModal from './components/ui/NotesModal';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 import { getKnowledgeBaseByCategory } from './core/constants';
@@ -14,6 +15,7 @@ const App: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProjectInfoOpen, setIsProjectInfoOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [savedSearchQuery, setSavedSearchQuery] = useState<string | null>(null);
   const { selectedTopicId, setSelectedTopicId, setSelectedMetaCategory } = useKnowledgeBaseStore();
   const { currentTopic, relatedTopics } = useCurrentTopic();
@@ -145,10 +147,25 @@ const App: React.FC = () => {
         О проекте
       </button>
 
+      {/* Кнопка заметок */}
+      <button
+        onClick={() => setIsNotesOpen(true)}
+        className="fixed top-28 right-6 z-40 h-8 bg-slate-950/90 border border-emerald-500/80 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg text-xs px-2.5"
+        title="Заметки"
+      >
+        Заметки
+      </button>
+
       {/* Модальное окно информации о проекте */}
       <ProjectInfoModal 
         isOpen={isProjectInfoOpen}
         onClose={() => setIsProjectInfoOpen(false)}
+      />
+
+      {/* Модальное окно заметок */}
+      <NotesModal 
+        isOpen={isNotesOpen}
+        onClose={() => setIsNotesOpen(false)}
       />
     </div>
   );
