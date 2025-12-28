@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +11,132 @@
   
   body {
     font-size: 1rem;
+    font-family: 'Inter', sans-serif;
   }
+  
+  pre, code {
+    font-family: 'Fira Code', monospace !important;
+  }
+  
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: #1e293b;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 10px;
+  }
+}
+
+.prose-custom {
+  line-height: 1.8;
+  color: #d1d5db;
+  font-size: 1.0625rem;
+}
+
+.prose-custom p {
+  margin-bottom: 1.5rem;
+}
+
+.prose-custom strong {
+  color: #ffffff;
+  font-weight: 700;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.prose-custom ul {
+  margin: 1.25rem 0;
+  padding-left: 1.75rem;
+}
+
+.prose-custom li {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.prose-custom ul li::before {
+  content: "→";
+  color: #10b981;
+  font-weight: bold;
+  display: inline-block;
+  width: 1.2em;
+  margin-left: -1.2em;
+}
+
+/* Анимация появления контента */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-content {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Анимация появления сайдбара (горизонтальная) */
+@keyframes fadeInSidebar {
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-sidebar {
+  animation: fadeInSidebar 0.4s ease-out forwards;
+}
+
+/* Кастомные правки для Prism, чтобы вписаться в дизайн */
+pre[class*="language-"] {
+  margin: 0 !important;
+  background: transparent !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+}
+
+code[class*="language-"] {
+  font-size: 14px !important;
+}
+
+/* Улучшенная видимость комментариев */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #9ca3af !important;
+  font-style: italic;
+  opacity: 0.95;
+}
+
+/* Более яркие комментарии для лучшей видимости */
+.token.comment {
+  color: rgba(215, 221, 229, 1) !important;
+  background: rgba(161, 169, 181, 0.15);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.code-block-container {
+  background: #282a36;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+  border: 1px solid #44475a;
 }
 
 
