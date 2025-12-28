@@ -26,7 +26,7 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const user = { name: "Ivan", address: { city: "Moscow" } };\nconst updated = {\n  ...user,\n  address: { ...user.address, city: "SPB" }\n};\n// user.address не изменился`
       }
     ],
-    relatedTopics: ['closures-basic'],
+    relatedTopics: ['closures-basic', 'mutability-immutability'],
   },
 {
     id: 'arrays-advanced',
