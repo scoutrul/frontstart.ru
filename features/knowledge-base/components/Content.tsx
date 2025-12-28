@@ -112,9 +112,11 @@ const Content: React.FC<ContentProps> = (props) => {
     element.addEventListener('dblclick', handleDoubleClick);
 
     return () => {
-      element.removeEventListener('dblclick', handleDoubleClick);
+      if (element) {
+        element.removeEventListener('dblclick', handleDoubleClick);
+      }
     };
-  }, [setContentSearchQuery]);
+  }, [setContentSearchQuery, topic.id]);
 
 
   return (
