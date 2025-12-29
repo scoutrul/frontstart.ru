@@ -82,7 +82,7 @@ const KnowledgeBaseContent: React.FC = () => {
     searchAreaRef
   } = useContentSearch(currentTopic?.id);
 
-  // Синхронизация: URL -> состояние (только когда URL меняется)
+  // Синхронизация: URL -> состояние (только когда URL меняется из браузера - назад/вперед или прямой переход)
   useEffect(() => {
     if (urlCategory && META_CATEGORIES.find(c => c.id === urlCategory)) {
       if (urlCategory !== selectedMetaCategory) {
@@ -90,20 +90,16 @@ const KnowledgeBaseContent: React.FC = () => {
       }
       if (urlTopicId && urlTopicId !== selectedTopicId) {
         setSelectedTopicId(urlTopicId);
+      } else if (!urlTopicId && selectedTopicId) {
+        // Если в URL нет topicId, но в состоянии есть - выбираем первую тему категории
+        const knowledgeBase = getKnowledgeBaseByCategory(urlCategory);
+        const firstTopic = knowledgeBase.flatMap(cat => cat.topics)[0];
+        if (firstTopic && firstTopic.id !== selectedTopicId) {
+          setSelectedTopicId(firstTopic.id);
+        }
       }
     }
   }, [urlCategory, urlTopicId]);
-
-  // Синхронизация: состояние -> URL (только когда состояние меняется программно)
-  useEffect(() => {
-    // Не обновляем URL, если он уже соответствует состоянию
-    if (urlCategory === selectedMetaCategory && urlTopicId === selectedTopicId) {
-      return;
-    }
-    
-    const expectedPath = `/${selectedMetaCategory}${selectedTopicId ? `/${selectedTopicId}` : ''}`;
-    navigate(expectedPath, { replace: true });
-  }, [selectedMetaCategory, selectedTopicId]);
 
   // Найти категорию для темы по ID
   const findTopicCategory = (topicId: string): MetaCategoryId | null => {
@@ -144,6 +140,11 @@ const KnowledgeBaseContent: React.FC = () => {
     }
     
     setSelectedTopicId(id);
+    
+    // Навигация с push для создания записи в истории браузера
+    const newPath = `/${topicCategory || selectedMetaCategory}/${id}`;
+    navigate(newPath);
+    
     scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
     setIsSidebarOpen(false);
   };
