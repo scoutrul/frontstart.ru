@@ -136,7 +136,7 @@ const Content: React.FC<ContentProps> = (props) => {
 
 
   return (
-    <div ref={contentRef} key={topic.id} className="w-full max-w-[min(90vw,80rem)] mx-auto py-12 px-2 lg:px-6 animate-content relative pb-20 lg:pb-12">
+    <article ref={contentRef} key={topic.id} className="w-full max-w-[min(90vw,80rem)] mx-auto py-12 px-2 lg:px-6 animate-content relative pb-20 lg:pb-12" style={{ minWidth: '255px', width: '100%' }}>
       <header className="mb-10 relative">
         <div className="flex items-start gap-2 mb-2 flex-wrap">
           <Badge variant={topic.difficulty} className="px-3 py-1.5" />
@@ -154,7 +154,7 @@ const Content: React.FC<ContentProps> = (props) => {
           )}
         </div>
         <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <h2 className="text-4xl font-black text-white tracking-tight leading-tight">{topic.title}</h2>
+          <h1 className="text-4xl font-black text-white tracking-tight leading-tight">{topic.title}</h1>
           {topicMeta.category && (
             <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-emerald-400 text-xs font-bold">
               {topicMeta.category.title}
@@ -207,12 +207,12 @@ const Content: React.FC<ContentProps> = (props) => {
         </section>
       )}
 
-      <div className="mb-10">
-        <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">ПРИМЕРЫ</h3>
+      <section className="mb-10">
+        <h2 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">ПРИМЕРЫ</h2>
         {topic.examples?.map((ex, i) => (
           <CodeBlock key={i} title={ex.title} code={ex.code} />
         ))}
-      </div>
+      </section>
 
       {topic.id === 'scope-chain' && <ScopeChainVisualizer />}
 
@@ -229,10 +229,10 @@ const Content: React.FC<ContentProps> = (props) => {
       </button>
 
       {relevantTopics.length > 0 && (
-        <div className="mt-16">
-          <h3 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
+        <section className="mt-16">
+          <h2 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
             {contentSearchQuery ? 'РЕЛЕВАНТНЫЕ ТЕМЫ (поиск)' : 'РЕЛЕВАНТНЫЕ ТЕМЫ'}
-          </h3>
+          </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {relevantTopics.map((relatedTopic, index) => {
               // Если это режим поиска, используем метаданные из searchResults, иначе ищем их
@@ -254,10 +254,10 @@ const Content: React.FC<ContentProps> = (props) => {
               );
             })}
           </div>
-        </div>
+        </section>
       )}
 
-    </div>
+    </article>
   );
 };
 

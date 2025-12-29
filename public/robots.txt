@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://frontstart.ru/sitemap.xml
+
+# Запрещаем индексацию служебных маршрутов (если есть)
+Disallow: /api/
+Disallow: /_next/
+Disallow: /dist/

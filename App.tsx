@@ -7,56 +7,226 @@ import ContentSearch from './features/knowledge-base/components/ContentSearch';
 import KnowledgePath from './features/knowledge-base/components/KnowledgePath';
 import ProjectInfoModal from './components/ui/ProjectInfoModal';
 import NotesModal from './components/ui/NotesModal';
+import Footer from './components/ui/Footer';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 import { getKnowledgeBaseByCategory } from './core/constants';
 import { MetaCategoryId, META_CATEGORIES } from './core/metaCategories';
 import { useNotesCount } from './hooks/useNotesCount';
 
-// Компонент для обновления meta-тегов
-const SEOHead: React.FC<{ topic: { title: string; description: string } | null; category: MetaCategoryId }> = ({ topic, category }) => {
+// Компонент для обновления meta-тегов и JSON-LD
+const SEOHead: React.FC<{ topic: { id: string; title: string; description: string; tags?: string[] } | null; category: MetaCategoryId; topicId?: string }> = ({ topic, category, topicId }) => {
   useEffect(() => {
-    if (!topic) return;
-    
     const categoryTitle = META_CATEGORIES.find(c => c.id === category)?.title || '';
-    const title = `${topic.title} - ${categoryTitle} | Frontender Pro`;
-    const description = topic.description || `Изучите тему "${topic.title}" в разделе ${categoryTitle}`;
+    const baseUrl = window.location.origin;
+    const currentUrl = window.location.href;
     
-    document.title = title;
-    
-    // Обновляем или создаем meta-теги
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', description);
-    
-    // Open Graph теги
-    const updateOGTag = (property: string, content: string) => {
-      let tag = document.querySelector(`meta[property="${property}"]`);
-      if (!tag) {
-        tag = document.createElement('meta');
-        tag.setAttribute('property', property);
-        document.head.appendChild(tag);
+    if (topic && topicId) {
+      // Динамические title и description для темы
+      const title = `${topic.title} - ${categoryTitle} | Frontstart`;
+      const description = topic.description || `Изучите тему "${topic.title}" в разделе ${categoryTitle}`;
+      const keywords = topic.tags?.join(', ') || `${topic.title}, ${categoryTitle}, frontend, программирование`;
+      
+      document.title = title;
+      
+      // Meta description
+      const updateMetaTag = (name: string, content: string) => {
+        let tag = document.querySelector(`meta[name="${name}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('name', name);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      };
+      
+      updateMetaTag('description', description);
+      updateMetaTag('keywords', keywords);
+      
+      // Open Graph теги
+      const updateOGTag = (property: string, content: string) => {
+        let tag = document.querySelector(`meta[property="${property}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('property', property);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      };
+      
+      updateOGTag('og:title', title);
+      updateOGTag('og:description', description);
+      updateOGTag('og:type', 'article');
+      updateOGTag('og:url', currentUrl);
+      updateOGTag('og:site_name', 'Frontstart');
+      
+      // Twitter Cards
+      const updateTwitterTag = (name: string, content: string) => {
+        let tag = document.querySelector(`meta[name="${name}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('name', name);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      };
+      
+      updateTwitterTag('twitter:card', 'summary');
+      updateTwitterTag('twitter:title', title);
+      updateTwitterTag('twitter:description', description);
+      
+      // Canonical URL
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
       }
-      tag.setAttribute('content', content);
-    };
-    
-    updateOGTag('og:title', title);
-    updateOGTag('og:description', description);
-    updateOGTag('og:type', 'website');
-    
-    // Canonical URL
-    let canonical = document.querySelector('link[rel="canonical"]');
-    if (!canonical) {
-      canonical = document.createElement('link');
-      canonical.setAttribute('rel', 'canonical');
-      document.head.appendChild(canonical);
+      canonical.setAttribute('href', currentUrl);
+      
+      // JSON-LD структурированные данные
+      const removeJSONLD = () => {
+        const existing = document.querySelectorAll('script[type="application/ld+json"]');
+        existing.forEach(el => el.remove());
+      };
+      
+      removeJSONLD();
+      
+      // WebPage schema
+      const webpageSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'WebPage',
+        '@id': currentUrl,
+        url: currentUrl,
+        name: title,
+        description: description,
+        inLanguage: 'ru',
+        isPartOf: {
+          '@type': 'WebSite',
+          name: 'Frontstart',
+          url: baseUrl
+        }
+      };
+      
+      // Article schema
+      const articleSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: topic.title,
+        description: description,
+        url: currentUrl,
+        datePublished: '2025-01-01',
+        dateModified: '2025-01-01',
+        author: {
+          '@type': 'Organization',
+          name: 'Frontender Pro'
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'Frontstart',
+          url: baseUrl
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': currentUrl
+        },
+        keywords: keywords,
+        articleSection: categoryTitle
+      };
+      
+      // LearningResource schema
+      const learningResourceSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'LearningResource',
+        name: topic.title,
+        description: description,
+        url: currentUrl,
+        educationalLevel: 'beginner',
+        learningResourceType: 'Article',
+        teaches: topic.title
+      };
+      
+      // BreadcrumbList schema
+      const breadcrumbSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Главная',
+            item: baseUrl
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: categoryTitle,
+            item: `${baseUrl}/${category}`
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: topic.title,
+            item: currentUrl
+          }
+        ]
+      };
+      
+      const addJSONLD = (schema: object) => {
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.textContent = JSON.stringify(schema);
+        document.head.appendChild(script);
+      };
+      
+      addJSONLD(webpageSchema);
+      addJSONLD(articleSchema);
+      addJSONLD(learningResourceSchema);
+      addJSONLD(breadcrumbSchema);
+      
+    } else {
+      // Для страниц категорий без темы
+      const title = `${categoryTitle} | Frontstart`;
+      const description = `Изучите ${categoryTitle.toLowerCase()} - база знаний для frontend разработчиков`;
+      
+      document.title = title;
+      
+      const updateMetaTag = (name: string, content: string) => {
+        let tag = document.querySelector(`meta[name="${name}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('name', name);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      };
+      
+      updateMetaTag('description', description);
+      
+      const updateOGTag = (property: string, content: string) => {
+        let tag = document.querySelector(`meta[property="${property}"]`);
+        if (!tag) {
+          tag = document.createElement('meta');
+          tag.setAttribute('property', property);
+          document.head.appendChild(tag);
+        }
+        tag.setAttribute('content', content);
+      };
+      
+      updateOGTag('og:title', title);
+      updateOGTag('og:description', description);
+      updateOGTag('og:type', 'website');
+      updateOGTag('og:url', currentUrl);
+      
+      let canonical = document.querySelector('link[rel="canonical"]');
+      if (!canonical) {
+        canonical = document.createElement('link');
+        canonical.setAttribute('rel', 'canonical');
+        document.head.appendChild(canonical);
+      }
+      canonical.setAttribute('href', currentUrl);
     }
-    canonical.setAttribute('href', window.location.href);
-  }, [topic, category]);
+  }, [topic, category, topicId]);
   
   return null;
 };
@@ -166,7 +336,7 @@ const KnowledgeBaseContent: React.FC = () => {
 
   return (
     <>
-      <SEOHead topic={currentTopic} category={selectedMetaCategory} />
+      <SEOHead topic={currentTopic} category={selectedMetaCategory} topicId={urlTopicId} />
       <div className="flex h-screen bg-[#0a0f1d] overflow-hidden pb-16">
       {/* Overlay для мобильных */}
       {isSidebarOpen && (
@@ -185,6 +355,7 @@ const KnowledgeBaseContent: React.FC = () => {
       <main 
         ref={scrollContainerRef} 
         className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative"
+        role="main"
         onClick={(e) => {
           // Закрываем поиск при клике вне области поиска (включая края)
           if (contentSearchQuery !== null && searchAreaRef.current && !searchAreaRef.current.contains(e.target as Node)) {
@@ -221,6 +392,7 @@ const KnowledgeBaseContent: React.FC = () => {
             savedSearchQuery={savedSearchQuery}
           />
         </div>
+        <Footer />
       </main>
       
       {/* Панель переключения метакатегорий */}

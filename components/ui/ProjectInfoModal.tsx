@@ -38,58 +38,102 @@ const ProjectInfoModal: React.FC<ProjectInfoModalProps> = ({ isOpen, onClose }) 
             {/* Content */}
             <div className="space-y-6 text-slate-300">
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Frontender Pro</h3>
-                <p className="text-sm leading-relaxed">
-                  Интерактивное приложение для изучения JavaScript и Frontend технологий. 
-                  Проект содержит структурированную базу знаний с примерами кода, объяснениями 
-                  и визуализаторами для лучшего понимания концепций.
+                <h3 className="text-lg font-bold text-white mb-2">Frontstart</h3>
+                <p className="text-sm leading-relaxed mb-3">
+                  Frontstart — это обучающий проект для фронтенд-разработчиков, созданный для повторения, 
+                  закрепления и систематизации теоретических знаний, чтобы повысить успешность прохождения 
+                  технических интервью.
+                </p>
+                <p className="text-sm leading-relaxed text-slate-400">
+                  Проект ориентирован на разработчиков, которые хотят быстро освежить знания, закрыть пробелы 
+                  и иметь удобную интерактивную шпаргалку для подготовки к собеседованию.
                 </p>
               </div>
 
               <div>
                 <h4 className="text-sm font-bold text-emerald-400 mb-2 uppercase tracking-wide">
-                  Текущее состояние
+                  Структура и содержание
                 </h4>
                 <ul className="text-sm space-y-2 ml-4">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Полное покрытие Browser API: DOM, Fetch, Events, Storage, Web Workers, Service Workers</span>
+                    <span><strong>Мета-категории:</strong> JavaScript, TypeScript, браузерные API, инструменты, оптимизация, архитектура и другие</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Интерактивные визуализаторы для сложных концепций (Scope Chain и др.)</span>
+                    <span><strong>Уровни сложности:</strong> начинающий, средний, продвинутый</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Структурированные темы от базового до продвинутого уровня</span>
+                    <span><strong>Содержание темы:</strong> краткая информация, ключевые моменты, практические примеры</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Подсветка синтаксиса кода с помощью Prism.js</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="text-emerald-500 mt-1">•</span>
-                    <span>Адаптивный интерфейс с поддержкой мобильных устройств</span>
+                    <span><strong>Теги:</strong> каждая тема связана с другими для релевантной навигации</span>
                   </li>
                 </ul>
               </div>
 
               <div>
                 <h4 className="text-sm font-bold text-emerald-400 mb-2 uppercase tracking-wide">
-                  В планах
+                  Навигация и поиск
                 </h4>
                 <ul className="text-sm space-y-2 ml-4">
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Reactive frameworks и libraries: React, Vue, Angular</span>
+                    <span><strong>Система поиска:</strong> двойной клик по слову автоматически запускает поиск по всем темам</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>CSS-layer: Grid, Flexbox, Custom Properties, Animations</span>
+                    <span><strong>Фильтры:</strong> по тегам, по сложности</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-emerald-500 mt-1">•</span>
-                    <span>Архитектурные паттерны: MVC, MVP, MVVM, Flux, Redux, Clean Architecture</span>
+                    <span><strong>Переключение между разделами:</strong> удобное и логичное</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span><strong>Каждая тема имеет собственный URL:</strong> можно открыть напрямую</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-emerald-400 mb-2 uppercase tracking-wide">
+                  Обучение и прогресс
+                </h4>
+                <ul className="text-sm space-y-2 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span><strong>Отметка тем как пройденных:</strong> прогресс считается автоматически</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span><strong>Система заметок:</strong> сохраняется в Local Storage, можно продолжать обучение на том же устройстве</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span><strong>Метрики прогресса:</strong> визуальное отображение изученного материала в разделе</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-sm font-bold text-emerald-400 mb-2 uppercase tracking-wide">
+                  Техническая реализация
+                </h4>
+                <ul className="text-sm space-y-2 ml-4">
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span>SPA на React.js с клиентским роутингом</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span>Навигация вперед/назад через историю браузера</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-emerald-500 mt-1">•</span>
+                    <span>Динамическая подгрузка контента и возможность прямых ссылок на темы</span>
                   </li>
                 </ul>
               </div>
@@ -111,8 +155,14 @@ const ProjectInfoModal: React.FC<ProjectInfoModalProps> = ({ isOpen, onClose }) 
               </div>
 
               <div className="pt-4 border-t border-slate-800/60">
+                <p className="text-xs text-slate-500 text-center mb-2">
+                  Frontstart.ru — каламбур на «frontend» и «start», лёгкая шутка для посвящённых.
+                </p>
                 <p className="text-xs text-slate-500 text-center">
-                  Frontender Pro © 2025
+                  Проект некоммерческий, создаётся для образовательных целей и удобства разработчиков.
+                </p>
+                <p className="text-xs text-slate-500 text-center mt-2">
+                  © {new Date().getFullYear()} <a href="https://www.antongolova.ru" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">www.antongolova.ru</a>
                 </p>
               </div>
             </div>
