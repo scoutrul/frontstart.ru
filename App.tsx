@@ -125,16 +125,23 @@ const KnowledgeBaseContent: React.FC = () => {
     return null;
   };
 
-  const handleTopicJump = (id: string, fromSearch: boolean = false) => {
+  const handleTopicJump = (id: string, fromSearch: boolean | string = false) => {
     // Найти категорию для выбранной темы
     const topicCategory = findTopicCategory(id);
     if (topicCategory) {
       setSelectedMetaCategory(topicCategory);
     }
     
-    // Если переход из поиска - сохранить запрос, иначе - очистить
-    if (fromSearch && contentSearchQuery) {
-      setSavedSearchQuery(contentSearchQuery);
+    // Если переход из поиска - сохранить запрос для выделения
+    if (fromSearch) {
+      // Если передан строковый запрос (из ContentSearch), используем его
+      // Иначе используем текущий contentSearchQuery
+      const queryToSave = typeof fromSearch === 'string' ? fromSearch : contentSearchQuery;
+      if (queryToSave && queryToSave.trim()) {
+        setSavedSearchQuery(queryToSave);
+      } else {
+        setSavedSearchQuery(null);
+      }
     } else {
       setSavedSearchQuery(null);
     }
@@ -199,7 +206,7 @@ const KnowledgeBaseContent: React.FC = () => {
           setContentSearchQuery={setContentSearchQuery}
           searchResults={searchResults}
           searchAreaRef={searchAreaRef}
-          onTopicSelect={(id) => handleTopicJump(id, true)}
+          onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
         />
         
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:clamp(2.5rem,4vw,3rem)_clamp(2.5rem,4vw,3rem)] pointer-events-none"></div>

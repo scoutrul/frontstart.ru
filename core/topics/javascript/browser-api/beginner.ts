@@ -138,7 +138,7 @@ export const JS_BROWSER_API_BEGINNER_TOPICS: Topic[] = [
         code: `// Создание кастомного события\nconst customEvent = new CustomEvent('myEvent', {\n  detail: { message: 'Hello' }\n});\n\n// Подписка\nbutton.addEventListener('myEvent', (event) => {\n  console.log(event.detail.message); // "Hello"\n});\n\n// Диспатч\nbutton.dispatchEvent(customEvent);`
       }
     ],
-    relatedTopics: ['dom-api', 'callbacks', 'functions-types']
+    relatedTopics: ['dom-api', 'callbacks', 'functions-types', 'events-advanced']
   },
 {
     id: 'history-api',

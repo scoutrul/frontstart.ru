@@ -24,11 +24,27 @@ const Content: React.FC<ContentProps> = (props) => {
   const { isLearned, toggleLearned, selectedMetaCategory } = useKnowledgeBaseStore();
   const learned = isLearned(topic.id, selectedMetaCategory);
   const contentRef = useRef<HTMLDivElement>(null);
+  
+  // Находим категорию для текущей темы
+  const topicMeta = findTopicMeta(topic.id);
 
   // Используем сохраненный запрос для выделения, если есть
   const highlightQuery = savedSearchQuery && savedSearchQuery.trim() 
     ? savedSearchQuery 
     : (contentSearchQuery && contentSearchQuery.trim() ? contentSearchQuery : null);
+
+  // Скролл к первому выделенному элементу при переходе из поиска
+  useEffect(() => {
+    if (highlightQuery && savedSearchQuery) {
+      // Небольшая задержка для рендеринга выделенных элементов
+      setTimeout(() => {
+        const firstMark = contentRef.current?.querySelector('mark');
+        if (firstMark) {
+          firstMark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [topic.id, highlightQuery, savedSearchQuery]);
 
   // Определяем, используем ли мы результаты поиска или релевантные темы
   const isSearchMode = contentSearchQuery && contentSearchQuery.trim();
@@ -122,11 +138,28 @@ const Content: React.FC<ContentProps> = (props) => {
   return (
     <div ref={contentRef} key={topic.id} className="w-full max-w-[min(90vw,80rem)] mx-auto py-12 px-6 animate-content relative">
       <header className="mb-10 relative">
-        <div className="flex items-start mb-2">
+        <div className="flex items-start gap-2 mb-2 flex-wrap">
           <Badge variant={topic.difficulty} className="px-3 py-1.5" />
+          {topic.tags && topic.tags.length > 0 && (
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {topic.tags.map((tag, index) => (
+                <span
+                  key={index}
+                  className="px-2 py-0.5 bg-slate-700/30 border border-slate-600/50 rounded text-[10px] text-slate-300 font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
           <h2 className="text-4xl font-black text-white tracking-tight leading-tight">{topic.title}</h2>
+          {topicMeta.category && (
+            <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-emerald-400 text-xs font-bold">
+              {topicMeta.category.title}
+            </span>
+          )}
           {learned && (
             <span className="px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded text-emerald-400 text-xs font-bold">
               ИЗУЧЕНО

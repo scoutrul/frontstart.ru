@@ -5,26 +5,73 @@ export const JS_PROTOTYPES_INTERMEDIATE_TOPICS: Topic[] = [
     id: 'prototype-chain',
     title: 'Прототипы',
     difficulty: 'intermediate',
-    description: 'Объекты наследуют напрямую от других объектов через [[Prototype]]. Если свойство не найдено, поиск идет по цепочке прототипов до Object.prototype.',
+    description: 'Прототип (prototype) — объект, из которого другие объекты унаследуют свойства и методы. Прототипное наследование — механизм, когда объект ищет свойства и методы по цепочке прототипов, если их нет у самого объекта. Каждый объект имеет скрытую ссылку [[Prototype]] (доступно через __proto__ или Object.getPrototypeOf(obj)).',
     keyPoints: [
-      'Свойство __proto__ ссылается на прототип (устаревший способ).',
-      'Object.getPrototypeOf() — современный способ доступа к прототипу.',
-      'Object.prototype — вершина цепочки.'
+      'Метод или свойство ищется по цепочке прототипов (prototype chain).',
+      'Все массивы, объекты и функции наследуются от своих прототипов (Array.prototype, Object.prototype, Function.prototype).',
+      'Классы — это просто удобный синтаксис для работы с прототипами.',
+      'Можно вручную создавать наследование через Object.create().',
+      'Object.getPrototypeOf(obj) — современный способ получить прототип.',
+      'Object.prototype — вершина цепочки, у которого [[Prototype]] === null.'
     ],
-    funFact: 'Прототипное наследование — уникальная особенность JavaScript. В отличие от классического наследования через классы, объекты наследуют напрямую от других объектов, что делает систему более гибкой.',
+    funFact: 'Прототипное наследование — уникальная особенность JavaScript. В отличие от классического наследования, объекты унаследуют напрямую от других объектов, что делает систему гибкой и динамичной.',
     tags: ['prototype', 'inheritance', 'oop', 'object-create', 'constructors'],
     examples: [
       {
-        title: "Наследование",
-        code: `const animal = { eats: true };\nconst cat = { jumps: true };\ncat.__proto__ = animal;\nconsole.log(cat.eats); // true`
+        title: "Пример цепочки прототипов",
+        code: `const arr = [1, 2, 3];
+
+// Где метод fill?
+console.log(arr.fill); // function fill() {...}
+
+// Проверка прототипов:
+console.log(Object.getPrototypeOf(arr) === Array.prototype); // true
+console.log(Object.getPrototypeOf(Array.prototype) === Object.prototype); // true
+console.log(Object.getPrototypeOf(Object.prototype)); // null
+
+// Объяснение:
+// arr — объект, созданный через Array
+// Метод fill берётся из Array.prototype
+// Если свойства нет в Array.prototype, ищем дальше в Object.prototype
+// Конец цепочки — null`
+      },
+      {
+        title: "Связь с классами",
+        code: `class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  greet() {
+    console.log(\`Hello, \${this.name}\`);
+  }
+}
+
+const p = new Person('Alice');
+p.greet(); // Hello, Alice
+console.log(Object.getPrototypeOf(p) === Person.prototype); // true
+
+// Методы класса (greet) на самом деле лежат в Person.prototype`
+      },
+      {
+        title: "Object.create() для наследования",
+        code: `const parent = { hello: () => console.log('Hello') };
+const child = Object.create(parent);
+child.hello(); // Hello
+
+// child не имеет свойства hello, но берёт его из parent через прототип
+console.log(Object.getPrototypeOf(child) === parent); // true`
       },
       {
         title: "Поиск по цепочке",
-        code: `const grandparent = { a: 1 };\nconst parent = { b: 2 };\nparent.__proto__ = grandparent;\nconst child = { c: 3 };\nchild.__proto__ = parent;\n\nconsole.log(child.a); // 1 (из grandparent)\nconsole.log(child.b); // 2 (из parent)\nconsole.log(child.c); // 3 (свое)`
-      },
-      {
-        title: "Переопределение метода",
-        code: `const animal = {\n  speak() { return "Some sound"; }\n};\nconst dog = {\n  speak() { return "Woof!"; }\n};\ndog.__proto__ = animal;\n\nconsole.log(dog.speak()); // "Woof!" (свой метод)\n\n// Удаляем свой метод\ndelete dog.speak;\nconsole.log(dog.speak()); // "Some sound" (из прототипа)`
+        code: `const grandparent = { a: 1 };
+const parent = { b: 2 };
+parent.__proto__ = grandparent;
+const child = { c: 3 };
+child.__proto__ = parent;
+
+console.log(child.a); // 1 (из grandparent)
+console.log(child.b); // 2 (из parent)
+console.log(child.c); // 3 (свое)`
       }
     ],
     relatedTopics: ['this-basics'],

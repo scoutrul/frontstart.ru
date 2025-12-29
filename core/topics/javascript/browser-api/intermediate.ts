@@ -215,5 +215,235 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'promises', 'async-await'],
+  },
+{
+    id: 'animation-event-loop',
+    title: 'Анимация и Event Loop',
+    difficulty: 'intermediate',
+    description: 'JavaScript работает однопоточно, но поддерживает асинхронность через Event Loop. Для анимации используются разные методы: setTimeout/setInterval (макротаски, не синхронизированы с рендером), requestAnimationFrame (синхронизирован с частотой кадров), requestIdleCallback (для фоновых задач). Event Loop обрабатывает очереди: macro-task queue (setTimeout, setInterval) и micro-task queue (Promise.then).',
+    keyPoints: [
+      'Event Loop: macro-task queue (setTimeout, setInterval, сетевые запросы) и micro-task queue (Promise.then/catch/finally, queueMicrotask).',
+      'Цикл Event Loop: берём задачу из macro-task → выполняем полностью → выполняем все micro-tasks → рендер (если нужно) → повторяем.',
+      'setTimeout/setInterval: работают через макротаски, не синхронизированы с рендером → анимация может "дёргаться".',
+      'requestAnimationFrame: синхронизирован с частотой кадров дисплея (обычно 60 FPS), оптимально для плавной анимации.',
+      'requestIdleCallback: вызывает функцию, когда браузер свободен, для фоновых задач, не для анимации.',
+      'setTimeout/setInterval подходят для периодических задач, не для плавной анимации.'
+    ],
+    tags: ['animation', 'event-loop', 'requestAnimationFrame', 'setTimeout', 'setInterval', 'requestIdleCallback', 'performance', 'browser-api', 'async'],
+    examples: [
+      {
+        title: "Event Loop и очереди",
+        code: `// Macro-task queue: setTimeout, setInterval
+setTimeout(() => console.log('Macro-task 1'), 0);
+setTimeout(() => console.log('Macro-task 2'), 0);
+
+// Micro-task queue: Promise.then, queueMicrotask
+Promise.resolve().then(() => console.log('Micro-task 1'));
+Promise.resolve().then(() => console.log('Micro-task 2'));
+
+console.log('Sync');
+
+// Порядок выполнения:
+// 1. Sync (стек)
+// 2. Micro-task 1, Micro-task 2 (все микрозадачи)
+// 3. Macro-task 1, Macro-task 2 (одна макрозадача за раз)`
+      },
+      {
+        title: "setTimeout для анимации (не рекомендуется)",
+        code: `const box = document.querySelector('#box');
+let x = 0;
+
+function animate() {
+  x += 2;
+  box.style.transform = \`translateX(\${x}px)\`;
+  if (x < 300) {
+    setTimeout(animate, 16); // ~60 FPS, но не синхронизировано
+  }
+}
+
+animate();
+
+// Проблема: не синхронизировано с рендером → может быть "дёргано"`
+      },
+      {
+        title: "requestAnimationFrame для плавной анимации",
+        code: `const box = document.querySelector('#box');
+let x = 0;
+
+function animate() {
+  x += 2;
+  box.style.transform = \`translateX(\${x}px)\`;
+  if (x < 300) {
+    requestAnimationFrame(animate); // следующий кадр
+  }
+}
+
+requestAnimationFrame(animate);
+
+// Плавная анимация благодаря синхронизации с рендером
+// Браузер может оптимизировать вызовы, снижать FPS, если вкладка не активна`
+      },
+      {
+        title: "requestIdleCallback для фоновых задач",
+        code: `// Выполняется, когда браузер свободен
+requestIdleCallback((deadline) => {
+  while (deadline.timeRemaining() > 0) {
+    // Выполняем фоновую задачу
+    processBackgroundData();
+  }
+}, { timeout: 2000 }); // максимум через 2 секунды
+
+// Не подходит для анимации - момент выполнения не гарантирован`
+      },
+      {
+        title: "Сравнение методов",
+        code: `// setTimeout - макротаска, не синхронизировано
+setTimeout(() => updateAnimation(), 16); // может быть "дёргано"
+
+// setInterval - макротаска, регулярно
+setInterval(() => updateAnimation(), 16); // тоже не синхронизировано
+
+// requestAnimationFrame - синхронизировано с рендером
+requestAnimationFrame(() => updateAnimation()); // плавно, оптимально
+
+// requestIdleCallback - когда браузер свободен
+requestIdleCallback(() => processData()); // для фоновых задач, не для анимации`
+      }
+    ],
+    relatedTopics: ['event-loop', 'performance-optimization', 'debounce-throttle'],
+    funFact: 'requestAnimationFrame синхронизирован с частотой обновления дисплея (обычно 60 FPS), что делает его идеальным для анимации. Браузер может автоматически снижать частоту кадров, если вкладка неактивна, экономя ресурсы.'
+  },
+{
+    id: 'events-advanced',
+    title: 'События в JavaScript (расширенно)',
+    difficulty: 'intermediate',
+    description: 'Событие (event) — сигнал о том, что что-то произошло: клик мыши, ввод текста, загрузка страницы. События в DOM проходят три фазы: Capture (захват/погружение сверху вниз), Target (достижение элемента), Bubbling (всплытие обратно вверх). Делегирование событий — навешивание обработчика на родительский элемент, экономит ресурсы и работает с динамически добавляемыми элементами. Некоторые события не всплывают (focus/blur, mouseenter/mouseleave).',
+    keyPoints: [
+      'Элемент, на котором навешано событие — цель события (target). Текущая цель (currentTarget) — элемент, на котором именно сейчас выполняется обработчик.',
+      'Фазы событий: Capture (захват/погружение сверху вниз) → Target (цель) → Bubbling (всплытие обратно вверх).',
+      'Параметр true в addEventListener включает фазу захвата. По умолчанию большинство событий всплывают.',
+      'Делегирование событий: навешивание обработчика на родительский элемент, экономит ресурсы и работает с динамически добавляемыми элементами.',
+      'event.target — реальный элемент, на котором произошло событие. event.currentTarget — элемент, на котором висит обработчик.',
+      'Некоторые события не всплывают: focus/blur, mouseenter/mouseleave. Использовать focusin/focusout вместо focus/blur для делегирования.',
+      'Остановить всплытие: event.stopPropagation().'
+    ],
+    tags: ['events', 'dom', 'bubbling', 'capture', 'event-delegation', 'target', 'currentTarget', 'browser-api', 'performance'],
+    examples: [
+      {
+        title: "Фазы событий",
+        code: `// HTML: <div id="parent"><button id="child">Click</button></div>
+
+// Capture фаза (сверху вниз) - третий параметр true
+document.getElementById('parent').addEventListener('click', () => {
+  console.log('1. Capture: parent');
+}, true);
+
+// Target фаза
+document.getElementById('child').addEventListener('click', () => {
+  console.log('2. Target: child');
+});
+
+// Bubbling фаза (снизу вверх) - по умолчанию
+document.getElementById('parent').addEventListener('click', () => {
+  console.log('3. Bubbling: parent');
+});
+
+// При клике на button выведет:
+// 1. Capture: parent
+// 2. Target: child
+// 3. Bubbling: parent`
+      },
+      {
+        title: "target vs currentTarget",
+        code: `const list = document.querySelector('#list');
+
+list.addEventListener('click', (event) => {
+  console.log('event.target:', event.target); 
+  // Реальный элемент, на который кликнули (например, <li>)
+  
+  console.log('event.currentTarget:', event.currentTarget); 
+  // Элемент, на котором висит обработчик (list)
+  
+  // При клике на <li> внутри list:
+  // event.target = <li>
+  // event.currentTarget = <ul id="list">`
+      },
+      {
+        title: "Делегирование событий",
+        code: `const list = document.querySelector('#list');
+
+// Навешиваем обработчик на родителя, а не на каждый элемент
+list.addEventListener('click', (event) => {
+  // Проверяем, что кликнули по элементу списка
+  if (event.target.tagName === 'LI') {
+    console.log('Clicked item:', event.target.textContent);
+    event.target.classList.toggle('selected');
+  }
+});
+
+// Работает для динамически добавляемых элементов!
+// Экономит память и CPU при большом количестве элементов`
+      },
+      {
+        title: "События, которые не всплывают",
+        code: `// focus и blur НЕ всплывают
+const form = document.querySelector('form');
+
+// Это НЕ сработает при фокусе на input внутри form
+form.addEventListener('focus', () => {
+  console.log('Focus'); // не сработает
+});
+
+// Решение: использовать focusin и focusout (они всплывают)
+form.addEventListener('focusin', (event) => {
+  console.log('Focus on:', event.target); // сработает
+});
+
+// mouseenter и mouseleave тоже не всплывают
+// Использовать mouseover и mouseout (они всплывают)`
+      },
+      {
+        title: "Остановка всплытия",
+        code: `const child = document.querySelector('#child');
+const parent = document.querySelector('#parent');
+
+child.addEventListener('click', (event) => {
+  console.log('Child clicked');
+  event.stopPropagation(); // останавливает всплытие
+  // Обработчик на parent не сработает
+});
+
+parent.addEventListener('click', () => {
+  console.log('Parent clicked'); // не выполнится
+});`
+      },
+      {
+        title: "Делегирование с focusin/focusout",
+        code: `// Для событий, которые не всплывают, используем альтернативы
+const form = document.querySelector('form');
+
+// focusin всплывает, в отличие от focus
+form.addEventListener('focusin', (event) => {
+  if (event.target.tagName === 'INPUT') {
+    event.target.classList.add('focused');
+  }
+});
+
+form.addEventListener('focusout', (event) => {
+  if (event.target.tagName === 'INPUT') {
+    event.target.classList.remove('focused');
+  }
+});
+
+// Или навесить обработчики на каждый элемент напрямую
+form.querySelectorAll('input').forEach(input => {
+  input.addEventListener('focus', () => {
+    input.classList.add('focused');
+  });
+});`
+      }
+    ],
+    relatedTopics: ['event-api', 'dom-api', 'performance-optimization'],
+    funFact: 'Делегирование событий экономит память и CPU при большом количестве элементов. Вместо создания обработчика для каждого элемента, создается один обработчик на родителе, который проверяет event.target. Это особенно полезно для динамически добавляемых элементов.'
   }
 ];

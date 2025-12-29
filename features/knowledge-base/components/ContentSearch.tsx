@@ -7,7 +7,7 @@ interface ContentSearchProps {
   setContentSearchQuery: (query: string | null) => void;
   searchResults: TopicWithMeta[];
   searchAreaRef: React.RefObject<HTMLDivElement | null>;
-  onTopicSelect: (id: string) => void;
+  onTopicSelect: (id: string, query: string | null) => void;
 }
 
 const ContentSearch: React.FC<ContentSearchProps> = ({
@@ -74,7 +74,8 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
                 key={topic.id}
                 topic={topic}
                 onClick={() => {
-                  onTopicSelect(topic.id);
+                  // Передаем запрос перед переходом, чтобы он сохранился для выделения
+                  onTopicSelect(topic.id, contentSearchQuery);
                   setContentSearchQuery(null);
                 }}
                 highlightQuery={contentSearchQuery}

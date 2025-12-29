@@ -5,25 +5,106 @@ export const JS_FUNCTIONS_INTERMEDIATE_TOPICS: Topic[] = [
     id: 'closures-basic',
     title: 'Замыкания (Closures)',
     difficulty: 'intermediate',
-    description: 'Замыкание — функция, которая сохраняет доступ к переменным внешней области видимости после её завершения. Используется для инкапсуляции и сохранения состояния.',
+    description: 'Замыкание — это когда функция "замыкает" доступ к переменным из своей внешней области видимости даже после того, как внешняя функция отработала. Реализуется через лексическое окружение (lexical environment): функция запоминает ссылки на переменные, которые были доступны при её создании. Если замыкание хранит ссылки на внешние переменные, сборщик мусора не удаляет их, пока замыкание существует.',
     keyPoints: [
+      'Замыкание — функция "замыкает" доступ к переменным внешней области видимости после завершения внешней функции.',
+      'Реализуется через лексическое окружение (lexical environment): функция запоминает ссылки на переменные при создании.',
+      'Связь с сборщиком мусора: если замыкание хранит ссылки на внешние переменные, сборщик мусора не удаляет их, пока замыкание существует.',
       'Используется для инкапсуляции и создания приватных данных.',
-      'Переменные сохраняются в памяти, пока на них ссылается внутренняя функция.'
+      'Method chaining (цепочка методов) часто используется вместе с замыканиями через возврат this.'
     ],
     funFact: 'Замыкания были открыты случайно в 1960-х годах в языке Lisp. В JavaScript они стали фундаментальной частью языка и используются повсеместно, даже когда программист об этом не думает.',
-    tags: ['closure', 'scope', 'encapsulation', 'scope-chain', 'lexical-scoping'],
+    tags: ['closure', 'scope', 'encapsulation', 'scope-chain', 'lexical-scoping', 'lexical-environment', 'garbage-collection', 'method-chaining'],
     examples: [
       {
-        title: "Счетчик",
-        code: `function createCounter() {\n  let count = 0;\n  return () => ++count;\n}\nconst counter = createCounter();\nconsole.log(counter()); // 1\nconsole.log(counter()); // 2`
+        title: "Базовое замыкание",
+        code: `function createCounter() {
+  let count = 0; // внешняя переменная
+  return () => ++count; // замыкание "замкнуло" count
+}
+
+const counter = createCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+
+// count сохраняется в памяти, пока существует counter`
+      },
+      {
+        title: "jQuery-подобная цепочка методов",
+        code: `function $(selector) {
+  const element = document.querySelector(selector); // внешняя переменная
+
+  return {
+    css(property, value) {
+      element.style[property] = value; // замыкание "замкнуло" element
+      return this; // позволяет chain
+    },
+    hide() {
+      element.style.display = 'none';
+      return this; // chain
+    },
+    show() {
+      element.style.display = 'block';
+      return this;
+    }
+  };
+}
+
+// Использование:
+$('#box').css('color', 'red').hide();
+
+// element хранится внутри возвращаемого объекта,
+// даже после того как $() отработала
+// Методы имеют доступ к element через замыкание
+// Возврат this позволяет method chaining`
       },
       {
         title: "Замыкание с параметрами",
-        code: `function multiply(x) {\n  return function(y) {\n    return x * y;\n  };\n}\nconst double = multiply(2);\nconsole.log(double(5)); // 10`
+        code: `function multiply(x) {
+  return function(y) {
+    return x * y; // x "замкнут" из внешней области
+  };
+}
+
+const double = multiply(2);
+console.log(double(5)); // 10
+
+// x сохраняется в замыкании функции double`
+      },
+      {
+        title: "Связь с сборщиком мусора",
+        code: `function createHandler() {
+  const data = new Array(1000000).fill(0); // большие данные
+  
+  return function() {
+    console.log(data.length); // замыкание хранит ссылку на data
+  };
+}
+
+const handler = createHandler();
+// data не удаляется сборщиком мусора,
+// пока существует handler (замыкание)
+
+// После удаления handler:
+handler = null;
+// data может быть удалена сборщиком мусора`
       },
       {
         title: "Несколько замыканий",
-        code: `function createFunctions() {\n  const arr = [];\n  for (let i = 0; i < 3; i++) {\n    arr.push(() => i);\n  }\n  return arr;\n}\nconst funcs = createFunctions();\nfuncs[0](); // 0\nfuncs[1](); // 1\nfuncs[2](); // 2`
+        code: `function createFunctions() {
+  const arr = [];
+  for (let i = 0; i < 3; i++) {
+    arr.push(() => i); // каждое замыкание "замкнуло" своё значение i
+  }
+  return arr;
+}
+
+const funcs = createFunctions();
+funcs[0](); // 0
+funcs[1](); // 1
+funcs[2](); // 2
+
+// Каждое замыкание помнит своё значение i`
       }
     ],
     relatedTopics: ['lexical-env', 'private-state'],

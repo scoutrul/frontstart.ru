@@ -60,34 +60,81 @@ export const JS_BASICS_BEGINNER_TOPICS: Topic[] = [
     ],
     relatedTopics: ['data-types', 'comparison']
   },
-{
+  {
     id: 'comparison',
     title: '== vs ===',
     difficulty: 'beginner',
-    description: '== выполняет приведение типов перед сравнением, === сравнивает без приведения. Всегда используй ===.',
+    description: 'JavaScript поддерживает два типа сравнения: строгое (===) и нестрогое (==). Разница в том, что нестрогое сравнение выполняет неявное приведение типов перед сравнением, а строгое — проверяет значение и тип одновременно. Объекты и массивы всегда считаются true в логическом контексте, но сравниваются по ссылке, а не по содержимому.',
     keyPoints: [
-      '== (нестрогое): приводит типы, может давать неожиданные результаты.',
-      '=== (строгое): сравнивает тип и значение, всегда используй это.',
-      'null == undefined (true), но null !== undefined (false).',
-      'NaN !== NaN (true), используй isNaN() или Number.isNaN().'
+      'Нестрогое сравнение (==) приводит операнды к примитивным типам перед сравнением.',
+      'Строгое сравнение (===) не делает приведение типов, сравниваются только одинаковые типы.',
+      'Объекты и массивы всегда считаются true в логическом контексте, но сравниваются по ссылке, а не по содержимому.',
+      'Специальные случаи: NaN не равен NaN, +0 и -0 могут вести себя неожиданно при сравнении.',
+      'Object.is() и Number.isNaN() позволяют корректно проверять значения в случаях, где == и === дают неожиданные результаты.'
     ],
-    funFact: '[] == false возвращает true, потому что массив преобразуется в строку "", а "" == false тоже true. Это классический пример неожиданного поведения ==.',
-    tags: ['comparison', 'operators', 'equality', 'type-coercion', 'strict-equality'],
+    funFact: 'Object.is() и Number.isNaN() позволяют корректно проверять значения в случаях, где == и === дают неожиданные результаты: Object.is(NaN, NaN) возвращает true, Object.is(+0, -0) возвращает false, Number.isNaN(NaN) возвращает true.',
+    tags: ['comparison', 'operators', 'equality', 'type-coercion', 'strict-equality', 'object.is'],
     examples: [
       {
-        title: "Нестрогое сравнение (==)",
-        code: `"5" == 5; // true\nnull == undefined; // true\n0 == false; // true\n[] == false; // true\n"" == 0; // true`
+        title: "Неявное приведение и нестрогое сравнение",
+        code: `'5' == 5;        // true, строка приводится к числу
+0 == false;      // true, false → 0
+null == undefined; // true
+'' == 0;         // true
+[] == false;     // true`
       },
       {
-        title: "Строгое сравнение (===)",
-        code: `"5" === 5; // false\nnull === undefined; // false\n0 === false; // false\n[] === false; // false\n"" === 0; // false`
+        title: "Строгое сравнение",
+        code: `'5' === 5;       // false, разные типы
+0 === false;     // false
+null === undefined; // false
+'' === 0;        // false
+[] === false;    // false`
       },
       {
-        title: "Особые случаи",
-        code: `NaN === NaN; // false\nisNaN(NaN); // true\nNumber.isNaN(NaN); // true\n\nObject.is(NaN, NaN); // true`
+        title: "Сравнение объектов",
+        code: `const a = [1, 2];
+const b = [1, 2];
+
+console.log(a == b);   // false, разные ссылки
+console.log(a === b);  // false, разные ссылки
+console.log(a || b);   // true, объекты всегда truthy
+
+// Объекты сравниваются по ссылке, не по содержимому
+const obj1 = { x: 1 };
+const obj2 = { x: 1 };
+console.log(obj1 === obj2); // false (разные ссылки)`
+      },
+      {
+        title: "Использование Object.is",
+        code: `// Object.is для специальных случаев
+Object.is(NaN, NaN);   // true (в отличие от ===)
+Object.is(+0, -0);     // false (в отличие от ===)
+
+// Number.isNaN для проверки NaN
+Number.isNaN(NaN);     // true
+Number.isNaN('NaN');   // false (в отличие от isNaN)
+
+// Сравнение с ===
+NaN === NaN;           // false
++0 === -0;             // true`
+      },
+      {
+        title: "Специальные случаи",
+        code: `// NaN не равен самому себе
+NaN === NaN;           // false
+NaN == NaN;            // false
+
+// Правильная проверка
+Number.isNaN(NaN);     // true
+Object.is(NaN, NaN);   // true
+
+// +0 и -0
++0 === -0;             // true
+Object.is(+0, -0);     // false`
       }
     ],
-    relatedTopics: ['type-coercion', 'operators']
+    relatedTopics: ['type-coercion', 'operators', 'objects-basic']
   },
   {
     id: 'operators',

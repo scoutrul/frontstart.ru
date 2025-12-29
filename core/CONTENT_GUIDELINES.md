@@ -188,3 +188,138 @@ typeof null возвращает "object" из-за исторического �
 - [ ] Категории/типы явно разделены
 - [ ] Код примеров рабочий и понятный
 
+## 10. Список всех доступных тегов
+
+Ниже представлен полный список всех тегов, используемых в темах базы знаний. Теги используются для категоризации и поиска тем.
+
+**JavaScript основы:**
+- `arrays`, `arrays-basic`, `objects`, `objects-basic`, `objects-advanced`, `object-api`, `object-methods`, `object-assign`, `object-create`, `object.create`, `object.keys`
+- `types`, `typing`, `primitives`, `data-types`, `data-types-overview`, `reference-types`, `references`
+- `variables`, `variables-basic`, `var`, `let`, `const`, `var-let-const`
+- `functions`, `functions-types`, `arrow-functions`, `declaration`, `expression`, `iife`
+- `operators`, `arithmetic`, `logical`, `comparison`, `equality`, `strict-equality`
+- `strings`, `string-api`, `template-literals`
+- `json`, `serialization`, `parsing`, `data`
+- `date`, `date-api`, `time`, `formatting`
+- `strict-mode`, `strict`, `best-practices`
+
+**Область видимости и замыкания:**
+- `scope`, `function-scope`, `block-scope`, `scope-chain`, `lexical-scoping`, `lexical-environment`, `lexical environment`
+- `closure`, `closures-basic`, `encapsulation`, `privacy`, `module pattern`
+- `hoisting`, `hoisting-basic`, `tdz`, `tdz-basic`
+- `блочная область видимости`, `функциональная область видимости`, `область видимости`
+
+**This и контекст:**
+- `this`, `this-basics`, `this-context`, `context`, `context-loss`
+- `bind`, `call`, `apply`, `bind-call-apply`
+
+**Прототипы и ООП:**
+- `prototype`, `prototype-chain`, `prototypes`, `inheritance`, `oop`
+- `constructors`, `new`, `classes`, `ES6`
+- `getprototypeof`, `setprototypeof`, `object.create`
+- `instanceof`, `hasownproperty`, `in`, `properties`
+- `getters`, `setters`, `getownpropertynames`
+
+**Функциональное программирование:**
+- `functional`, `higher-order-functions`, `patterns`
+- `currying`, `partial-application`, `composition`, `compose`
+- `memoization`, `recursion`, `caching`
+- `immutability`, `immutable`, `mutability`, `mutable`, `иммутабельность`, `мутабельность`
+- `map`, `filter`, `reduce`, `forEach`, `some`, `every`, `flat`
+- `destructuring`, `rest`, `parameters`, `spread`, `optional-chaining`, `nullish-coalescing`
+
+**Асинхронность:**
+- `async`, `await`, `async-await`, `async-deep`, `promise`, `promises`
+- `callbacks`, `flow`, `error-handling`
+- `event-loop`, `event loop`, `concurrency`, `non-blocking`, `blocking`
+- `threading`, `single-threaded`, `multithreading`
+
+**Коллекции:**
+- `collections`, `map`, `set`, `maps`, `weakmap`, `weakset`
+- `iterables`, `iterators`, `iteration`
+
+**Окружение выполнения:**
+- `runtime`, `browser`, `nodejs`, `node`, `environment`, `global`
+- `dom`, `bom`, `modules`, `import`, `export`
+- `javascript`, `ecmascript`, `language`, `introduction`
+
+**Оптимизация и производительность:**
+- `performance`, `optimization`, `algorithms`, `scalability`, `data-structures`
+- `complexity`, `big-o`, `profiling`, `metrics`, `lighthouse`
+- `bundling`, `webpack`, `lazy-loading`
+- `runtime`, `caching`, `memory`, `memory-leaks`, `memory-management`, `garbage-collection`, `heap`, `stack`
+
+**Копирование объектов:**
+- `copying`, `shallow-copy`, `deep-copy`, `spread`, `object-assign`, `structured-clone`
+
+**Обработка ошибок:**
+- `errors`, `exceptions`, `try-catch`, `throw`, `error-handling`
+
+**Операторы и управление:**
+- `conditions`, `loops`, `if`, `for`, `while`, `control-flow`
+- `coercion`, `conversion`, `type-coercion`, `truthy-falsy`, `to-primitive`
+
+**Инструменты разработки:**
+- `tools`, `productivity`, `devtools`, `debugging`, `console`
+- `git`, `version-control`, `basics`, `init`, `clone`, `add`, `commit`, `staging`, `status`, `log`, `diff`, `history`, `branches`, `checkout`, `merge`, `remote`, `push`, `pull`, `github`, `conflicts`, `rebase`, `reset`, `revert`, `undo`, `stash`, `temporary`, `fetch`, `upstream`, `cherry-pick`, `reflog`, `recovery`, `hooks`, `automation`, `submodules`, `dependencies`, `workflow`, `team`, `collaboration`
+- `npm`, `package-manager`, `versioning`, `workspaces`, `monorepo`
+- `docker`, `containers`, `volumes`
+- `vps`, `server`, `hosting`, `linux`, `ssh`, `devops`, `infrastructure`, `cloud`
+- `ci-cd`, `cicd`, `github-actions`, `deploy`, `continuous-integration`, `continuous-deployment`, `automation`
+- `terminal`, `bash`, `shell`, `tmux`, `cli`
+- `testing`, `tdd`, `bdd`, `unit-tests`, `e2e`, `jest`, `vitest`, `cypress`, `playwright`, `mocking`, `coverage`, `snapshots`
+- `cursor`, `ai`, `chatgpt`, `copilot`, `ollama`, `local-models`, `custom-models`, `fine-tuning`, `prompts`, `code-generation`
+- `documentation`, `refactoring`, `design`, `architecture`
+
+**Browser API:**
+- `browser-api`, `dom`, `elements`, `events`, `listeners`, `observer`
+- `fetch`, `http`, `networking`, `networks`, `cors`, `same-origin`
+- `storage`, `localStorage`, `sessionStorage`, `indexeddb`, `cookies`
+- `file`, `blob`, `filereader`, `clipboard`, `copy`, `paste`
+- `geolocation`, `camera`, `mediadevices`, `microphone`
+- `service-workers`, `pwa`, `offline`
+- `websocket`, `realtime`, `streaming`
+- `web-workers`, `parallelism`
+- `intersection-observer`, `mutation-observer`, `resize-observer`, `page-visibility`
+- `abort-controller`, `cancellation`
+- `location`, `history`, `routing`, `spa`
+
+**Безопасность:**
+- `security`, `xss`, `csrf`, `cors`, `same-origin`, `safety`
+
+**Специальные темы:**
+- `history`, `netscape`, `brendan-eich`, `java`, `comparison`
+- `high-level`, `abstraction`, `standard-library`
+- `paradigms`, `imperative`, `event-driven`, `programming-styles`
+- `dynamic-typing`, `weak-typing`
+- `call-stack`, `internals`
+- `symbol`, `proxy`, `reflect`, `metaprogramming`
+- `generators`, `yield`
+- `regex`, `regexp`, `regular-expressions`
+- `unique`
+- `factory`, `singleton`, `mixins`
+- `super`
+- `descriptors`, `freeze`, `seal`, `defineProperty`
+- `iterables`, `iterators`
+- `compose`, `pipes`
+- `observer`
+- `responsive`, `viewport`, `layout`
+
+**Версии и стандарты:**
+- `ES6`, `ES2017`
+
+**Дополнительные:**
+- `api`, `methods`, `iteration`, `entries`, `keys`, `values`
+- `call-stack`, `stack`, `heap`
+- `formatting`, `parsing`
+- `scripting`
+- `database`
+- `html`
+- `kubernetes`
+- `processes`
+- `reactivity`
+- `safety`
+- `version-control`
+- `versioning`
+
+**Примечание:** Теги используются для фильтрации и поиска тем. При создании новой темы выбирайте релевантные теги из этого списка для лучшей категоризации.

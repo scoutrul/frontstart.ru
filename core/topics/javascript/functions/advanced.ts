@@ -3,30 +3,59 @@ import { Topic } from '../../../types';
 export const JS_FUNCTIONS_ADVANCED_TOPICS: Topic[] = [
 {
     id: 'currying',
-    title: 'Currying и Partial Application',
+    title: 'Каррирование',
     difficulty: 'advanced',
-    description: 'Currying — преобразование функции с несколькими аргументами в цепочку функций с одним аргументом. Partial Application — фиксация части аргументов функции.',
+    description: 'Каррирование — это приём, при котором функция с несколькими аргументами превращается в последовательность функций, каждая из которых принимает один аргумент. Проще говоря: вместо f(a, b, c) мы пишем f(a)(b)(c). Позволяет частично применять аргументы и создавать более гибкие функции.',
     keyPoints: [
-      'Currying: f(a, b, c) → f(a)(b)(c).',
-      'Partial Application: фиксация части аргументов.',
-      'Создает специализированные функции из общих.',
-      'Улучшает переиспользование и композицию.',
-      'Основа функционального программирования.'
+      'Каррирование: f(a, b, c) → f(a)(b)(c) — функция возвращает функцию.',
+      'Реализуется через замыкания и лексическое окружение.',
+      'Позволяет частично применять аргументы, создавая специализированные функции.',
+      'Полезно для создания универсальных, переиспользуемых функций.',
+      'Основа функционального программирования, связана с this и контекстом через apply или bind.'
     ],
-    funFact: 'Currying назван в честь математика Хаскелла Карри (Haskell Curry), хотя концепция была впервые описана Мозесом Шёнфинкелем (Moses Schönfinkel) в 1920-х годах.',
-    tags: ['currying', 'functional', 'partial-application', 'patterns', 'higher-order-functions', 'closures-basic'],
+    funFact: 'Каррирование названо в честь математика Хаскелла Карри (Haskell Curry), хотя концепция была впервые описана Мозесом Шёнфинкелем (Moses Schönfinkel) в 1920-х годах.',
+    tags: ['currying', 'functional', 'partial-application', 'patterns', 'higher-order-functions', 'closures-basic', 'lexical-scoping', 'lexical-environment', 'closure', 'this', 'this-basics', 'context'],
     examples: [
       {
-        title: "Currying вручную",
-        code: `function add(a) {\n  return function(b) {\n    return function(c) {\n      return a + b + c;\n    };\n  };\n}\n\nadd(1)(2)(3); // 6\n\n// Arrow functions\nconst add = a => b => c => a + b + c;`
+        title: "Простой пример",
+        code: `function sum(a) {
+  return function(b) {
+    return a + b;
+  };
+}
+
+console.log(sum(2)(3)); // 5
+
+// sum(2) возвращает функцию, которая ждёт следующий аргумент
+// sum(2)(3) — сразу вычисляется результат`
       },
       {
-        title: "Универсальный curry",
-        code: `function curry(fn) {\n  return function curried(...args) {\n    if (args.length >= fn.length) {\n      return fn.apply(this, args);\n    }\n    return function(...nextArgs) {\n      return curried.apply(this, args.concat(nextArgs));\n    };\n  };\n}\n\nconst multiply = (a, b, c) => a * b * c;\nconst curriedMultiply = curry(multiply);\n\ncurriedMultiply(2)(3)(4); // 24\ncurriedMultiply(2, 3)(4); // 24`
-      },
-      {
-        title: "Partial Application",
-        code: `function partial(fn, ...fixedArgs) {\n  return function(...remainingArgs) {\n    return fn(...fixedArgs, ...remainingArgs);\n  };\n}\n\nfunction greet(greeting, name) {\n  return \`\${greeting}, \${name}!\`;\n}\n\nconst sayHello = partial(greet, "Hello");\nsayHello("Alice"); // "Hello, Alice!"\n\nconst sayHi = partial(greet, "Hi");\nsayHi("Bob"); // "Hi, Bob!"`
+        title: "Более универсальный вариант",
+        code: `function curry(fn) {
+  return function curried(...args) {
+    if (args.length >= fn.length) { 
+      return fn.apply(this, args);
+    } else {
+      return function(...nextArgs) {
+        return curried.apply(this, args.concat(nextArgs));
+      };
+    }
+  };
+}
+
+// Пример:
+function multiply(a, b, c) {
+  return a * b * c;
+}
+
+const curriedMultiply = curry(multiply);
+
+console.log(curriedMultiply(2)(3)(4)); // 24
+console.log(curriedMultiply(2, 3)(4)); // 24
+
+// Используется замыкание, чтобы запомнить переданные аргументы
+// apply(this, args) позволяет сохранить контекст и объединить все аргументы
+// Можно вызывать через цепочку скобок или передавать несколько аргументов сразу`
       }
     ],
     relatedTopics: ['higher-order-functions', 'closures-basic', 'functions-types']

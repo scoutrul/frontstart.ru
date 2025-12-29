@@ -5,41 +5,113 @@ export const JS_ASYNC_INTERMEDIATE_TOPICS: Topic[] = [
     id: 'promises',
     title: 'Promises (Промисы)',
     difficulty: 'intermediate',
-    description: 'Промис — объект для асинхронных операций. Состояния: pending, fulfilled, rejected. Методы: then, catch, finally. Решает проблему Callback Hell.',
+    description: 'Promise — объект, представляющий результат асинхронной операции, который может быть выполнен (resolved) или отклонён (rejected). Решает проблему callback hell — вложенные коллбэки, трудночитаемый код, сложная обработка ошибок. Методы: .then() для обработки успешного выполнения, .catch() для обработки ошибок, .finally() выполняется в любом случае.',
     keyPoints: [
-      'Состояния: pending, fulfilled, rejected.',
-      'Методы: then, catch, finally.',
-      'Promise.all: все должны успешно выполниться, иначе ошибка.',
-      'Promise.allSettled: ждет все промисы, возвращает результаты и ошибки.',
-      'Promise.race: возвращает первый завершенный (успех или ошибка).',
-      'Promise.any: возвращает первый успешный, ошибка только если все провалились.'
+      'Promise решает проблему callback hell — вложенные коллбэки, трудночитаемый код, сложная обработка ошибок.',
+      'Состояния: pending, fulfilled (resolved), rejected.',
+      'Методы: .then() — обработка успешного выполнения, .catch() — обработка ошибок, .finally() — выполняется в любом случае.',
+      'Promise.all([...]) — ждёт все промисы, отклоняется при первом reject.',
+      'Promise.allSettled([...]) — ждёт все промисы, возвращает результат каждого (успех или ошибка).',
+      'Promise.race([...]) — первый промис, который выполнится или даст ошибку, определяет результат.',
+      'Promise.any([...]) — ждёт первый успешный промис, игнорирует ошибки всех остальных.'
     ],
     funFact: 'Промисы были стандартизированы в ES6 (2015), но концепция пришла из библиотек (Q, Bluebird). Они решают проблему "callback hell" и делают асинхронный код более читаемым.',
-    tags: ['promise', 'async', 'flow', 'async-deep', 'callbacks', 'async-await'],
+    tags: ['promise', 'async', 'flow', 'async-deep', 'callbacks', 'async-await', 'callback-hell'],
     examples: [
       {
-        title: "Цепочка промисов",
-        code: `fetch(url)\n  .then(res => res.json())\n  .then(data => console.log(data))\n  .catch(err => console.error(err));`
+        title: "Проблема с коллбэками (callback hell)",
+        code: `// Раньше асинхронность делали через коллбэки
+setTimeout(() => {
+  console.log('Step 1');
+  setTimeout(() => {
+    console.log('Step 2');
+    setTimeout(() => {
+      console.log('Step 3');
+    }, 1000);
+  }, 1000);
+}, 1000);
+
+// Проблемы: вложенные коллбэки, трудночитаемый код, сложная обработка ошибок`
+      },
+      {
+        title: "Promise решает проблему",
+        code: `fetch('/api/data')
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
+// Читаемый код, простая обработка ошибок`
       },
       {
         title: "Создание промиса",
         code: `const promise = new Promise((resolve, reject) => {\n  setTimeout(() => {\n    resolve("Success!");\n  }, 1000);\n});\n\npromise.then(result => console.log(result));`
       },
       {
-        title: "Promise.all - все должны успешно выполниться",
-        code: `const p1 = Promise.resolve(1);\nconst p2 = Promise.resolve(2);\nconst p3 = Promise.reject('Error');\n\nPromise.all([p1, p2, p3])\n  .then(console.log) // не выполнится\n  .catch(console.error); // "Error"\n\n// Если все успешны:\nPromise.all([p1, p2]).then(console.log); // [1, 2]`
+        title: "Promise.all - ждёт все промисы, отклоняется при первом reject",
+        code: `const p1 = Promise.resolve(1);
+const p2 = Promise.resolve(2);
+const p3 = Promise.reject('Error');
+
+Promise.all([p1, p2, p3])
+  .then(console.log) // не выполнится
+  .catch(console.error); // "Error"
+
+// Если все успешны:
+Promise.all([p1, p2]).then(console.log); // [1, 2]`
       },
       {
-        title: "Promise.allSettled - ждет все промисы",
-        code: `const p1 = Promise.resolve(1);\nconst p2 = Promise.reject('Error');\nconst p3 = Promise.resolve(3);\n\nPromise.allSettled([p1, p2, p3]).then(results => {\n  console.log(results);\n  // [\n  //   { status: 'fulfilled', value: 1 },\n  //   { status: 'rejected', reason: 'Error' },\n  //   { status: 'fulfilled', value: 3 }\n  // ]\n});`
+        title: "Promise.allSettled - ждёт все промисы, возвращает результат каждого",
+        code: `const p1 = Promise.resolve(1);
+const p2 = Promise.reject('Error');
+const p3 = Promise.resolve(3);
+
+Promise.allSettled([p1, p2, p3]).then(results => {
+  console.log(results);
+  // [
+  //   { status: 'fulfilled', value: 1 },
+  //   { status: 'rejected', reason: 'Error' },
+  //   { status: 'fulfilled', value: 3 }
+  // ]
+});`
       },
       {
-        title: "Promise.race - первый завершенный",
-        code: `const fast = new Promise(resolve => setTimeout(() => resolve('Fast'), 100));\nconst slow = new Promise(resolve => setTimeout(() => resolve('Slow'), 500));\n\nPromise.race([fast, slow]).then(console.log); // "Fast"\n\n// С ошибкой:\nconst error = Promise.reject('Error');\nPromise.race([fast, error])\n  .then(console.log) // не выполнится\n  .catch(console.error); // "Error" (ошибка быстрее)`
+        title: "Promise.race - первый промис, который выполнится или даст ошибку",
+        code: `const fast = new Promise(resolve => setTimeout(() => resolve('Fast'), 100));
+const slow = new Promise(resolve => setTimeout(() => resolve('Slow'), 500));
+
+Promise.race([fast, slow]).then(console.log); // "Fast"
+
+// С ошибкой:
+const error = Promise.reject('Error');
+Promise.race([fast, error])
+  .then(console.log) // не выполнится
+  .catch(console.error); // "Error" (ошибка быстрее)`
       },
       {
-        title: "Promise.any - первый успешный",
-        code: `const p1 = Promise.reject('Error 1');\nconst p2 = Promise.resolve('Success 2');\nconst p3 = Promise.reject('Error 3');\n\nPromise.any([p1, p2, p3])\n  .then(console.log); // "Success 2"\n\n// Если все провалились:\nPromise.any([p1, p3])\n  .then(console.log) // не выполнится\n  .catch(err => console.error(err.errors)); // ['Error 1', 'Error 3']`
+        title: "Promise.any - ждёт первый успешный промис, игнорирует ошибки",
+        code: `const p1 = Promise.reject('Error 1');
+const p2 = Promise.resolve('Success 2');
+const p3 = Promise.reject('Error 3');
+
+Promise.any([p1, p2, p3])
+  .then(console.log); // "Success 2"
+
+// Если все провалились:
+Promise.any([p1, p3])
+  .then(console.log) // не выполнится
+  .catch(err => console.error(err.errors)); // ['Error 1', 'Error 3']`
+      },
+      {
+        title: "Методы работы с несколькими промисами",
+        code: `const p1 = fetch('/api/users');
+const p2 = fetch('/api/posts');
+const p3 = fetch('/api/comments');
+
+// Все должны успешно выполниться
+Promise.all([p1, p2, p3]).then(results => console.log(results));
+
+// Первый завершенный (успех или ошибка)
+Promise.race([p1, p2, p3]).then(first => console.log(first));`
       }
     ],
     relatedTopics: ['event-loop', 'async-await'],
@@ -48,21 +120,32 @@ export const JS_ASYNC_INTERMEDIATE_TOPICS: Topic[] = [
     id: 'async-await',
     title: 'Async / Await',
     difficulty: 'intermediate',
-    description: 'async/await — синтаксический сахар над промисами. async функция всегда возвращает промис. await приостанавливает выполнение до разрешения промиса, не блокируя основной поток.',
+    description: 'async/await — синтаксический сахар над промисами. Позволяет писать асинхронный код как синхронный (читается сверху вниз). Вызов await останавливает выполнение функции до получения результата промиса. async функция всегда возвращает промис. Обработка ошибок через try/catch делает код более линейным и читаемым.',
     keyPoints: [
-      'async всегда возвращает промис.',
-      'await приостанавливает функцию до выполнения промиса.',
+      'Async/await делает код более линейным и читаемым, обработка ошибок через try/catch.',
+      'async функция всегда возвращает промис.',
+      'await приостанавливает выполнение функции до получения результата промиса.',
+      'Позволяет писать асинхронный код как синхронный (читается сверху вниз).',
       'Обработка ошибок через try/catch.',
       'Необработанные ошибки создают rejected промис.',
-      'Потерянные промисы: забытый await или catch.',
-      'Всегда обрабатывай ошибки явно.'
+      'Потерянные промисы: забытый await или catch.'
     ],
     funFact: 'async/await был добавлен в ES2017 и стал самым популярным способом работы с асинхронностью. Он делает асинхронный код похожим на синхронный, что значительно улучшает читаемость.',
     tags: ['async', 'await', 'ES2017', 'async-deep', 'promises', 'error-handling'],
     examples: [
       {
-        title: "Чистая асинхронность",
-        code: `async function load() {\n  try {\n    const res = await fetch(url);\n    const data = await res.json();\n    return data;\n  } catch(e) { /* ... */ }\n}`
+        title: "Базовое использование async/await",
+        code: `async function fetchData() {
+  try {
+    const res = await fetch('/api/data');
+    const data = await res.json();
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Код читается сверху вниз, как синхронный`
       },
       {
         title: "async всегда возвращает промис",
