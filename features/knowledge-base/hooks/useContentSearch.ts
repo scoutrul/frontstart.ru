@@ -62,7 +62,7 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
     }
 
     // Ищем темы, где хотя бы одно слово найдено в контенте
-    return allTopicsWithMeta.filter(({ topic }) => {
+    const results = allTopicsWithMeta.filter(({ topic }) => {
       const searchText = [
         topic.title,
         topic.description,
@@ -72,6 +72,23 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
       ].join(' ').toLowerCase();
 
       return searchWords.some(word => searchText.includes(word));
+    });
+
+    // Сортируем результаты: сначала темы с совпадением в заголовке
+    return results.sort((a, b) => {
+      const aTitleLower = a.topic.title.toLowerCase();
+      const bTitleLower = b.topic.title.toLowerCase();
+      
+      // Проверяем, есть ли совпадение в заголовке
+      const aHasMatchInTitle = searchWords.some(word => aTitleLower.includes(word));
+      const bHasMatchInTitle = searchWords.some(word => bTitleLower.includes(word));
+      
+      // Если один имеет совпадение в заголовке, а другой нет - приоритет первому
+      if (aHasMatchInTitle && !bHasMatchInTitle) return -1;
+      if (!aHasMatchInTitle && bHasMatchInTitle) return 1;
+      
+      // Если оба имеют или не имеют совпадение в заголовке - оставляем исходный порядок
+      return 0;
     });
   }, [contentSearchQuery, allTopicsWithMeta, currentTopicId]);
 
