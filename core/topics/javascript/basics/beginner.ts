@@ -3,33 +3,136 @@ import { Topic } from '../../../types';
 export const JS_BASICS_BEGINNER_TOPICS: Topic[] = [
 {
     id: 'data-types',
-    title: 'Типы данных',
+    title: 'Типы данных и типизация',
     difficulty: 'beginner',
-    description: 'JavaScript имеет 8 типов: 7 примитивов и объекты. Примитивы передаются по значению, объекты по ссылке.',
+    description: 'JavaScript имеет 8 типов: 7 примитивов и объекты. Язык использует динамическую и слабую типизацию — типы определяются во время выполнения, переменные могут менять тип, происходит автоматическое преобразование типов при операциях.',
     keyPoints: [
-      'Примитивы: number, string, boolean, null, undefined, symbol, bigint.',
-      'Объекты: все остальное (массивы, функции, даты — это объекты).',
-      'Примитивы иммутабельны, объекты мутабельны.',
-      'Передача по значению: примитивы копируются, изменения не влияют на оригинал.',
-      'Передача по ссылке: объекты копируется ссылка, изменения влияют на оригинал.'
+      '8 типов: 7 примитивов (number, string, boolean, null, undefined, symbol, bigint) и объекты.',
+      'Динамическая типизация: тип определяется во время выполнения, переменные могут менять тип.',
+      'Слабая типизация: автоматическое преобразование типов при операциях ("5" + 3 = "53").',
+      'Примитивы: передаются по значению, иммутабельны, копируются при присваивании.',
+      'Объекты: передаются по ссылке, мутабельны, изменения влияют на все ссылки.',
+      'Встроенные объекты: Object, Array, Function, Date, RegExp, Map, Set, WeakMap, WeakSet, Error, Promise, TypedArray, ArrayBuffer.',
+      'Массивы и функции — это объекты, могут иметь свойства и методы.',
+      'typeof null возвращает "object" — исторический баг языка.'
     ],
-    funFact: 'typeof null возвращает "object" из-за исторического бага в языке — это было исправлено в спецификации, но оставлено для обратной совместимости.',
-    tags: ['types', 'primitives', 'objects', 'basics', 'references', 'data-types-overview'],
+    funFact: 'В JavaScript массивы и функции технически являются объектами. Это означает, что можно добавлять им свойства, как обычным объектам, хотя это редко используется на практике. typeof null возвращает "object" из-за исторического бага в языке.',
+    tags: ['types', 'primitives', 'objects', 'basics', 'references', 'dynamic-typing', 'weak-typing', 'type-coercion', 'collections', 'built-in-objects'],
     examples: [
       {
-        title: "Проверка типов",
-        code: `typeof 42; // "number"\ntypeof "text"; // "string"\ntypeof true; // "boolean"\ntypeof null; // "object" (баг!)\ntypeof undefined; // "undefined"\ntypeof []; // "object"\ntypeof {}; // "object"`
+        title: "Проверка типов через typeof",
+        code: `typeof 42; // "number"
+typeof "hello"; // "string"
+typeof true; // "boolean"
+typeof null; // "object" (баг языка!)
+typeof undefined; // "undefined"
+typeof []; // "object"
+typeof {}; // "object"
+typeof function() {}; // "function"`
       },
       {
-        title: "Примитивы vs объекты",
-        code: `let a = 5;\nlet b = a;\nb = 10;\nconsole.log(a); // 5 (не изменилось)\n\nlet obj1 = { x: 1 };\nlet obj2 = obj1;\nobj2.x = 2;\nconsole.log(obj1.x); // 2 (изменилось!)`
+        title: "Динамическая типизация - переменные могут менять тип",
+        code: `let value = 42; // number
+value = "hello"; // string (тип изменился)
+value = true; // boolean (тип изменился)
+value = {}; // object (тип изменился)
+
+// В статически типизированных языках это невозможно`
+      },
+      {
+        title: "Слабая типизация - автоматическое преобразование",
+        code: `"5" + 3; // "53" (конкатенация)
+"5" - 3; // 2 (преобразование в число)
+"5" * "2"; // 10
+!0; // true (преобразование в boolean)
+
+// В строго типизированных языках это вызвало бы ошибку`
+      },
+      {
+        title: "Примитивы vs объекты - передача по значению и ссылке",
+        code: `// Примитивы - по значению
+let a = 5;
+let b = a;
+b = 10;
+console.log(a); // 5 (не изменилось)
+
+// Объекты - по ссылке
+let obj1 = { x: 1 };
+let obj2 = obj1;
+obj2.x = 2;
+console.log(obj1.x); // 2 (изменилось!)`
       },
       {
         title: "Массивы и функции - это объекты",
-        code: `const arr = [1, 2];\narr.prop = "test";\nconsole.log(arr.prop); // "test"\n\nfunction fn() {}\nfn.prop = "test";\nconsole.log(fn.prop); // "test"`
+        code: `const arr = [1, 2];
+arr.prop = "test";
+console.log(arr.prop); // "test"
+
+function fn() {}
+fn.prop = "test";
+console.log(fn.prop); // "test"
+
+// Можно использовать методы объектов
+Object.keys(arr); // ["0", "1", "2", "prop"]`
+      },
+      {
+        title: "Встроенные объекты",
+        code: `// Object
+const obj = { name: "Alice" };
+
+// Array
+const arr = [1, 2, 3];
+
+// Function
+function fn() {}
+
+// Date
+const date = new Date();
+
+// RegExp
+const regex = /pattern/;
+
+// Map и Set
+const map = new Map();
+const set = new Set();
+
+// Promise
+const promise = Promise.resolve();
+
+// Error
+const error = new Error('message');`
+      },
+      {
+        title: "null — особый случай",
+        code: `typeof null; // "object" (исторический баг)
+null instanceof Object; // false
+Object.prototype.toString.call(null); // "[object Null]"
+
+// Правильная проверка:
+value === null;`
+      },
+      {
+        title: "Date, RegExp, Map, Set — ссылочные типы",
+        code: `// Date — ссылочный тип
+const date1 = new Date('2023-01-01');
+const date2 = date1;
+date2.setMonth(5);
+console.log(date1.getMonth()); // 5 (изменилось!)
+
+// RegExp — объект, передаётся по ссылке
+const r1 = /a/g;
+const r2 = r1;
+r2.lastIndex = 3;
+console.log(r1.lastIndex); // 3 (изменилось!)
+
+// Map и Set — ссылочные коллекции
+const map1 = new Map([['a', 1]]);
+const map2 = map1;
+map2.set('b', 2);
+console.log(map1.has('b')); // true (изменилось!)`
       }
     ],
-    relatedTopics: ['type-coercion', 'functions-types']
+    relatedTopics: ['type-coercion', 'functions-types', 'comparison', 'objects-basic', 'arrays-basic', 'map-set', 'date-api']
   },
 {
     id: 'type-coercion',
@@ -376,18 +479,19 @@ Object.is(+0, -0);     // false`
   },
 {
     id: 'strict-mode',
-    title: 'Strict mode',
+    title: 'Строгий и нестрогий режимы',
     difficulty: 'beginner',
-    description: "'use strict' включает строгий режим. Запрещает неявное создание глобальных переменных, дублирование параметров. this в функциях undefined вместо window.",
+    description: 'Строгий режим делает JavaScript более безопасным и предсказуемым, запрещая небезопасные практики. Современные инструменты разработки используют его по умолчанию.',
     keyPoints: [
       "'use strict': включается в начале файла или функции.",
       'Запрещает неявные глобальные переменные (без var/let/const).',
       'Запрещает дублирование параметров функции.',
       'this в функциях = undefined (не window).',
+      'Современные фреймворки используют строгий режим по умолчанию.',
       'Улучшает производительность и помогает находить ошибки.'
     ],
-    funFact: "'use strict' — это обычная строка, которая игнорируется старыми браузерами. Это сделано для обратной совместимости — старые движки просто проигнорируют её.",
-    tags: ['strict-mode', 'best-practices', 'errors', 'performance', 'strict'],
+    funFact: 'Строгий режим был введен в ES5 (2009) для исправления ошибок языка. Интересно, что "use strict" — это обычная строка, которая игнорируется старыми движками, но активирует строгий режим в новых.',
+    tags: ['strict-mode', 'best-practices', 'errors', 'performance', 'this'],
     examples: [
       {
         title: "Включение strict mode",
@@ -400,8 +504,12 @@ Object.is(+0, -0);     // false`
       {
         title: "this в strict mode",
         code: `"use strict";\n\nfunction test() {\n  console.log(this); // undefined\n}\n\ntest();\n\n// В обычном режиме this = window (в браузере)\n// В strict mode this = undefined`
+      },
+      {
+        title: "Современные инструменты",
+        code: `// ES6 модули автоматически в strict mode\nexport const x = 1;\n\n// Webpack, Babel, TypeScript используют strict mode\n// Классы автоматически в strict mode\nclass MyClass {\n  constructor() {\n    // В конструкторе this указывает на экземпляр класса\n    this.name = 'Example';\n    console.log(this); // MyClass { name: 'Example' }\n  }\n  \n  method() {\n    // В методах класса this также указывает на экземпляр\n    return this.name;\n  }\n}\n\n// В обычных функциях (вызванных без контекста) в strict mode:\nfunction regularFunction() {\n  console.log(this); // undefined (в strict mode)\n}\n\nregularFunction(); // undefined`
       }
     ],
-    relatedTopics: ['var-let-const', 'this-basics', 'functions-types']
+    relatedTopics: ['var-let-const', 'this-basics', 'functions-types', 'modules']
   }
 ];

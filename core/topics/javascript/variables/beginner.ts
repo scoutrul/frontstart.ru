@@ -5,18 +5,34 @@ export const JS_VARIABLES_BEGINNER_TOPICS: Topic[] = [
     id: 'var-let-const',
     title: 'var, let, const',
     difficulty: 'beginner',
-    description: 'var имеет функциональную область видимости и всплывает. let и const имеют блочную область видимости. const запрещает переприсваивание ссылки, но не делает объект неизменяемым.',
+    description: 'JavaScript предоставляет три способа объявления переменных: var, let и const. Каждый имеет свои особенности области видимости и поведения, что влияет на структуру и надежность кода.',
     keyPoints: [
-      'var: функциональная область видимости, допускает повторное объявление, всплывает (hoisting).',
-      'let/const: блочная область видимости, не допускают повторного объявления.',
-      'const требует инициализации и запрещает переопределение ссылки.'
+      'var: функциональная область видимости, допускает повторное объявление, всплывает (hoisting) — объявление поднимается, присвоение остаётся на месте.',
+      'var в глобальном контексте становится свойством глобального объекта (window в браузере, global в Node.js).',
+      'let/const: блочная область видимости, также всплывают, но доступ до объявления запрещён (TDZ — временная мёртвая зона).',
+      'let/const не допускают повторного объявления в одной области видимости.',
+      'const требует инициализации при объявлении и запрещает переопределение ссылки.',
+      'const не запрещает изменение свойств объектов или элементов массивов, если объект/массив объявлен через const.',
+      'Scope: глобальная (вне функций), функциональная (var внутри функции), блочная (let/const внутри { ... }).'
     ],
-    funFact: 'const был добавлен в ES6 вместе с let. До этого использовался только var, что приводило к проблемам с областью видимости и hoisting.',
-    tags: ['variables', 'scope', 'let', 'const', 'hoisting', 'ES6', 'variables-basic'],
+    funFact: 'var существует с самого начала JavaScript (1995), а let и const были добавлены только в ES6 (2015). var считается устаревшим и не рекомендуется к использованию.',
+    tags: ['variables', 'scope', 'let', 'const', 'var', 'ES6', 'hoisting', 'tdz', 'variables-basic'],
     examples: [
       {
-        title: "Разница областей видимости",
-        code: `if (true) {\n  var x = 5;\n  let y = 10;\n}\nconsole.log(x); // 5\n// console.log(y); // ReferenceError`
+        title: "Как работает функциональная область видимости (var)",
+        code: `function example() {\n  console.log(a); // undefined — переменная всплыла\n  var a = 10;\n  console.log(a); // 10\n}\nexample();\n\n// JS под капотом делает примерно так:\n// function example() {\n//   var a;           // объявление всплыло\n//   console.log(a);  // undefined\n//   a = 10;          // присвоение остаётся на месте\n//   console.log(a);  // 10\n// }`
+      },
+      {
+        title: "var в глобальном контексте",
+        code: `var g = 123;\nconsole.log(window.g); // 123 (в браузере)\n// var становится свойством глобального объекта`
+      },
+      {
+        title: "Как работает блочная область видимости (let/const)",
+        code: `{\n  let b = 5;\n  const c = 10;\n  console.log(b, c); // 5, 10\n}\nconsole.log(b, c); // ReferenceError — переменные не видны вне блока\n\n// Пример с циклом:\nfor (let i = 0; i < 3; i++) {\n  console.log(i); // 0, 1, 2\n}\nconsole.log(i); // ReferenceError — i не существует за пределами блока`
+      },
+      {
+        title: "Разница областей видимости наглядно",
+        code: `if (true) {\n  var x = 5;  // функциональная область — видна за пределами блока\n  let y = 10; // блочная область — видна только внутри блока\n}\nconsole.log(x); // 5\n// console.log(y); // ReferenceError`
       },
       {
         title: "Повторное объявление",
@@ -24,7 +40,11 @@ export const JS_VARIABLES_BEGINNER_TOPICS: Topic[] = [
       },
       {
         title: "const и объекты",
-        code: `const obj = { x: 1 };\nobj.x = 2; // OK (изменение свойства)\nobj.y = 3; // OK (добавление свойства)\n// obj = {}; // TypeError (переприсваивание)`
+        code: `const obj = { x: 1 };\nobj.x = 2; // OK — изменяем свойства\nobj.y = 3; // OK — добавляем новые свойства\n// obj = {}; // TypeError — переприсваивание ссылки запрещено`
+      },
+      {
+        title: "Области видимости вместе",
+        code: `// Глобальная область\nconst global = "global";\n\nfunction test() {\n  // Функциональная область (var)\n  var funcVar = "func";\n  \n  if (true) {\n    // Блочная область (let/const)\n    let blockVar = "block";\n    const blockConst = "block";\n    console.log(blockVar, blockConst); // block block\n  }\n  \n  console.log(funcVar); // func\n  // console.log(blockVar); // ReferenceError\n}`
       }
     ],
     relatedTopics: ['functions-types', 'hoisting-basic', 'tdz-basic', 'function-scope', 'block-scope', 'mutability-immutability'],

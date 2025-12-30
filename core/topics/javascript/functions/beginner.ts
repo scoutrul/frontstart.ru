@@ -5,34 +5,92 @@ export const JS_FUNCTIONS_BEGINNER_TOPICS: Topic[] = [
     id: 'functions-types',
     title: 'Типы функций',
     difficulty: 'beginner',
-    description: 'Function Declaration всплывает, Function Expression не всплывает. Arrow Function не имеет this, arguments, нельзя использовать как конструктор. IIFE — самовызывающаяся функция.',
+    description: 'Функции в JavaScript бывают разных типов и имеют особенности создания, области видимости и поведения this. Function Declaration всплывает, Function Expression не всплывает. Arrow Function не имеет this, arguments, нельзя использовать как конструктор. Функции-конструкторы создают объекты через prototype. Генераторы позволяют приостанавливать выполнение.',
     keyPoints: [
-      'Function Declaration всплывает, можно вызывать до объявления.',
-      'Function Expression не всплывает, присваивается переменной.',
-      'Arrow Function: нет this, arguments, super, нельзя new.',
+      'Function Declaration: полностью всплывает, можно вызывать до объявления.',
+      'Function Expression: не всплывает, присваивается переменной.',
+      'Arrow Function: лексический this (берут из внешнего контекста), нет arguments, нет prototype, нельзя использовать с new.',
+      'Функции-конструкторы: вызываются с new, создают объекты через prototype.',
+      'Генераторы (function*): создают итераторы, позволяют приостанавливать выполнение через yield.',
       'IIFE изолирует область видимости, используется для модулей.'
     ],
-    funFact: 'Arrow functions были добавлены в ES6 и изначально назывались "fat arrow functions" из-за синтаксиса =>. Они были вдохновлены языками CoffeeScript и Haskell.',
-    tags: ['functions', 'arrow-functions', 'declaration', 'expression', 'ES6', 'iife'],
+    funFact: 'Стрелочные функции никогда не могут быть конструкторами: попытка вызвать их с new вызовет TypeError. Arrow functions были добавлены в ES6 и изначально назывались "fat arrow functions" из-за синтаксиса =>.',
+    tags: ['functions', 'arrow-functions', 'declaration', 'expression', 'ES6', 'iife', 'constructors', 'generators'],
     examples: [
       {
-        title: "Function Declaration",
-        code: `sayHi(); // работает (всплывает)\nfunction sayHi() {\n  console.log("Hi");\n}`
-      },
-      {
-        title: "Function Expression",
-        code: `// sayHi(); // ошибка (не всплывает)\nconst sayHi = function() {\n  console.log("Hi");\n};`
+        title: "Function Declaration vs Function Expression",
+        code: `// Declaration - всплывает
+sayHi(); // "Hi"
+function sayHi() {
+  console.log("Hi");
+}
+
+// Expression - не всплывает
+// sayHello(); // ReferenceError
+const sayHello = function() {
+  console.log("Hello");
+};`
       },
       {
         title: "Arrow Function",
-        code: `const add = (a, b) => a + b;\nconst greet = name => "Hello " + name;\nconst log = () => console.log("Hi");\n\n// Нет this, arguments\nconst obj = {\n  name: "Test",\n  arrow: () => this.name, // undefined\n  regular: function() { return this.name; } // "Test"\n};`
+        code: `const add = (a, b) => a + b;
+const greet = name => "Hello " + name;
+const log = () => console.log("Hi");
+
+// Нет this, arguments
+const obj = {
+  name: "Test",
+  arrow: () => this.name, // undefined (this из глобального контекста)
+  regular: function() { return this.name; } // "Test"
+};
+
+// Нет arguments
+const arrow = () => {
+  // console.log(arguments); // ReferenceError
+  const arrow2 = (...args) => console.log(args); // правильно через rest
+  arrow2(1, 2, 3); // [1, 2, 3]
+};`
+      },
+      {
+        title: "Функции-конструкторы",
+        code: `function Person(name) {
+  this.name = name;
+}
+
+Person.prototype.sayHi = function() {
+  return \`Hi, I'm \${this.name}\`;
+};
+
+const person = new Person("Alice");
+console.log(person.sayHi()); // "Hi, I'm Alice"`
+      },
+      {
+        title: "Генераторы",
+        code: `function* counter() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const gen = counter();
+console.log(gen.next().value); // 1
+console.log(gen.next().value); // 2
+console.log(gen.next().value); // 3`
       },
       {
         title: "IIFE (Immediately Invoked Function Expression)",
-        code: `(function() {\n  const private = "secret";\n  // изолированная область видимости\n})();\n\n// Современная альтернатива — блок кода\n{\n  const private = "secret";\n}`
+        code: `(function() {
+  const private = "secret";
+  // изолированная область видимости
+})();
+
+// Современная альтернатива — блок кода
+{
+  const private = "secret";
+}`
       }
     ],
-    relatedTopics: ['data-types', 'hoisting-basic', 'this-basics'],
+    relatedTopics: ['data-types', 'hoisting-basic', 'this-basics', 'prototype-chain', 'iterators'],
   },
 {
     id: 'this-basics',

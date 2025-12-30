@@ -285,9 +285,7 @@ typeof null возвращает "object" из-за исторического �
 - `location`, `history`, `routing`, `spa`
 
 **Безопасность:**
-- `security`, `xss`, `csrf`, `cors`, `same-origin`, `safety`
-
-**Специальные темы:**
+- `security`, `xss`, `csrf`, `cors`, `same-origin`, `safety`**Специальные темы:**
 - `history`, `netscape`, `brendan-eich`, `java`, `comparison`
 - `high-level`, `abstraction`, `standard-library`
 - `paradigms`, `imperative`, `event-driven`, `programming-styles`

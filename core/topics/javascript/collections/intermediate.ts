@@ -151,16 +151,18 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
     keyPoints: [
       'Поверхностное копирование: копируется только первый уровень, вложенные объекты ссылаются на оригинал.',
       'Глубокое копирование: копируются все уровни, создаются новые объекты.',
-      'Spread и Object.assign: поверхностное копирование.',
-      'structuredClone: глубокое копирование (современный способ).',
+      'Spread и Object.assign: поверхностное копирование объектов.',
+      'slice: поверхностное копирование массивов (arr.slice()).',
+      'structuredClone: глубокое копирование (современный способ, поддерживает Map, Set, Date, ArrayBuffer).',
       'JSON.parse/stringify: глубокое, но с ограничениями (нет функций, Date, Symbol, BigInt).',
-      'Рекурсивное копирование: ручная реализация для полного контроля.'
+      'Рекурсивное копирование: ручная реализация для полного контроля над всеми типами.',
+      'Библиотеки: lodash.cloneDeep для надежного глубокого копирования.'
     ],
     tags: ['objects', 'copying', 'immutability', 'objects-advanced'],
     examples: [
       {
         title: "Поверхностное копирование",
-        code: `const original = { name: "Alice", address: { city: "Moscow" } };\n\n// Spread оператор\nconst shallow1 = { ...original };\n\n// Object.assign\nconst shallow2 = Object.assign({}, original);\n\n// Изменение вложенного объекта влияет на оригинал\nshallow1.address.city = "SPB";\nconsole.log(original.address.city); // "SPB" (изменилось!)\n\n// Изменение первого уровня не влияет\nshallow1.name = "Bob";\nconsole.log(original.name); // "Alice" (не изменилось)`
+        code: `const original = { name: "Alice", address: { city: "Moscow" } };\n\n// Spread оператор\nconst shallow1 = { ...original };\n\n// Object.assign\nconst shallow2 = Object.assign({}, original);\n\n// slice для массивов\nconst arr = [1, 2, 3];\nconst arrCopy = arr.slice();\n\n// Изменение вложенного объекта влияет на оригинал\nshallow1.address.city = "SPB";\nconsole.log(original.address.city); // "SPB" (изменилось!)\n\n// Изменение первого уровня не влияет\nshallow1.name = "Bob";\nconsole.log(original.name); // "Alice" (не изменилось)`
       },
       {
         title: "Глубокое копирование через structuredClone",
