@@ -2,6 +2,225 @@ import { Topic } from '../../../types';
 
 export const JS_ADVANCED_ADVANCED_TOPICS: Topic[] = [
 {
+    id: 'js-parsing-and-execution',
+    title: 'Парсинг и выполнение',
+    difficulty: 'advanced',
+    description: 'Перед выполнением JavaScript-кода движок сначала анализирует его структуру и подготавливает окружение выполнения. Этот процесс включает парсинг исходного текста в структурное представление и разделение выполнения на фазу создания и фазу исполнения. Понимание этих этапов объясняет hoisting, Temporal Dead Zone и порядок доступа к переменным.',
+    additionalDescription: 'AST используется движком как внутренняя модель программы: по нему определяются области видимости, объявления и допустимость операций. Фаза создания не вычисляет выражения и не вызывает функции — она работает только со структурой кода. Именно поэтому доступ к `var` возможен до присваивания, а доступ к `let` и `const` до инициализации запрещён.',
+    keyPoints: [
+      'Парсинг: преобразование исходного текста программы в структурное представление, понятное движку (не строка, а дерево).',
+      'AST (Abstract Syntax Tree): абстрактное синтаксическое дерево, описывающее структуру кода (объявления, выражения, блоки).',
+      'Фаза создания: подготовка контекста выполнения, регистрация объявлений и выделение памяти без исполнения кода.',
+      'Фаза выполнения: последовательное выполнение инструкций сверху вниз после завершения фазы создания.',
+      'Hoisting: результат фазы создания, при котором объявления `var` и `function declaration` доступны до строки объявления.',
+      'Temporal Dead Zone (TDZ): состояние переменных `let` и `const` между началом области видимости и инициализацией.'
+    ],
+    funFact: 'Hoisting — это не отдельный механизм языка, а побочный эффект того, что движок обязан знать все объявления ещё до начала выполнения кода.',
+    tags: ['javascript', 'parsing', 'internals', 'hoisting', 'tdz', 'variables', 'var', 'let', 'const', 'ES6', 'runtime', 'AST'],
+    examples: [
+      {
+        title: 'Hoisting и var',
+        code: `console.log(a); // undefined (переменная зарегистрирована на фазе создания)
+var a = 10;
+console.log(a); // 10 (присваивание произошло на фазе выполнения)`
+      },
+      {
+        title: 'Function Declaration и фаза создания',
+        code: `sayHi(); // работает, функция доступна до строки объявления
+
+function sayHi() {
+  console.log('Hi');
+}`
+      },
+      {
+        title: 'Temporal Dead Zone',
+        code: `console.log(x); // ReferenceError: x is not defined
+let x = 5;
+
+console.log(y); // ReferenceError
+const y = 10;`
+      },
+      {
+        title: 'Фаза создания не выполняет код',
+        code: `var a = getValue(); // getValue НЕ вызывается на фазе создания
+
+function getValue() {
+  console.log('side effect');
+  return 42;
+}
+
+console.log(a); // 'side effect', 42 — вызов происходит только на фазе выполнения`
+      }
+    ],
+    relatedTopics: ['hoisting-basic', 'tdz-basic', 'lexical-env', 'call-stack']
+  },
+{
+    id: 'execution-context',
+    title: 'Execution Context (Контекст выполнения)',
+    difficulty: 'advanced',
+    description: 'Execution Context (контекст выполнения) — окружение, в котором выполняется JavaScript-код. Каждый контекст содержит информацию о переменных, функциях, this, и ссылку на внешнее лексическое окружение. Контексты создаются при вызове функций и управляются через Call Stack. Понимание контекстов выполнения объясняет работу scope, this, closures и hoisting.',
+    additionalDescription: 'Контекст выполнения состоит из трех компонентов: Variable Environment (переменные var), Lexical Environment (let/const, функции), и This Binding (значение this). Глобальный контекст создается при загрузке скрипта, контекст функции — при каждом вызове. Контексты связаны через Scope Chain, что позволяет функциям обращаться к переменным из внешних областей видимости.',
+    keyPoints: [
+      'Типы контекстов: Global Execution Context (глобальный), Function Execution Context (функции), Eval Execution Context (eval).',
+      'Структура контекста: Variable Environment (var), Lexical Environment (let/const, функции), This Binding (this).',
+      'Фаза создания: регистрация объявлений, создание лексического окружения, определение this.',
+      'Фаза выполнения: выполнение кода построчно, присваивание значений переменным.',
+      'Call Stack: контексты управляются через стек вызовов (LIFO).',
+      'Scope Chain: цепочка лексических окружений для поиска переменных.',
+      'Связь с Lexical Environment: каждый контекст содержит ссылку на лексическое окружение.',
+      'Глобальный контекст: создается один раз при загрузке скрипта, this = window/global.'
+    ],
+    funFact: 'В браузере глобальный контекст выполнения связан с объектом window. В Node.js — с объектом global. В ES-модулях this на верхнем уровне всегда undefined, даже без "use strict".',
+    tags: ['execution-context', 'runtime', 'internals', 'lexical-environment', 'call-stack', 'scope', 'this', 'hoisting'],
+    examples: [
+      {
+        title: 'Глобальный контекст выполнения',
+        code: `// Глобальный контекст создается при загрузке скрипта
+var globalVar = 'global';
+let globalLet = 'global';
+
+console.log(this); // window (в браузере) или global (в Node.js)
+console.log(globalVar); // 'global'
+console.log(globalLet); // 'global'
+
+// В глобальном контексте:
+// - Variable Environment: { globalVar: undefined → 'global' }
+// - Lexical Environment: { globalLet: 'global' }
+// - This Binding: window/global`
+      },
+      {
+        title: 'Контекст выполнения функции',
+        code: `function test(a, b) {
+  var funcVar = 'var';
+  let funcLet = 'let';
+  
+  console.log(this); // зависит от способа вызова
+  console.log(a, b); // параметры функции
+  console.log(funcVar, funcLet); // 'var', 'let'
+}
+
+test(1, 2);
+
+// При вызове test создается новый контекст:
+// - Variable Environment: { a: 1, b: 2, funcVar: undefined → 'var' }
+// - Lexical Environment: { funcLet: 'let' }
+// - This Binding: зависит от способа вызова
+// - Outer Reference: ссылка на глобальное окружение`
+      },
+      {
+        title: 'Связь контекстов через Scope Chain',
+        code: `const global = 'global';
+
+function outer() {
+  const outerVar = 'outer';
+  
+  function inner() {
+    const innerVar = 'inner';
+    console.log(innerVar); // 'inner' (из текущего контекста)
+    console.log(outerVar); // 'outer' (из контекста outer через Scope Chain)
+    console.log(global); // 'global' (из глобального контекста через Scope Chain)
+  }
+  
+  inner();
+}
+
+outer();
+
+// Scope Chain для inner:
+// inner Lexical Environment → outer Lexical Environment → Global Lexical Environment`
+      },
+      {
+        title: 'Контекст и this',
+        code: `const obj = {
+  name: 'Object',
+  method() {
+    console.log(this); // obj (контекст метода)
+    
+    function regular() {
+      console.log(this); // undefined (strict mode) или window (не strict)
+    }
+    
+    const arrow = () => {
+      console.log(this); // obj (лексический this из метода)
+    };
+    
+    regular();
+    arrow();
+  }
+};
+
+obj.method();
+
+// В методе:
+// - This Binding: obj
+// В regular:
+// - This Binding: undefined (strict) или window
+// В arrow:
+// - This Binding: берется из внешнего контекста (obj)`
+      },
+      {
+        title: 'Контексты в Call Stack',
+        code: `function first() {
+  console.log('First context');
+  second();
+}
+
+function second() {
+  console.log('Second context');
+  third();
+}
+
+function third() {
+  console.log('Third context');
+}
+
+first();
+
+// Call Stack (снизу вверх):
+// [Global Execution Context]
+// [First Execution Context] <- создан при вызове first()
+// [Second Execution Context] <- создан при вызове second()
+// [Third Execution Context] <- выполняется сейчас
+// После завершения third: удаляется из стека
+// После завершения second: удаляется из стека
+// После завершения first: удаляется из стека`
+      },
+      {
+        title: 'Фазы создания и выполнения контекста',
+        code: `function example() {
+  // ФАЗА СОЗДАНИЯ КОНТЕКСТА:
+  // 1. Создается Variable Environment
+  // 2. Регистрируются var и function declaration
+  // 3. Создается Lexical Environment
+  // 4. Определяется this
+  
+  console.log(a); // undefined (var зарегистрирован, но не присвоен)
+  console.log(sayHi); // function (function declaration зарегистрирована)
+  // console.log(b); // ReferenceError (let в TDZ)
+  
+  var a = 10;
+  let b = 20;
+  
+  function sayHi() {
+    console.log('Hi');
+  }
+  
+  // ФАЗА ВЫПОЛНЕНИЯ:
+  // 1. Выполняется код построчно
+  // 2. Присваиваются значения переменным
+  // 3. Вызываются функции
+  
+  console.log(a); // 10
+  console.log(b); // 20
+  sayHi(); // 'Hi'
+}
+
+example();`
+      }
+    ],
+    relatedTopics: ['lexical-env', 'call-stack', 'scope-chain', 'js-parsing-and-execution', 'this-basics', 'hoisting-advanced']
+  },
+{
     id: 'lexical-env',
     title: 'Лексическое окружение',
     difficulty: 'advanced',

@@ -253,9 +253,7 @@ typeof null возвращает "object" из-за исторического �
 - `copying`, `shallow-copy`, `deep-copy`, `spread`, `object-assign`, `structured-clone`
 
 **Обработка ошибок:**
-- `errors`, `exceptions`, `try-catch`, `throw`, `error-handling`
-
-**Операторы и управление:**
+- `errors`, `exceptions`, `try-catch`, `throw`, `error-handling`**Операторы и управление:**
 - `conditions`, `loops`, `if`, `for`, `while`, `control-flow`
 - `coercion`, `conversion`, `type-coercion`, `truthy-falsy`, `to-primitive`
 

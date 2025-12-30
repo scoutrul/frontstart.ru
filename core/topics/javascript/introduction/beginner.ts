@@ -367,8 +367,8 @@ for (let i = 0; i < numbers.length; i++) {
   doubled.push(numbers[i] * 2);
 }
 // doubled = [2, 4, 6, 8, 10]`
-      },
-      {
+  },
+  {
         title: "Функциональный стиль",
         code: `// Чистые функции, высшие функции
 const numbers = [1, 2, 3, 4, 5];
