@@ -1,4 +1,5 @@
 import { Category } from '../../types';
+import { TOOLS_INTRODUCTION_TOPICS } from './tools-introduction';
 import { GIT_TOPICS } from './git';
 import { TERMINAL_TOPICS } from './terminal';
 import { NPM_TOPICS } from './npm';
@@ -11,6 +12,11 @@ import { CI_CD_TOPICS } from './ci-cd';
 import { VPS_TOPICS } from './vps';
 
 export const TOOLS_CATEGORIES: Category[] = [
+  {
+    id: 'tools-introduction',
+    title: 'Инструменты',
+    topics: TOOLS_INTRODUCTION_TOPICS
+  },
   {
     id: 'git',
     title: 'Git',
@@ -65,6 +71,7 @@ export const TOOLS_CATEGORIES: Category[] = [
 
 // Экспорт плоского массива для обратной совместимости
 export const TOOLS_TOPICS = [
+  ...TOOLS_INTRODUCTION_TOPICS,
   ...GIT_TOPICS,
   ...TERMINAL_TOPICS,
   ...NPM_TOPICS,

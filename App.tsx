@@ -401,25 +401,27 @@ const KnowledgeBaseContent: React.FC = () => {
       {/* Кнопка информации о проекте */}
       <button
         onClick={() => setIsProjectInfoOpen(true)}
-        className="fixed top-16 right-6 z-40 h-8 bg-slate-950/90 border border-emerald-500/80 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg text-xs px-2.5"
+        className="fixed top-16 right-6 z-40 h-8 w-8 bg-slate-950/90 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg"
         title="Информация о проекте"
       >
-        О проекте
+        <i className="fa-solid fa-info text-sm"></i>
       </button>
 
       {/* Кнопка заметок */}
-      <button
-        onClick={() => setIsNotesOpen(true)}
-        className="fixed top-28 right-6 z-40 h-8 bg-slate-950/90 border border-emerald-500/80 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg text-xs px-2.5 gap-1.5"
-        title="Заметки"
-      >
-        <span>Заметки</span>
-        {notesCount > 0 && (
-          <span className="bg-emerald-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1.5">
-            {notesCount > 99 ? '99+' : notesCount}
-          </span>
-        )}
-      </button>
+      <div className="fixed top-28 right-6 z-40">
+        <button
+          onClick={() => setIsNotesOpen(true)}
+          className="h-8 w-8 bg-slate-950/90 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg relative"
+          title="Заметки"
+        >
+          <i className="fa-solid fa-note-sticky text-sm"></i>
+          {notesCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1.5">
+              {notesCount > 99 ? '99+' : notesCount}
+            </span>
+          )}
+        </button>
+      </div>
 
       {/* Модальное окно информации о проекте */}
       <ProjectInfoModal 
