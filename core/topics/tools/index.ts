@@ -3,6 +3,7 @@ import { TOOLS_INTRODUCTION_TOPICS } from './tools-introduction';
 import { BROWSERS_TOPICS } from './browsers';
 import { DEVTOOLS_TOPICS } from './devtools';
 import { TERMINAL_TOPICS } from './terminal';
+import { NODEJS_TOPICS } from './nodejs';
 import { NPM_TOPICS } from './npm';
 import { GIT_TOPICS } from './git';
 import { DOCKER_TOPICS } from './docker';
@@ -32,6 +33,11 @@ export const TOOLS_CATEGORIES: Category[] = [
     id: 'terminal',
     title: 'Terminal',
     topics: TERMINAL_TOPICS
+  },
+  {
+    id: 'nodejs',
+    title: 'Node.js',
+    topics: NODEJS_TOPICS
   },
   {
     id: 'npm',
@@ -81,6 +87,7 @@ export const TOOLS_TOPICS = [
   ...BROWSERS_TOPICS,
   ...DEVTOOLS_TOPICS,
   ...TERMINAL_TOPICS,
+  ...NODEJS_TOPICS,
   ...NPM_TOPICS,
   ...GIT_TOPICS,
   ...DOCKER_TOPICS,
