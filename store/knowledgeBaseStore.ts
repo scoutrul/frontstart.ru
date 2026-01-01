@@ -96,7 +96,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
       },
     }),
     {
-      name: 'frontender-pro-storage-v3', // Изменили имя для сброса кэша
+      name: 'front-start-storage-v3', // Изменили имя для сброса кэша
       partialize: (state) => ({ 
         learnedTopics: state.learnedTopics,
         selectedMetaCategory: state.selectedMetaCategory,

@@ -83,7 +83,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
             <i className={`${categoryIcon} text-emerald-500 text-base`}></i>
           </div>
           <h1 className="font-bold text-white text-lg tracking-tight">
-            Frontender <span className="text-emerald-500">Pro</span>
+            Front <span className="text-emerald-500">Start</span>
             {selectedMetaCategory && (
               <span className="text-slate-500 text-sm font-normal"> / {META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title}</span>
             )}
@@ -104,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
               <i className={`${categoryIcon} text-emerald-500 text-base`}></i>
             </div>
             <h1 className="font-bold text-white text-lg tracking-tight">
-              Frontender <span className="text-emerald-500">Pro</span>
+              Front <span className="text-emerald-500">Start</span>
               {selectedMetaCategory && (
                 <span className="text-slate-500 text-sm font-normal"> / {META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title}</span>
               )}

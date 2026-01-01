@@ -7,7 +7,7 @@ const path = require('path');
 // Импортируем данные (в реальности нужно использовать TypeScript или переписать на JS)
 // Для простоты создадим базовую структуру
 
-const baseUrl = 'https://frontstart.ru';
+const baseUrl = 'https://frontstart.online';
 const allCategories = [
   'javascript',
   'markup',

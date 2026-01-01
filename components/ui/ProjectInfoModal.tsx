@@ -38,9 +38,9 @@ const ProjectInfoModal: React.FC<ProjectInfoModalProps> = ({ isOpen, onClose }) 
             {/* Content */}
             <div className="space-y-6 text-slate-300">
               <div>
-                <h3 className="text-lg font-bold text-white mb-2">Frontstart</h3>
+                <h3 className="text-lg font-bold text-white mb-2">Front Start</h3>
                 <p className="text-sm leading-relaxed mb-3">
-                  Frontstart — это обучающий проект для фронтенд-разработчиков, созданный для повторения, 
+                  Front Start — это обучающий проект для фронтенд-разработчиков, созданный для повторения, 
                   закрепления и систематизации теоретических знаний, чтобы повысить успешность прохождения 
                   технических интервью.
                 </p>
@@ -156,13 +156,13 @@ const ProjectInfoModal: React.FC<ProjectInfoModalProps> = ({ isOpen, onClose }) 
 
               <div className="pt-4 border-t border-slate-800/60">
                 <p className="text-xs text-slate-500 text-center mb-2">
-                  Frontstart.ru — каламбур на «frontend» и «start», лёгкая шутка для посвящённых.
+                  Front Start — каламбур на «frontend» и «start», лёгкая шутка для посвящённых.
                 </p>
                 <p className="text-xs text-slate-500 text-center">
                   Проект некоммерческий, создаётся для образовательных целей и удобства разработчиков.
                 </p>
                 <p className="text-xs text-slate-500 text-center mt-2">
-                  © {new Date().getFullYear()} <a href="https://www.antongolova.ru" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">www.antongolova.ru</a>
+                  © {new Date().getFullYear()} Front Start by <a href="https://www.antongolova.ru" target="_blank" rel="noopener noreferrer" className="hover:text-emerald-400 transition-colors">antongolova.ru</a>
                 </p>
               </div>
             </div>

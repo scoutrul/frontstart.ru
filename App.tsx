@@ -23,7 +23,7 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
     
     if (topic && topicId) {
       // Динамические title и description для темы
-      const title = `${topic.title} - ${categoryTitle} | Frontstart`;
+      const title = `${topic.title} - ${categoryTitle} | Front Start`;
       const description = topic.description || `Изучите тему "${topic.title}" в разделе ${categoryTitle}`;
       const keywords = topic.tags?.join(', ') || `${topic.title}, ${categoryTitle}, frontend, программирование`;
       
@@ -58,7 +58,7 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
       updateOGTag('og:description', description);
       updateOGTag('og:type', 'article');
       updateOGTag('og:url', currentUrl);
-      updateOGTag('og:site_name', 'Frontstart');
+      updateOGTag('og:site_name', 'Front Start');
       
       // Twitter Cards
       const updateTwitterTag = (name: string, content: string) => {
@@ -103,7 +103,7 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
         inLanguage: 'ru',
         isPartOf: {
           '@type': 'WebSite',
-          name: 'Frontstart',
+          name: 'Front Start',
           url: baseUrl
         }
       };
@@ -119,11 +119,11 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
         dateModified: '2025-01-01',
         author: {
           '@type': 'Organization',
-          name: 'Frontender Pro'
+          name: 'Front Start'
         },
         publisher: {
           '@type': 'Organization',
-          name: 'Frontstart',
+          name: 'Front Start',
           url: baseUrl
         },
         mainEntityOfPage: {
@@ -186,7 +186,7 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
       
     } else {
       // Для страниц категорий без темы
-      const title = `${categoryTitle} | Frontstart`;
+      const title = `${categoryTitle} | Front Start`;
       const description = `Изучите ${categoryTitle.toLowerCase()} - база знаний для frontend разработчиков`;
       
       document.title = title;
