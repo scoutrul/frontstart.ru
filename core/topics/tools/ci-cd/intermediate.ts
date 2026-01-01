@@ -2,174 +2,47 @@ import { Topic } from '../../../types';
 
 export const CI_CD_INTERMEDIATE_TOPICS: Topic[] = [
   {
-    id: 'github-actions-vps-deploy',
-    title: 'Автодеплой проекта на VPS через GitHub Actions',
+    id: 'cicd-intermediate',
+    title: 'CI/CD: продвинутый',
+    description: 'Средний уровень CI/CD включает использование систем автоматизации сборки и тестирования, настройку VPS и деплой пайплайнов.',
     difficulty: 'intermediate',
-    description: 'GitHub Actions — встроенный CI/CD-инструмент GitHub для автоматизации сборки и деплоя. В связке с SSH обеспечивает безопасный деплой на VPS без необходимости настраивать вебхуки и открывать HTTP-порты.',
+    tags: ['ci-cd', 'cicd', 'vps', 'ssh', 'automation', 'staging', 'deployment', 'tools', 'intermediate', 'docker'],
     keyPoints: [
-      'Триггеры: push в выбранную ветку (main, develop), pull_request, manual (workflow_dispatch).',
-      'CI/CD среда: GitHub Actions выполняется на серверах GitHub (ubuntu-latest, windows-latest).',
-      'Доступ к VPS: подключение по SSH с использованием приватных ключей.',
-      'Secrets: чувствительные данные (IP, пользователь, SSH-ключ) хранятся в GitHub Secrets.',
-      'Процесс деплоя: git pull, установка зависимостей (npm install), сборка (npm run build), перезапуск сервиса.',
-      'Логи: все шаги деплоя доступны в интерфейсе GitHub Actions с детальным выводом.',
-      'Безопасность: не требуется открывать HTTP-доступ, webhook endpoint или порты на VPS.'
+      'Настройка GitHub Actions, GitLab CI или других CI/CD платформ',
+      'Автоматизация сборки и тестирования фронтенд-приложений',
+      'Деплой на VPS с использованием SSH и скриптов',
+      'Использование среды staging и production для безопасного релиза',
+      'Мониторинг состояния пайплайнов и логов'
     ],
-    tags: ['ci-cd', 'github-actions', 'deploy', 'vps', 'ssh', 'automation', 'devops', 'continuous-integration', 'continuous-deployment', 'github', 'workflow'],
+    additionalDescription: 'Разработка пайплайнов позволяет ускорить интеграцию кода и снизить количество ошибок на продакшене. VPS часто используется для тестирования и хостинга внутренних проектов, а SSH и скрипты облегчают управление сервером.',
+    funFact: 'Некоторые компании используют один и тот же VPS как staging и production с разными Docker-контейнерами для экономии ресурсов.',
     examples: [
       {
-        title: 'Workflow GitHub Actions для деплоя на VPS',
-        code: `# .github/workflows/deploy.yml
-name: Deploy to VPS
-
-# Триггеры запуска
-on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - '**.md'
-      - '.gitignore'
-  workflow_dispatch: # Ручной запуск
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: \${{ secrets.VPS_HOST }}
-          username: \${{ secrets.VPS_USER }}
-          key: \${{ secrets.VPS_SSH_KEY }}
-          port: 22
-          script: |
-            cd /var/www/my-project
-            git pull origin main
-            npm ci --production=false
-            npm run build
-            pm2 restart my-app || pm2 start npm --name "my-app" -- start`
-      },
-      {
-        title: 'Настройка GitHub Secrets',
-        code: `# GitHub Repository → Settings → Secrets and variables → Actions → New repository secret
-
-# Добавить секреты:
-VPS_HOST=123.123.123.123
-# или домен:
-VPS_HOST=example.com
-
-VPS_USER=deploy
-# или root (не рекомендуется)
-
-VPS_SSH_KEY=-----BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn...
------END OPENSSH PRIVATE KEY-----
-
-# Генерация ключа на локальной машине:
-# ssh-keygen -t ed25519 -C "github-actions"
-# Затем добавить публичный ключ на VPS:
-# ssh-copy-id -i ~/.ssh/id_ed25519.pub deploy@123.123.123.123`
-      },
-      {
-        title: 'Расширенный workflow с проверками',
-        code: `# .github/workflows/deploy.yml
-name: Deploy to VPS
+        title: 'GitHub Actions пайплайн',
+        code: `name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '18'
-      - run: npm ci
-      - run: npm test
-      - run: npm run build
-
-  deploy:
-    needs: test # Деплой только после успешных тестов
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-      - name: Deploy to production
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: \${{ secrets.VPS_HOST }}
-          username: \${{ secrets.VPS_USER }}
-          key: \${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/my-project
-            git pull origin main
-            npm ci
-            npm run build
-            pm2 restart my-app`
+          node-version: 18
+      - run: npm install
+      - run: npm run build`
       },
       {
-        title: 'Структура проекта на VPS',
-        code: `# Типичное расположение проекта на VPS
-/var/www/my-project/
-  ├── .git/              # Git репозиторий
-  ├── .github/
-  │   └── workflows/
-  │       └── deploy.yml  # Workflow файл
-  ├── package.json
-  ├── node_modules/      # Зависимости
-  ├── dist/              # Собранный проект
-  ├── src/               # Исходники
-  └── .env               # Переменные окружения
-
-# Права доступа
-sudo chown -R deploy:deploy /var/www/my-project
-sudo chmod -R 755 /var/www/my-project`
-      },
-      {
-        title: 'Обработка ошибок и откат',
-        code: `# .github/workflows/deploy.yml
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: \${{ secrets.VPS_HOST }}
-          username: \${{ secrets.VPS_USER }}
-          key: \${{ secrets.VPS_SSH_KEY }}
-          script: |
-            cd /var/www/my-project
-            
-            # Сохраняем текущую версию для отката
-            git tag backup-\$(date +%Y%m%d-%H%M%S)
-            
-            # Пытаемся обновить
-            if git pull origin main; then
-              npm ci
-              npm run build
-              pm2 restart my-app
-            else
-              echo "Deploy failed, keeping current version"
-              exit 1
-            fi
-            
-            # Проверка работоспособности
-            sleep 5
-            if ! curl -f http://localhost:3000/health; then
-              echo "Health check failed, rolling back"
-              git reset --hard HEAD~1
-              pm2 restart my-app
-              exit 1
-            fi`
+        title: 'Деплой на VPS через SSH',
+        code: `ssh user@server.com "cd /var/www/project && git pull && npm install && npm run build"`
       }
     ],
-    relatedTopics: ['git-remote', 'git-remote-advanced', 'terminal-advanced', 'vps-basics', 'vps-ssh-security']
+    relatedTopics: ['cicd-basics', 'vps-intermediate', 'docker-basics']
   }
 ];
 

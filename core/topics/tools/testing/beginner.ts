@@ -4,60 +4,33 @@ export const TESTING_BEGINNER_TOPICS: Topic[] = [
   {
     id: 'testing-basics',
     title: 'Основы тестирования',
-    description: 'Типы тестов: unit тесты для отдельных функций, интеграционные тесты для взаимодействия компонентов. Jest и Vitest: популярные фреймворки для тестирования JavaScript. Настройка: установка, конфигурация, базовые матчеры (toBe, toEqual). Структура тестов: describe для группировки, it/test для тестов, beforeEach/afterEach для подготовки.',
+    description: 'Тестирование позволяет проверять работу приложения и предотвращать ошибки. На базовом уровне это ручная проверка интерфейса и простые проверки JavaScript.',
     difficulty: 'beginner',
-    tags: ['testing', 'jest', 'vitest', 'unit-tests', 'basics', 'tools', 'productivity'],
+    tags: ['testing', 'basics', 'tools', 'productivity', 'debugging', 'unit-tests'],
     keyPoints: [
-      'Unit тесты проверяют отдельные функции изолированно.',
-      'describe группирует связанные тесты.',
-      'it или test определяет отдельный тест.',
-      'beforeEach выполняется перед каждым тестом.',
-      'Матчеры проверяют ожидаемые результаты.'
+      'Ручная проверка UI и пользовательских взаимодействий',
+      'Использование console.log и встроенных тестов в редакторе',
+      'Проверка корректности работы функций и событий',
+      'Тестирование помогает безопасно вносить изменения в код',
+      'Базовый уровень подготавливает к изучению unit и интеграционных тестов'
     ],
+    additionalDescription: 'Даже простые проверки помогают находить ошибки на ранних этапах разработки. Постепенно можно подключать автоматизированные тесты для повышения уверенности в стабильности приложения.',
+    funFact: 'Практика тестирования кода существует с 1950-х годов, а автоматизированное тестирование стало массовым только в 1990-х.',
     examples: [
       {
-        title: 'Базовый тест',
-        code: `// sum.test.js
-import { sum } from './sum';
-
-describe('sum function', () => {
-  it('should add two numbers', () => {
-    expect(sum(1, 2)).toBe(3);
-  });
-
-  it('should handle negative numbers', () => {
-    expect(sum(-1, -2)).toBe(-3);
-  });
-});`
+        title: 'Проверка UI вручную',
+        code: `// Оценка видимости кнопки
+console.log("Проверяем кнопку на странице");`
       },
       {
-        title: 'Матчеры',
-        code: `expect(2 + 2).toBe(4);              // Строгое равенство
-expect({a: 1}).toEqual({a: 1});      // Глубокое равенство
-expect('hello').toContain('ell');    // Содержит
-expect(true).toBeTruthy();          // Truthy
-expect(null).toBeNull();             // Null
-expect([1, 2, 3]).toHaveLength(3);  // Длина массива`
-      },
-      {
-        title: 'beforeEach/afterEach',
-        code: `let data;
-
-beforeEach(() => {
-  data = { count: 0 };
-});
-
-afterEach(() => {
-  data = null;
-});
-
-it('should increment count', () => {
-  data.count++;
-  expect(data.count).toBe(1);
-});`
+        title: 'Простая проверка функции',
+        code: `function sum(a, b) {
+  return a + b;
+}
+console.log(sum(2, 3)); // 5`
       }
     ],
-    relatedTopics: ['testing-intermediate']
+    relatedTopics: ['testing-intermediate', 'ci-cd-basics']
   }
 ];
 

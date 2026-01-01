@@ -3,68 +3,52 @@ import { Topic } from '../../../types';
 export const TESTING_INTERMEDIATE_TOPICS: Topic[] = [
   {
     id: 'testing-intermediate',
-    title: 'Тестирование средний уровень',
-    description: 'Mocking: создание моков для зависимостей, spies для отслеживания вызовов, stubs для замены функций. Тестирование асинхронного кода: промисы, async/await, использование done или return. Snapshot тесты: сохранение снимков UI компонентов. Покрытие кода: измерение покрытия тестами, цель 80%+ покрытия.',
+    title: 'Юнит-тесты и Mocking',
+    description: 'Юнит-тесты проверяют отдельные функции или модули. Средний уровень включает mocking зависимостей, snapshot тесты и измерение покрытия кода.',
     difficulty: 'intermediate',
-    tags: ['testing', 'jest', 'vitest', 'mocking', 'async', 'snapshots', 'coverage', 'tools', 'productivity'],
+    tags: ['testing', 'jest', 'vitest', 'mocking', 'unit-tests', 'async', 'snapshots', 'coverage', 'productivity'],
     keyPoints: [
-      'jest.fn() создаёт mock функцию.',
-      'jest.spyOn отслеживает вызовы существующих функций.',
-      'await или return для тестирования async функций.',
-      'Snapshot тесты сравнивают текущий вывод с сохранённым.',
-      '--coverage показывает процент покрытия кода.'
+      'jest.fn() создаёт mock-функцию для изоляции логики',
+      'jest.spyOn отслеживает вызовы существующих функций',
+      'Тестирование асинхронных функций с async/await, return или done',
+      'Snapshot тесты фиксируют визуальное состояние компонентов',
+      '--coverage показывает процент покрытия кода тестами'
     ],
+    additionalDescription: 'Mocking позволяет тестировать код без зависимости от внешних модулей. Snapshot тесты полезны для UI компонентов, так как фиксируют визуальные изменения и предотвращают неожиданные регрессии.',
+    funFact: 'Snapshot тесты впервые появились в Jest и стали популярны для тестирования React компонентов.',
     examples: [
       {
-        title: 'Mocking',
-        code: `// Mock функции
-const mockFn = jest.fn();
-mockFn('arg1', 'arg2');
-expect(mockFn).toHaveBeenCalledWith('arg1', 'arg2');
-
-// Mock модуля
-jest.mock('./api', () => ({
-  fetchData: jest.fn(() => Promise.resolve({data: 'test'}))
-}));
-
-// Spy
-const spy = jest.spyOn(obj, 'method');
+        title: 'Mock функции',
+        code: `const mockFn = jest.fn();
+mockFn("arg1", "arg2");
+expect(mockFn).toHaveBeenCalledWith("arg1", "arg2");`
+      },
+      {
+        title: 'Mock модуля',
+        code: `jest.mock("./api", () => ({
+  fetchData: jest.fn(() => Promise.resolve({ data: "test" }))
+}));`
+      },
+      {
+        title: 'Spy',
+        code: `const spy = jest.spyOn(obj, "method");
 expect(spy).toHaveBeenCalled();`
       },
       {
-        title: 'Асинхронное тестирование',
-        code: `// С промисом
-test('async test', () => {
-  return fetchData().then(data => {
-    expect(data).toBeDefined();
-  });
-});
-
-// С async/await
-test('async test', async () => {
+        title: 'Асинхронный тест с async/await',
+        code: `test("async test", async () => {
   const data = await fetchData();
   expect(data).toBeDefined();
-});
-
-// С done
-test('async test', (done) => {
-  fetchData().then(() => {
-    expect(true).toBe(true);
-    done();
-  });
 });`
       },
       {
-        title: 'Snapshot тесты',
-        code: `import { render } from '@testing-library/react';
-import Component from './Component';
-
-test('matches snapshot', () => {
+        title: 'Snapshot тест',
+        code: `import { render } from "@testing-library/react";
+import Component from "./Component";
+test("matches snapshot", () => {
   const { container } = render(<Component />);
   expect(container).toMatchSnapshot();
-});
-
-// Обновить snapshot: jest -u`
+});`
       }
     ],
     relatedTopics: ['testing-basics', 'testing-advanced']

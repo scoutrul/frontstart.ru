@@ -6,12 +6,10 @@ import { TERMINAL_TOPICS } from './terminal';
 import { NODEJS_TOPICS } from './nodejs';
 import { NPM_TOPICS } from './npm';
 import { GIT_TOPICS } from './git';
-import { DOCKER_TOPICS } from './docker';
-import { CURSOR_TOPICS } from './cursor';
-import { AI_TOOLS_TOPICS } from './ai-tools';
 import { TESTING_TOPICS } from './testing';
+import { DOCKER_TOPICS } from './docker';
+import { AI_TOOLS_TOPICS } from './ai-tools';
 import { CI_CD_TOPICS } from './ci-cd';
-import { VPS_TOPICS } from './vps';
 
 export const TOOLS_CATEGORIES: Category[] = [
   {
@@ -50,34 +48,24 @@ export const TOOLS_CATEGORIES: Category[] = [
     topics: GIT_TOPICS
   },
   {
-    id: 'docker',
-    title: 'Docker',
-    topics: DOCKER_TOPICS
-  },
-  {
-    id: 'cursor',
-    title: 'Cursor',
-    topics: CURSOR_TOPICS
-  },
-  {
-    id: 'ai',
-    title: 'AI инструменты',
-    topics: AI_TOOLS_TOPICS
-  },
-  {
     id: 'testing',
     title: 'Тестирование',
     topics: TESTING_TOPICS
   },
   {
-    id: 'ci-cd',
-    title: 'CI/CD',
-    topics: CI_CD_TOPICS
+    id: 'docker',
+    title: 'Docker',
+    topics: DOCKER_TOPICS
   },
   {
-    id: 'vps',
-    title: 'VPS',
-    topics: VPS_TOPICS
+    id: 'ai',
+    title: 'ИИ-инструменты',
+    topics: AI_TOOLS_TOPICS
+  },
+  {
+    id: 'ci-cd',
+    title: 'CI/CD + VPS/SSH',
+    topics: CI_CD_TOPICS
   }
 ];
 
@@ -90,10 +78,8 @@ export const TOOLS_TOPICS = [
   ...NODEJS_TOPICS,
   ...NPM_TOPICS,
   ...GIT_TOPICS,
-  ...DOCKER_TOPICS,
-  ...CURSOR_TOPICS,
-  ...AI_TOOLS_TOPICS,
   ...TESTING_TOPICS,
-  ...CI_CD_TOPICS,
-  ...VPS_TOPICS
+  ...DOCKER_TOPICS,
+  ...AI_TOOLS_TOPICS,
+  ...CI_CD_TOPICS
 ];

@@ -3,62 +3,37 @@ import { Topic } from '../../../types';
 export const AI_TOOLS_ADVANCED_TOPICS: Topic[] = [
   {
     id: 'ai-tools-advanced',
-    title: 'Продвинутые AI инструменты',
-    description: 'Fine-tuning моделей: обучение моделей на собственных данных, создание специализированных моделей. AI в CI/CD: автоматическое ревью кода, автотесты через AI, автоматическое исправление багов. Локальные модели: Ollama для запуска моделей локально, LM Studio для экспериментов, преимущества приватности и контроля данных.',
+    title: 'ИИ-инструменты: эксперты',
+    description: 'Продвинутый уровень включает кастомные модели, fine-tuning, генерацию тестов и анализ архитектуры с помощью ИИ.',
     difficulty: 'advanced',
-    tags: ['ai', 'fine-tuning', 'cicd', 'local-models', 'ollama', 'tools', 'productivity'],
+    tags: ['ai', 'tools', 'fine-tuning', 'custom-models', 'local-models', 'cursor', 'copilot', 'code-generation', 'advanced', 'productivity'],
     keyPoints: [
-      'Fine-tuning адаптирует модели под специфичные задачи.',
-      'AI в CI/CD автоматизирует ревью и тестирование.',
-      'Локальные модели работают офлайн и защищают данные.',
-      'Ollama упрощает запуск локальных моделей.',
-      'Кастомные модели могут быть специализированы под проект.'
+      'Создание и дообучение кастомных моделей под проект',
+      'Интеграция ИИ для анализа архитектуры и оптимизации кода',
+      'Автоматическая генерация unit, integration и e2e тестов',
+      'Комбинирование нескольких моделей для комплексных задач',
+      'Использование I/O моделей для генерации документации и примеров'
     ],
+    additionalDescription: 'На этом уровне ИИ становится полноценным помощником в проекте: он помогает оптимизировать структуру кода, проверять соответствие стандартам и даже генерировать нагрузочные тесты.',
+    funFact: 'Fine-tuning позволяет обучить ИИ на собственных репозиториях, чтобы подсказки соответствовали стилю и архитектуре команды.',
     examples: [
       {
         title: 'Fine-tuning модели',
-        code: `# Подготовка данных:
-# Формат: JSONL
-{"prompt": "Вопрос", "completion": "Ответ"}
-{"prompt": "...", "completion": "..."}
-
-# Обучение:
-openai api fine_tunes.create \\
-  -t training_data.jsonl \\
-  -m gpt-3.5-turbo
-
-# Использование:
-# Модель адаптирована под ваш стиль кода`
+        code: `// Обучение модели на коде проекта
+// lm.train(dataset) // dataset содержит репозитории с внутренними стандартами`
       },
       {
-        title: 'AI в CI/CD',
-        code: `# GitHub Actions пример:
-- name: AI Code Review
-  uses: github-actions/ai-review
-  with:
-    model: 'gpt-4'
-    checks: ['bugs', 'security', 'performance']
-
-# Автоматические тесты:
-- name: Generate Tests
-  run: |
-    ai-generate-tests --coverage 80%`
+        title: 'Генерация тестов с AI',
+        code: `// AI создает unit тесты для функции
+// AI: generateTests("function calculateTotal(items) { return items.reduce((sum, item) => sum + item, 0); }")`
       },
       {
-        title: 'Локальные модели (Ollama)',
-        code: `# Установка:
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Запуск модели:
-ollama run codellama
-
-# Использование в коде:
-# API endpoint: http://localhost:11434
-# Полная приватность данных
-# Работает офлайн`
+        title: 'Анализ архитектуры',
+        code: `// AI анализирует зависимости модулей и предлагает оптимизацию
+// analyzeArchitecture(projectStructure)`
       }
     ],
-    relatedTopics: ['ai-tools-intermediate']
+    relatedTopics: ['ai-tools-intermediate', 'testing-advanced', 'ci-cd-advanced']
   }
 ];
 
