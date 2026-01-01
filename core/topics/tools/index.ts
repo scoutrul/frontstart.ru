@@ -1,11 +1,11 @@
 import { Category } from '../../types';
 import { TOOLS_INTRODUCTION_TOPICS } from './tools-introduction';
 import { BROWSERS_TOPICS } from './browsers';
-import { GIT_TOPICS } from './git';
+import { DEVTOOLS_TOPICS } from './devtools';
 import { TERMINAL_TOPICS } from './terminal';
 import { NPM_TOPICS } from './npm';
+import { GIT_TOPICS } from './git';
 import { DOCKER_TOPICS } from './docker';
-import { DEVTOOLS_TOPICS } from './devtools';
 import { CURSOR_TOPICS } from './cursor';
 import { AI_TOOLS_TOPICS } from './ai-tools';
 import { TESTING_TOPICS } from './testing';
@@ -29,19 +29,19 @@ export const TOOLS_CATEGORIES: Category[] = [
     topics: DEVTOOLS_TOPICS
   },
   {
-    id: 'git',
-    title: 'Git',
-    topics: GIT_TOPICS
-  },
-  {
     id: 'terminal',
     title: 'Terminal',
     topics: TERMINAL_TOPICS
   },
   {
     id: 'npm',
-    title: 'npm',
+    title: 'Пакетные менеджеры',
     topics: NPM_TOPICS
+  },
+  {
+    id: 'git',
+    title: 'Git',
+    topics: GIT_TOPICS
   },
   {
     id: 'docker',
@@ -80,9 +80,9 @@ export const TOOLS_TOPICS = [
   ...TOOLS_INTRODUCTION_TOPICS,
   ...BROWSERS_TOPICS,
   ...DEVTOOLS_TOPICS,
-  ...GIT_TOPICS,
   ...TERMINAL_TOPICS,
   ...NPM_TOPICS,
+  ...GIT_TOPICS,
   ...DOCKER_TOPICS,
   ...CURSOR_TOPICS,
   ...AI_TOOLS_TOPICS,

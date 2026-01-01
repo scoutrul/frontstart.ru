@@ -2,52 +2,52 @@ import { Topic } from '../../../types';
 
 export const NPM_BEGINNER_TOPICS: Topic[] = [
   {
-    id: 'npm-basics',
-    title: 'Основы npm',
-    description: 'npm (Node Package Manager) — менеджер пакетов для Node.js. Установка пакетов: npm install, npm i. package.json: управление зависимостями, scripts для автоматизации задач. Команды: npm start, npm run для выполнения скриптов. Локальная и глобальная установка пакетов.',
+    id: 'pm-intro',
+    title: 'Что такое пакетный менеджер',
     difficulty: 'beginner',
-    tags: ['npm', 'package-manager', 'node', 'basics', 'tools', 'productivity'],
+    description: 'Пакетный менеджер — это инструмент для установки, обновления и управления библиотеками и зависимостями проекта. Он работает через терминал, используется во всех JavaScript-проектах и тесно связан с Node.js.',
     keyPoints: [
-      'npm install или npm i устанавливает пакеты локально в node_modules.',
-      'package.json хранит метаданные проекта, зависимости и скрипты.',
-      'npm start и npm run выполняют скрипты из package.json.',
-      '--save-dev устанавливает пакеты как devDependencies (для разработки).',
-      'npm init создаёт новый package.json файл.'
+      'Что это: инструмент для установки, обновления и управления библиотеками и зависимостями проекта',
+      'Работает через терминал',
+      'Используется во всех JS-проектах',
+      'Связан с Node.js',
+      'Управляет версиями библиотек и скриптами проекта'
     ],
+    tags: ['tools', 'npm', 'package-manager', 'basics', 'productivity'],
+    relatedTopics: ['terminal-basics'],
+    examples: []
+  },
+  {
+    id: 'npm-basics',
+    title: 'npm — стандарт экосистемы',
+    difficulty: 'beginner',
+    description: 'npm — основной пакетный менеджер JavaScript. Он самый популярный, имеет большой реестр пакетов и позволяет устанавливать библиотеки локально и глобально. package.json хранит метаданные проекта и скрипты, которые запускаются через npm start и npm run.',
+    keyPoints: [
+      'Что это: основной пакетный менеджер JavaScript',
+      'Самый популярный пакетный менеджер',
+      'Большой реестр пакетов',
+      'Установка локально и глобально',
+      'package.json хранит метаданные и скрипты',
+      'npm start и npm run запускают скрипты',
+      'npm install устанавливает зависимости из package.json'
+    ],
+    tags: ['tools', 'npm', 'package-manager', 'basics', 'productivity'],
+    relatedTopics: ['pm-intro', 'terminal-development'],
+    funFact: 'npm был запущен в 2010 году и быстро стал крупнейшим реестром пакетов в мире. В 2020 году npm был куплен GitHub, что сделало его еще более интегрированным в экосистему разработки.',
     examples: [
       {
         title: 'Установка пакетов',
-        code: `npm install express          # Установить пакет
-npm install express --save-dev  # Установить как dev зависимость
-npm install -g nodemon         # Установить глобально
-npm i                          # Установить все зависимости из package.json`
+        code: `npm install express        // установка пакета
+npm install express --save-dev  // установка как dev-зависимость
+npm install -g nodemon          // глобальная установка
+npm i                           // установка всех зависимостей из package.json`
       },
       {
-        title: 'package.json',
-        code: `{
-  "name": "my-project",
-  "version": "1.0.0",
-  "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest"
-  },
-  "dependencies": {
-    "express": "^4.18.0"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.0"
-  }
-}`
-      },
-      {
-        title: 'Выполнение скриптов',
-        code: `npm start                   # Запустить скрипт "start"
-npm run dev                 # Запустить скрипт "dev"
-npm test                     # Запустить скрипт "test"`
+        title: 'Запуск скриптов',
+        code: `npm start        // запуск скрипта "start"
+npm run dev     // запуск скрипта "dev"
+npm test        // запуск скрипта "test"`
       }
-    ],
-    relatedTopics: ['npm-intermediate']
+    ]
   }
 ];
-
