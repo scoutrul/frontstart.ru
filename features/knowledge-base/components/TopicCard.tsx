@@ -27,6 +27,11 @@ const TopicCard: React.FC<TopicCardProps> = ({
 }) => {
   const metaCategory = metaCategoryId ? META_CATEGORIES.find(m => m.id === metaCategoryId) : null;
 
+  const labels = [
+    metaCategory && { title: metaCategory.title, icon: metaCategory.icon },
+    category && { title: category.title, icon: undefined }
+  ].filter(Boolean) as Array<{ title: string; icon?: string }>;
+
   return (
     <div
       onClick={onClick}
@@ -39,16 +44,15 @@ const TopicCard: React.FC<TopicCardProps> = ({
             <h4 className="text-sm font-black text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
               {topic.title}
             </h4>
-            {metaCategory && (
-              <span className="px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/50 rounded text-[10px] text-emerald-400 font-bold">
-                <i className={`${metaCategory.icon} mr-1`}></i>
-                {metaCategory.title}
-              </span>
-            )}
-            {category && (
-              <span className="px-2 py-0.5 bg-emerald-500/20 border border-emerald-500/50 rounded text-[10px] text-emerald-400 font-bold">
-                {category.title}
-              </span>
+            {labels.length > 0 && (
+              <div className="flex items-center gap-1 self-center">
+                {labels.map((label, index) => (
+                  <span key={index} className="px-1 text-[9px] text-emerald-500">
+                    {label.icon && <i className={`${label.icon} mr-1`}></i>}
+                    {label.title}
+                  </span>
+                ))}
+              </div>
             )}
           </div>
           <p className={`text-slate-400 text-xs ${descriptionLines === 2 ? 'line-clamp-2' : 'line-clamp-3'}`}>
