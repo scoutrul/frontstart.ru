@@ -5,6 +5,7 @@ import { DEVTOOLS_TOPICS } from './devtools';
 import { TERMINAL_TOPICS } from './terminal';
 import { NODEJS_TOPICS } from './nodejs';
 import { NPM_TOPICS } from './npm';
+import { FRONTEND_INFRASTRUCTURE_TOPICS } from './frontend-infrastructure';
 import { GIT_TOPICS } from './git';
 import { TESTING_TOPICS } from './testing';
 import { DOCKER_TOPICS } from './docker';
@@ -43,6 +44,11 @@ export const TOOLS_CATEGORIES: Category[] = [
     topics: NPM_TOPICS
   },
   {
+    id: 'frontend-infrastructure',
+    title: 'Фронтенд-инфраструктура',
+    topics: FRONTEND_INFRASTRUCTURE_TOPICS
+  },
+  {
     id: 'git',
     title: 'Git',
     topics: GIT_TOPICS
@@ -77,6 +83,7 @@ export const TOOLS_TOPICS = [
   ...TERMINAL_TOPICS,
   ...NODEJS_TOPICS,
   ...NPM_TOPICS,
+  ...FRONTEND_INFRASTRUCTURE_TOPICS,
   ...GIT_TOPICS,
   ...TESTING_TOPICS,
   ...DOCKER_TOPICS,
