@@ -22,6 +22,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
     setSearchQuery,
     setSelectedDifficulty,
     toggleTag,
+    clearSelectedTags,
     isLearned,
     clearAllLearned,
     learnedTopics
@@ -45,6 +46,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       setTagsCategory(selectedMetaCategory);
     }
   }, [selectedMetaCategory, tagsCategory]);
+
+  // Очищаем теги и сворачиваем блок при изменении фильтров
+  useEffect(() => {
+    if (selectedTags.length > 0) {
+      clearSelectedTags();
+      setShowAllTags(false);
+    }
+  }, [searchQuery, selectedDifficulty]);
 
   // Вычисляем актуальное состояние тегов - всегда false при смене категории
   const actualShowAllTags = tagsCategory === selectedMetaCategory ? showAllTags : false;

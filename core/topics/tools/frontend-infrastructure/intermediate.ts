@@ -173,5 +173,82 @@ vite build  // production build`
 bun run dev`
       }
     ]
+  },
+  {
+    id: 'pwa-overview',
+    title: 'PWA',
+    difficulty: 'intermediate',
+    description: 'PWA (Progressive Web App) — это формат доставки и запуска фронтенд-приложений, который позволяет веб-приложению работать как нативное: устанавливаться, работать офлайн и получать обновления. PWA находится на уровне production-инфраструктуры и опирается на браузерные API, а не на конкретный фреймворк или runtime.',
+    keyPoints: [
+      'Формат приложения: способ доставки и запуска веб-приложения, а не фреймворк или библиотека',
+      'Production-ориентированность: активируется и работает корректно только в production-среде',
+      'Service Worker: фоновой скрипт для кеширования, офлайн-режима и обновлений',
+      'Web App Manifest: метаданные приложения (имя, иконки, режим отображения)',
+      'Offline-first подход: приложение может работать без сети',
+      'Installability: установка на устройство из браузера без app store',
+      'HTTPS requirement: PWA работает только по защищённому соединению',
+      'Независимость от стека: работает с любым фреймворком и сборщиком'
+    ],
+    additionalDescription: 'PWA не участвует в процессе разработки напрямую и не влияет на dev server. Все ключевые возможности PWA появляются после сборки приложения и зависят от корректной production-конфигурации: кеширования ассетов, стратегии обновлений и поддержки браузерных API. Поэтому PWA логично рассматривать как часть delivery и production pipeline фронтенд-приложений.',
+    funFact: 'Первоначально термин PWA был введён Google в 2015 году как маркетинговое название набора браузерных возможностей, а не отдельной технологии.',
+    tags: ['pwa', 'infrastructure', 'browser-api', 'service-workers', 'offline', 'build', 'deployment', 'frontend', 'intermediate'],
+    relatedTopics: ['build-step-bundlers', 'browser-support', 'vite-architecture'],
+    examples: [
+      {
+        title: 'Web App Manifest',
+        code: `{
+  "name": "My PWA App",
+  "short_name": "PWA App",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d6efd",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}`
+      },
+      {
+        title: 'Регистрация Service Worker',
+        code: `if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(() => {
+        // Service Worker зарегистрирован
+      })
+      .catch(() => {
+        // Ошибка регистрации
+      });
+  });
+}`
+      },
+      {
+        title: 'Простейший Service Worker',
+        code: `self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open('app-cache-v1').then((cache) => {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/app.js'
+      ]);
+    })
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
+    })
+  );
+});`
+      }
+    ]
   }
 ];

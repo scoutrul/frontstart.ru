@@ -16,6 +16,7 @@ interface KnowledgeBaseState {
   setSearchQuery: (query: string) => void;
   setSelectedDifficulty: (difficulty: Difficulty | 'all') => void;
   toggleTag: (tag: string) => void;
+  clearSelectedTags: () => void;
   clearFilters: () => void;
   toggleLearned: (topicId: string, metaCategory?: MetaCategoryId) => void;
   isLearned: (topicId: string, metaCategory?: MetaCategoryId) => boolean;
@@ -54,6 +55,7 @@ export const useKnowledgeBaseStore = create<KnowledgeBaseState>()(
           ? state.selectedTags.filter(t => t !== tag)
           : [...state.selectedTags, tag]
       })),
+      clearSelectedTags: () => set({ selectedTags: [] }),
       clearFilters: () => set({ 
         searchQuery: '', 
         selectedDifficulty: 'all', 
