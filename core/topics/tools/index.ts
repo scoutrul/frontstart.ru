@@ -19,6 +19,11 @@ export const TOOLS_CATEGORIES: Category[] = [
     topics: TOOLS_INTRODUCTION_TOPICS
   },
   {
+    id: 'frontend-infrastructure',
+    title: 'Фронтенд-инфраструктура',
+    topics: FRONTEND_INFRASTRUCTURE_TOPICS
+  },
+  {
     id: 'browsers',
     title: 'Браузеры',
     topics: BROWSERS_TOPICS
@@ -42,11 +47,6 @@ export const TOOLS_CATEGORIES: Category[] = [
     id: 'npm',
     title: 'Пакетные менеджеры',
     topics: NPM_TOPICS
-  },
-  {
-    id: 'frontend-infrastructure',
-    title: 'Фронтенд-инфраструктура',
-    topics: FRONTEND_INFRASTRUCTURE_TOPICS
   },
   {
     id: 'git',
@@ -78,12 +78,12 @@ export const TOOLS_CATEGORIES: Category[] = [
 // Экспорт плоского массива для обратной совместимости
 export const TOOLS_TOPICS = [
   ...TOOLS_INTRODUCTION_TOPICS,
+  ...FRONTEND_INFRASTRUCTURE_TOPICS,
   ...BROWSERS_TOPICS,
   ...DEVTOOLS_TOPICS,
   ...TERMINAL_TOPICS,
   ...NODEJS_TOPICS,
   ...NPM_TOPICS,
-  ...FRONTEND_INFRASTRUCTURE_TOPICS,
   ...GIT_TOPICS,
   ...TESTING_TOPICS,
   ...DOCKER_TOPICS,
