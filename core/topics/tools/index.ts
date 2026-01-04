@@ -11,6 +11,7 @@ import { TESTING_TOPICS } from './testing';
 import { DOCKER_TOPICS } from './docker';
 import { AI_TOOLS_TOPICS } from './ai-tools';
 import { CI_CD_TOPICS } from './ci-cd';
+import { TEAM_DEVELOPMENT_TOPICS } from './team-development';
 
 export const TOOLS_CATEGORIES: Category[] = [
   {
@@ -72,6 +73,11 @@ export const TOOLS_CATEGORIES: Category[] = [
     id: 'ci-cd',
     title: 'CI/CD + VPS/SSH',
     topics: CI_CD_TOPICS
+  },
+  {
+    id: 'team-development',
+    title: 'Командная разработка',
+    topics: TEAM_DEVELOPMENT_TOPICS
   }
 ];
 
@@ -88,5 +94,6 @@ export const TOOLS_TOPICS = [
   ...TESTING_TOPICS,
   ...DOCKER_TOPICS,
   ...AI_TOOLS_TOPICS,
-  ...CI_CD_TOPICS
+  ...CI_CD_TOPICS,
+  ...TEAM_DEVELOPMENT_TOPICS
 ];
