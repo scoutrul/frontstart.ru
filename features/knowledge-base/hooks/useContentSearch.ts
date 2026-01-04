@@ -2,6 +2,11 @@ import { useState, useMemo, useRef } from 'react';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Topic, Category } from '../../../core/types';
 import { MetaCategoryId } from '../../../core/metaCategories';
+import { hasTitleMatch } from '../utils/hasTitleMatch';
+import { hasHighlightedWords } from '../utils/hasHighlightedWords';
+import { hasCategoryMatch } from '../utils/hasCategoryMatch';
+import { calculateRelevanceScore } from '../utils/calculateRelevanceScore';
+import { createWordBoundaryRegex } from '../utils/wordBoundaryRegex';
 
 export interface TopicWithMeta {
   topic: Topic;
@@ -61,33 +66,99 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
       return [];
     }
 
-    // Ищем темы, где хотя бы одно слово найдено в контенте
-    const results = allTopicsWithMeta.filter(({ topic }) => {
+    // Ищем темы, где хотя бы одно слово найдено в контенте (с границами слов)
+    const filteredResults = allTopicsWithMeta.filter(({ topic }) => {
       const searchText = [
         topic.title,
         topic.description,
         ...topic.keyPoints,
         ...(topic.examples?.map(ex => `${ex.title} ${ex.code}`) || []),
         ...topic.tags
-      ].join(' ').toLowerCase();
+      ].join(' ');
 
-      return searchWords.some(word => searchText.includes(word));
+      // Используем границы слов для точного совпадения (с поддержкой кириллицы)
+      return searchWords.some(word => {
+        const regex = createWordBoundaryRegex(word, 'i');
+        return regex.test(searchText);
+      });
     });
 
-    // Сортируем результаты: сначала темы с совпадением в заголовке
+    // Убираем дубликаты по id темы (оставляем первое вхождение)
+    const seenTopicIds = new Set<string>();
+    const results: TopicWithMeta[] = [];
+    for (const item of filteredResults) {
+      if (!seenTopicIds.has(item.topic.id)) {
+        seenTopicIds.add(item.topic.id);
+        results.push(item);
+      }
+    }
+
+    // Сортируем результаты с учетом совокупности совпадений
+    const searchQuery = contentSearchQuery.trim();
+    
     return results.sort((a, b) => {
-      const aTitleLower = a.topic.title.toLowerCase();
-      const bTitleLower = b.topic.title.toLowerCase();
+      // Сначала сортируем по общему баллу релевантности (по убыванию)
+      const aScore = calculateRelevanceScore(
+        a.topic,
+        a.category,
+        a.metaCategoryId,
+        searchQuery,
+        undefined,
+        searchWords
+      );
+      const bScore = calculateRelevanceScore(
+        b.topic,
+        b.category,
+        b.metaCategoryId,
+        searchQuery,
+        undefined,
+        searchWords
+      );
       
-      // Проверяем, есть ли совпадение в заголовке
-      const aHasMatchInTitle = searchWords.some(word => aTitleLower.includes(word));
-      const bHasMatchInTitle = searchWords.some(word => bTitleLower.includes(word));
+      if (aScore !== bScore) {
+        return bScore - aScore; // По убыванию
+      }
       
-      // Если один имеет совпадение в заголовке, а другой нет - приоритет первому
-      if (aHasMatchInTitle && !bHasMatchInTitle) return -1;
-      if (!aHasMatchInTitle && bHasMatchInTitle) return 1;
+      // Если баллы равны, используем текущую систему приоритетов
+      // Приоритет 1: Совпадение в заголовке
+      const aHasTitleMatch = hasTitleMatch(a.topic.title, searchQuery, undefined);
+      const bHasTitleMatch = hasTitleMatch(b.topic.title, searchQuery, undefined);
       
-      // Если оба имеют или не имеют совпадение в заголовке - оставляем исходный порядок
+      if (aHasTitleMatch && !bHasTitleMatch) return -1;
+      if (!aHasTitleMatch && bHasTitleMatch) return 1;
+      
+      // Приоритет 2: Название мета-секции или подсекции содержит искомое слово
+      const aHasCategoryMatch = hasCategoryMatch(a.category, a.metaCategoryId, searchQuery, undefined);
+      const bHasCategoryMatch = hasCategoryMatch(b.category, b.metaCategoryId, searchQuery, undefined);
+      
+      if (aHasCategoryMatch && !bHasCategoryMatch) return -1;
+      if (!aHasCategoryMatch && bHasCategoryMatch) return 1;
+      
+      // Приоритет 3: Подсветка в тексте (description)
+      const aHasHighlight = hasHighlightedWords(a.topic, searchQuery, undefined);
+      const bHasHighlight = hasHighlightedWords(b.topic, searchQuery, undefined);
+      
+      if (aHasHighlight && !bHasHighlight) return -1;
+      if (!aHasHighlight && bHasHighlight) return 1;
+      
+      // Приоритет 4: По тегам (с границами слов, поддерживающими кириллицу)
+      const aHasTagMatch = a.topic.tags.some(tag => 
+        searchWords.some(word => {
+          const regex = createWordBoundaryRegex(word, 'i');
+          return regex.test(tag);
+        })
+      );
+      const bHasTagMatch = b.topic.tags.some(tag => 
+        searchWords.some(word => {
+          const regex = createWordBoundaryRegex(word, 'i');
+          return regex.test(tag);
+        })
+      );
+      
+      if (aHasTagMatch && !bHasTagMatch) return -1;
+      if (!aHasTagMatch && bHasTagMatch) return 1;
+      
+      // Если все приоритеты равны, сохраняем исходный порядок
       return 0;
     });
   }, [contentSearchQuery, allTopicsWithMeta, currentTopicId]);

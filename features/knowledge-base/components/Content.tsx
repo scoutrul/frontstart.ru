@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { Topic } from '../../../core/types';
 import { Badge, CodeBlock } from '../../../components/ui';
 import ScopeChainVisualizer from '../visualizers/ScopeChainVisualizer';
@@ -8,10 +8,15 @@ import { highlightText } from '../utils/highlightText';
 import { TopicWithMeta } from '../hooks/useContentSearch';
 import TopicCard from './TopicCard';
 import { findTopicMeta } from '../utils/findTopicMeta';
+import { hasHighlightedWords } from '../utils/hasHighlightedWords';
+import { hasTitleMatch } from '../utils/hasTitleMatch';
+import { hasCategoryMatch } from '../utils/hasCategoryMatch';
+import { calculateRelevanceScore } from '../utils/calculateRelevanceScore';
 
 interface ContentProps {
   topic: Topic;
   relatedTopics: Topic[];
+  explicitRelatedTopicIds?: Set<string>; // Явные связи из relatedTopics
   onTopicJump: (id: string) => void;
   contentSearchQuery: string | null;
   setContentSearchQuery: (query: string | null) => void;
@@ -48,9 +53,87 @@ const Content: React.FC<ContentProps> = (props) => {
 
   // Определяем, используем ли мы результаты поиска или релевантные темы
   const isSearchMode = contentSearchQuery && contentSearchQuery.trim();
-  const relevantTopics: Topic[] = isSearchMode 
-    ? searchResults.map(item => item.topic)
-    : props.relatedTopics;
+  const rawRelevantTopics: Topic[] = useMemo(() => {
+    const topics = isSearchMode 
+      ? searchResults.map(item => item.topic)
+      : props.relatedTopics;
+    
+    // Убираем дубликаты по id темы (оставляем первое вхождение)
+    const seenTopicIds = new Set<string>();
+    const uniqueTopics: Topic[] = [];
+    for (const topic of topics) {
+      if (!seenTopicIds.has(topic.id)) {
+        seenTopicIds.add(topic.id);
+        uniqueTopics.push(topic);
+      }
+    }
+    return uniqueTopics;
+  }, [isSearchMode, searchResults, props.relatedTopics]);
+  
+  // Сортируем релевантные темы с учетом совокупности совпадений
+  const relevantTopics = useMemo(() => {
+    const relevanceWords = !isSearchMode ? topic.tags : undefined;
+    const explicitIds = props.explicitRelatedTopicIds || new Set<string>();
+    
+    return [...rawRelevantTopics].sort((a, b) => {
+      // Получаем метаданные для обеих тем
+      const aMeta = findTopicMeta(a.id);
+      const bMeta = findTopicMeta(b.id);
+      
+      // Сначала сортируем по общему баллу релевантности (по убыванию)
+      const aScore = calculateRelevanceScore(
+        a,
+        aMeta.category,
+        aMeta.metaCategoryId,
+        highlightQuery,
+        relevanceWords
+      );
+      const bScore = calculateRelevanceScore(
+        b,
+        bMeta.category,
+        bMeta.metaCategoryId,
+        highlightQuery,
+        relevanceWords
+      );
+      
+      if (aScore !== bScore) {
+        return bScore - aScore; // По убыванию
+      }
+      
+      // Если баллы равны, используем текущую систему приоритетов
+      // Приоритет 1: Совпадение в заголовке
+      const aHasTitleMatch = hasTitleMatch(a.title, highlightQuery, relevanceWords);
+      const bHasTitleMatch = hasTitleMatch(b.title, highlightQuery, relevanceWords);
+      
+      if (aHasTitleMatch && !bHasTitleMatch) return -1;
+      if (!aHasTitleMatch && bHasTitleMatch) return 1;
+      
+      // Приоритет 2: Название мета-секции или подсекции содержит искомое слово
+      const aHasCategoryMatch = hasCategoryMatch(aMeta.category, aMeta.metaCategoryId, highlightQuery, relevanceWords);
+      const bHasCategoryMatch = hasCategoryMatch(bMeta.category, bMeta.metaCategoryId, highlightQuery, relevanceWords);
+      
+      if (aHasCategoryMatch && !bHasCategoryMatch) return -1;
+      if (!aHasCategoryMatch && bHasCategoryMatch) return 1;
+      
+      // Приоритет 3: Подсветка в тексте
+      const aHasHighlight = hasHighlightedWords(a, highlightQuery, relevanceWords);
+      const bHasHighlight = hasHighlightedWords(b, highlightQuery, relevanceWords);
+      
+      if (aHasHighlight && !bHasHighlight) return -1;
+      if (!aHasHighlight && bHasHighlight) return 1;
+      
+      // Приоритет 4: Явные связи (explicitRelatedTopicIds)
+      const aIsExplicit = explicitIds.has(a.id);
+      const bIsExplicit = explicitIds.has(b.id);
+      
+      if (aIsExplicit && !bIsExplicit) return -1;
+      if (!aIsExplicit && bIsExplicit) return 1;
+      
+      // Приоритет 5: Автоматические связи по тегам (остальные)
+      // Если все приоритеты равны, сохраняем исходный порядок
+      return 0;
+    });
+  }, [rawRelevantTopics, highlightQuery, isSearchMode, topic.tags, props.explicitRelatedTopicIds]);
   
   // Создаем мапу метаданных для результатов поиска
   const searchResultsMeta = isSearchMode 
@@ -264,6 +347,7 @@ const Content: React.FC<ContentProps> = (props) => {
                   topic={relatedTopic}
                   onClick={() => props.onTopicJump(relatedTopic.id)}
                   highlightQuery={highlightQuery}
+                  relevanceWords={!isSearchMode ? topic.tags : undefined}
                   metaCategoryId={meta?.metaCategoryId || undefined}
                   category={meta?.category || undefined}
                   padding="p-5"

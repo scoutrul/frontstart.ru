@@ -242,7 +242,7 @@ const KnowledgeBaseContent: React.FC = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [savedSearchQuery, setSavedSearchQuery] = useState<string | null>(null);
   const { selectedTopicId, setSelectedTopicId, setSelectedMetaCategory, selectedMetaCategory } = useKnowledgeBaseStore();
-  const { currentTopic, relatedTopics } = useCurrentTopic();
+  const { currentTopic, relatedTopics, explicitRelatedTopicIds } = useCurrentTopic();
   const notesCount = useNotesCount();
   
   const {
@@ -385,6 +385,7 @@ const KnowledgeBaseContent: React.FC = () => {
           <Content 
             topic={currentTopic}
             relatedTopics={relatedTopics}
+            explicitRelatedTopicIds={explicitRelatedTopicIds}
             onTopicJump={handleTopicJump}
             contentSearchQuery={contentSearchQuery}
             setContentSearchQuery={setContentSearchQuery}
