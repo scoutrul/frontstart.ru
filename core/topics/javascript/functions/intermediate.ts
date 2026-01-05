@@ -328,6 +328,10 @@ funcs[2](); // 2
         code: `function factorial(n) {\n  // Базовый случай\n  if (n <= 1) return 1;\n  \n  // Рекурсивный случай\n  return n * factorial(n - 1);\n}\n\nfactorial(5); // 120`
       },
       {
+        title: "Числа Фибоначчи",
+        code: `function fib(n) {\n  // Базовые случаи\n  if (n <= 1) return n;\n  \n  // Рекурсивный случай\n  return fib(n - 1) + fib(n - 2);\n}\n\nfib(0); // 0\nfib(1); // 1\nfib(6); // 8\n\n// ⚠️ Проблема: при больших n создаётся огромное количество\n// вызовов в стеке, что может привести к нехватке памяти.\n// Решение: использовать мемоизацию (см. раздел про мемоизацию)`
+      },
+      {
         title: "Обход дерева",
         code: `function traverse(node) {\n  if (!node) return;\n  \n  console.log(node.value);\n  traverse(node.left);\n  traverse(node.right);\n}\n\nconst tree = {\n  value: 1,\n  left: { value: 2 },\n  right: { value: 3 }\n};\n\ntraverse(tree);`
       },

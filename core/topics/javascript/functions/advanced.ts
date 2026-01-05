@@ -86,6 +86,10 @@ console.log(curriedMultiply(2, 3)(4)); // 24
       {
         title: "Мемоизация с Map",
         code: `function memoizeMap(fn) {\n  const cache = new Map();\n  return function(...args) {\n    const key = args.join(',');\n    if (cache.has(key)) {\n      return cache.get(key);\n    }\n    const result = fn.apply(this, args);\n    cache.set(key, result);\n    return result;\n  };\n}`
+      },
+      {
+        title: "Оптимизация Фибоначчи через мемоизацию",
+        code: `function memoize(fn) {\n  const cache = {};\n  return function(...args) {\n    const key = JSON.stringify(args);\n    if (cache[key]) {\n      return cache[key];\n    }\n    const result = fn.apply(this, args);\n    cache[key] = result;\n    return result;\n  };\n}\n\nconst fibMemo = memoize(function(n) {\n  if (n <= 1) return n;\n  return fibMemo(n - 1) + fibMemo(n - 2);\n});\n\n// Теперь можно безопасно вычислять большие числа\nfibMemo(40); // Быстро, использует кэш\nfibMemo(50); // Оптимально, избегает повторных вычислений\n\n// Без мемоизации fib(40) создал бы миллионы вызовов в стеке\n// С мемоизацией каждый fib(n) вычисляется только один раз`
       }
     ],
     relatedTopics: ['recursion', 'higher-order-functions', 'performance']
