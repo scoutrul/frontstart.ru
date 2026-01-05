@@ -272,6 +272,24 @@ const Content: React.FC<ContentProps> = (props) => {
         </div>
       </header>
 
+      {/* Первый занимательный факт - перед ключевыми моментами */}
+      {topic.funFact && (Array.isArray(topic.funFact) ? topic.funFact[0] : topic.funFact) && (
+        <section className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10">
+          <div className="flex items-start gap-3">
+            <i className="fa-solid fa-lightbulb text-emerald-400 text-lg mt-0.5"></i>
+            <div>
+              <h3 className="text-emerald-400 text-sm font-bold mb-2">Занимательный факт</h3>
+              <p className="text-slate-300 text-sm leading-relaxed">
+                {highlightQuery 
+                  ? highlightText(Array.isArray(topic.funFact) ? topic.funFact[0] : topic.funFact, highlightQuery)
+                  : (Array.isArray(topic.funFact) ? topic.funFact[0] : topic.funFact)
+                }
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       <section className="bg-[#12162a] border border-slate-800/60 rounded-xl p-8 mb-10 shadow-xl">
         <h3 className="text-white text-sm font-bold mb-6 flex items-center gap-2">
           <i className="fa-solid fa-star text-emerald-500 text-xs"></i>
@@ -294,18 +312,23 @@ const Content: React.FC<ContentProps> = (props) => {
         )}
       </section>
 
-      {topic.funFact && (
-        <section className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10">
-          <div className="flex items-start gap-3">
-            <i className="fa-solid fa-lightbulb text-emerald-400 text-lg mt-0.5"></i>
-            <div>
-              <h3 className="text-emerald-400 text-sm font-bold mb-2">Занимательный факт</h3>
-              <p className="text-slate-300 text-sm leading-relaxed">
-                {highlightQuery ? highlightText(topic.funFact, highlightQuery) : topic.funFact}
-              </p>
-            </div>
-          </div>
-        </section>
+      {/* Второй и следующие занимательные факты - после ключевых моментов */}
+      {topic.funFact && Array.isArray(topic.funFact) && topic.funFact.length > 1 && (
+        <>
+          {topic.funFact.slice(1).map((fact, index) => (
+            <section key={index} className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10">
+              <div className="flex items-start gap-3">
+                <i className="fa-solid fa-lightbulb text-emerald-400 text-lg mt-0.5"></i>
+                <div>
+                  <h3 className="text-emerald-400 text-sm font-bold mb-2">Занимательный факт</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
+                    {highlightQuery ? highlightText(fact, highlightQuery) : fact}
+                  </p>
+                </div>
+              </div>
+            </section>
+          ))}
+        </>
       )}
 
       <section className="mb-10">

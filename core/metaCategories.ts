@@ -1,4 +1,5 @@
 export type MetaCategoryId =
+  | "computer-science"
   | "javascript"
   | "markup"
   | "frameworks"
@@ -17,6 +18,12 @@ export interface MetaCategory {
 }
 
 export const META_CATEGORIES: MetaCategory[] = [
+  {
+    id: "computer-science",
+    title: "Информатика",
+    icon: "fa-solid fa-microchip",
+    description: "Основы вычислений, алгоритмы, архитектура",
+  },
   {
     id: "tools",
     title: "Инструменты",
