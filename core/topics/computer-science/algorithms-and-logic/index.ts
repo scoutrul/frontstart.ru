@@ -1,0 +1,7 @@
+import { CS_ALGORITHMS_BEGINNER_TOPICS } from './beginner';
+import { CS_ALGORITHMS_INTERMEDIATE_TOPICS } from './intermediate';
+
+export const CS_ALGORITHMS_TOPICS = [
+  ...CS_ALGORITHMS_BEGINNER_TOPICS,
+  ...CS_ALGORITHMS_INTERMEDIATE_TOPICS
+];

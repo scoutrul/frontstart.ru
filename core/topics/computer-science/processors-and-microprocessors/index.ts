@@ -1,0 +1,7 @@
+import { CS_PROCESSORS_BEGINNER_TOPICS } from './beginner';
+import { CS_PROCESSORS_INTERMEDIATE_TOPICS } from './intermediate';
+
+export const CS_PROCESSORS_TOPICS = [
+  ...CS_PROCESSORS_BEGINNER_TOPICS,
+  ...CS_PROCESSORS_INTERMEDIATE_TOPICS
+];

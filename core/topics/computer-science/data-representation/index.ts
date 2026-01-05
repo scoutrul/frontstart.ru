@@ -1,8 +1,0 @@
-import { Topic } from '../../../types';
-import { CS_DATA_REPRESENTATION_BEGINNER_TOPICS } from './beginner';
-import { CS_DATA_REPRESENTATION_INTERMEDIATE_TOPICS } from './intermediate';
-
-export const CS_DATA_REPRESENTATION_TOPICS: Topic[] = [
-  ...CS_DATA_REPRESENTATION_BEGINNER_TOPICS,
-  ...CS_DATA_REPRESENTATION_INTERMEDIATE_TOPICS
-];
