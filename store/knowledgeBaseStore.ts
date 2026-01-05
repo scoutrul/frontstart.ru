@@ -25,6 +25,7 @@ interface KnowledgeBaseState {
 }
 
 const getInitialLearnedTopics = (): Record<MetaCategoryId, string[]> => ({
+  'computer-science': [],
   javascript: [],
   markup: [],
   frameworks: [],
