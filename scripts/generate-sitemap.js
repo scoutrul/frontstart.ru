@@ -9,6 +9,7 @@ const path = require('path');
 
 const baseUrl = 'https://frontstart.online';
 const allCategories = [
+  'computer-science',
   'javascript',
   'markup',
   'frameworks',

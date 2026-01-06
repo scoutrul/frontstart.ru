@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Category, Difficulty } from '../../../core/types';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
+import { createWordBoundaryRegex } from '../utils/wordBoundaryRegex';
 
 export const useTopicsFilter = () => {
   const { searchQuery, selectedDifficulty, selectedTags, selectedMetaCategory } = useKnowledgeBaseStore();
@@ -32,9 +33,10 @@ export const useTopicsFilter = () => {
           // Поиск по словам: хотя бы одно слово должно быть найдено в title, description или tags
           const matchesSearch = !searchQuery || searchWords.length === 0 || 
             searchWords.some(word => {
-              const titleMatch = t.title.toLowerCase().includes(word);
-              const descriptionMatch = t.description.toLowerCase().includes(word);
-              const tagsMatch = t.tags.some(tag => tag.toLowerCase().includes(word));
+              const regex = createWordBoundaryRegex(word, 'i');
+              const titleMatch = regex.test(t.title);
+              const descriptionMatch = regex.test(t.description);
+              const tagsMatch = t.tags.some(tag => regex.test(tag));
               return titleMatch || descriptionMatch || tagsMatch;
             });
           const matchesDifficulty = selectedDifficulty === 'all' || 

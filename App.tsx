@@ -284,19 +284,9 @@ const KnowledgeBaseContent: React.FC = () => {
 
   // Найти категорию для темы по ID
   const findTopicCategory = (topicId: string): MetaCategoryId | null => {
-    const allCategories: MetaCategoryId[] = [
-      'javascript',
-      'markup',
-      'frameworks',
-      'typescript',
-      'architecture',
-      'security',
-      'tools',
-      'network',
-      'optimization'
-    ];
+    const allCategoryIds = META_CATEGORIES.map(m => m.id);
 
-    for (const categoryId of allCategories) {
+    for (const categoryId of allCategoryIds) {
       const categories = getKnowledgeBaseByCategory(categoryId);
       const topic = categories.flatMap(cat => cat.topics).find(t => t.id === topicId);
       if (topic) {

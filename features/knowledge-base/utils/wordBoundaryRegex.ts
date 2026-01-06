@@ -9,10 +9,12 @@ export const createWordBoundaryRegex = (word: string, flags: string = 'i'): RegE
   // Экранируем специальные символы регулярных выражений
   const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   
-  // Используем Unicode-aware границы слов
-  // (?<![а-яА-Яa-zA-Z0-9]) - не буква/цифра перед словом
-  // (?![а-яА-Яa-zA-Z0-9]) - не буква/цифра после слова
-  const pattern = `(?<![а-яА-Яa-zA-Z0-9])${escapedWord}(?![а-яА-Яa-zA-Z0-9])`;
+  // Для коротких слов (меньше 5 символов) используем строгие границы с обеих сторон
+  // Для длинных слов (>= 5 символов) позволяем вхождение как префикс (без границы справа)
+  // Это позволяет находить "программиста", "программистов" при поиске "программист"
+  const useStrictBoundaryRight = word.length < 5;
+
+  const pattern = `(?<![а-яёА-ЯЁa-zA-Z0-9])${escapedWord}${useStrictBoundaryRight ? '(?![а-яёА-ЯЁa-zA-Z0-9])' : ''}`;
   
   return new RegExp(pattern, flags);
 };

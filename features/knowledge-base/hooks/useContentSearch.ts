@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Topic, Category } from '../../../core/types';
-import { MetaCategoryId } from '../../../core/metaCategories';
+import { MetaCategoryId, META_CATEGORIES } from '../../../core/metaCategories';
 import { hasTitleMatch } from '../utils/hasTitleMatch';
 import { hasHighlightedWords } from '../utils/hasHighlightedWords';
 import { hasCategoryMatch } from '../utils/hasCategoryMatch';
@@ -20,21 +20,11 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
 
   // Получаем все темы из всех категорий с информацией о метакатегории и категории
   const allTopicsWithMeta = useMemo(() => {
-    const allCategories: MetaCategoryId[] = [
-      'javascript',
-      'markup',
-      'frameworks',
-      'typescript',
-      'architecture',
-      'security',
-      'tools',
-      'network',
-      'optimization'
-    ];
+    const allCategoryIds = META_CATEGORIES.map(m => m.id);
     
     const result: TopicWithMeta[] = [];
     
-    allCategories.forEach(metaCategoryId => {
+    allCategoryIds.forEach(metaCategoryId => {
       const categories = getKnowledgeBaseByCategory(metaCategoryId);
       categories.forEach(category => {
         category.topics.forEach(topic => {
@@ -67,13 +57,16 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
     }
 
     // Ищем темы, где хотя бы одно слово найдено в контенте (с границами слов)
-    const filteredResults = allTopicsWithMeta.filter(({ topic }) => {
+    const filteredResults = allTopicsWithMeta.filter(({ topic, category, metaCategoryId }) => {
+      const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
       const searchText = [
         topic.title,
         topic.description,
         ...topic.keyPoints,
         ...(topic.examples?.map(ex => `${ex.title} ${ex.code}`) || []),
-        ...topic.tags
+        ...topic.tags,
+        category.title,
+        metaCategory?.title || ''
       ].join(' ');
 
       // Используем границы слов для точного совпадения (с поддержкой кириллицы)
