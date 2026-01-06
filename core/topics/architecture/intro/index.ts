@@ -1,0 +1,10 @@
+import { Topic } from '../../../types';
+import { ARCHITECTURE_INTRO_BEGINNER_TOPICS } from './beginner';
+import { ARCHITECTURE_INTRO_INTERMEDIATE_TOPICS } from './intermediate';
+import { ARCHITECTURE_INTRO_ADVANCED_TOPICS } from './advanced';
+
+export const ARCHITECTURE_INTRO_TOPICS: Topic[] = [
+  ...ARCHITECTURE_INTRO_BEGINNER_TOPICS,
+  ...ARCHITECTURE_INTRO_INTERMEDIATE_TOPICS,
+  ...ARCHITECTURE_INTRO_ADVANCED_TOPICS
+];

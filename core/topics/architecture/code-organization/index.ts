@@ -1,0 +1,10 @@
+import { Topic } from '../../../types';
+import { CODE_ORGANIZATION_BEGINNER_TOPICS } from './beginner';
+import { CODE_ORGANIZATION_INTERMEDIATE_TOPICS } from './intermediate';
+import { CODE_ORGANIZATION_ADVANCED_TOPICS } from './advanced';
+
+export const CODE_ORGANIZATION_TOPICS: Topic[] = [
+  ...CODE_ORGANIZATION_BEGINNER_TOPICS,
+  ...CODE_ORGANIZATION_INTERMEDIATE_TOPICS,
+  ...CODE_ORGANIZATION_ADVANCED_TOPICS
+];
