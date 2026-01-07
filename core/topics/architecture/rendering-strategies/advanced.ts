@@ -38,7 +38,8 @@ export const RENDERING_STRATEGIES_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-rendering-ssr-ssg-isr'],
-    funFact: 'Island Architecture была популяризирована Astro в 2021 году. Идея в том, чтобы гидратировать только интерактивные части страницы, а не всю страницу. Это уменьшает JavaScript и улучшает производительность, особенно на мобильных устройствах.'
+    funFact: 'Island Architecture была популяризирована Astro в 2021 году. Идея в том, чтобы гидратировать только интерактивные части страницы, а не всю страницу. Это уменьшает JavaScript и улучшает производительность, особенно на мобильных устройствах.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-rendering-rsc',
@@ -308,7 +309,8 @@ function Component() {
       }
     ],
     relatedTopics: ['architecture-rendering-advanced', 'architecture-rendering-ssr-ssg-isr', 'architecture-rendering-hydration'],
-    funFact: 'React Server Components были анонсированы в 2020 году, но стали доступны только в Next.js 13 в 2022 году. Они представляют фундаментальное изменение в том, как работает React, позволяя рендерить компоненты на сервере без отправки на клиент. Команда React потратила годы на разработку этой технологии, решая сложные проблемы с сериализацией, streaming и композицией Server и Client Components.'
+    funFact: 'React Server Components были анонсированы в 2020 году, но стали доступны только в Next.js 13 в 2022 году. Они представляют фундаментальное изменение в том, как работает React, позволяя рендерить компоненты на сервере без отправки на клиент. Команда React потратила годы на разработку этой технологии, решая сложные проблемы с сериализацией, streaming и композицией Server и Client Components.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-rendering-partial-pre-rendering',
@@ -535,6 +537,7 @@ async function ProductReviews({ id }) {
       }
     ],
     relatedTopics: ['architecture-rendering-ssr-ssg-isr', 'architecture-rendering-rsc', 'architecture-rendering-advanced'],
-    funFact: 'Partial Pre-Rendering был анонсирован Next.js в 2023 году и стал доступен в Next.js 15. Концепция объединяет лучшие стороны SSG (быстрота) и SSR (динамичность), позволяя разработчикам получать быструю загрузку статичного контента и динамичность там, где она нужна. Это следующий шаг в эволюции стратегий рендеринга после SSG, SSR и ISR.'
+    funFact: 'Partial Pre-Rendering был анонсирован Next.js в 2023 году и стал доступен в Next.js 15. Концепция объединяет лучшие стороны SSG (быстрота) и SSR (динамичность), позволяя разработчикам получать быструю загрузку статичного контента и динамичность там, где она нужна. Это следующий шаг в эволюции стратегий рендеринга после SSG, SSR и ISR.',
+    isFrontendEssential: true
   }
 ];

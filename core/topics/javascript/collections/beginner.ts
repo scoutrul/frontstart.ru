@@ -30,6 +30,7 @@ export const JS_COLLECTIONS_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'operators'],
+    isFrontendEssential: true
   },
 {
     id: 'objects-basic',
@@ -59,6 +60,7 @@ export const JS_COLLECTIONS_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'arrays-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'destructuring-basic',
@@ -88,5 +90,6 @@ export const JS_COLLECTIONS_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['arrays-basic', 'objects-basic'],
+    isFrontendEssential: true
   }
 ];

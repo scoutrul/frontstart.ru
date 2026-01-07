@@ -28,6 +28,7 @@ export const JS_ADVANCED_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['functions-types', 'classes'],
+    isFrontendEssential: true
   },
 {
     id: 'symbol',
@@ -56,5 +57,6 @@ export const JS_ADVANCED_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['data-types', 'objects-basic'],
+    isFrontendEssential: true
   }
 ];

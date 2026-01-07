@@ -166,6 +166,7 @@ Content-Security-Policy:
 // - Тестировать на разных страницах`
       }
     ],
-    relatedTopics: ['csrf-xss', 'same-origin-policy']
+    relatedTopics: ['csrf-xss', 'same-origin-policy'],
+    isFrontendEssential: true
   }
 ];

@@ -108,6 +108,7 @@ funcs[2](); // 2
       }
     ],
     relatedTopics: ['lexical-env', 'private-state'],
+    isFrontendEssential: true
   },
 {
     id: 'private-state',
@@ -162,6 +163,7 @@ funcs[2](); // 2
       }
     ],
     relatedTopics: ['this-basics'],
+    isFrontendEssential: true
   },
 {
     id: 'context-loss',
@@ -189,6 +191,7 @@ funcs[2](); // 2
       }
     ],
     relatedTopics: ['bind-call-apply'],
+    isFrontendEssential: true
   },
 {
     id: 'bind-call-apply',
@@ -217,6 +220,7 @@ funcs[2](); // 2
       }
     ],
     relatedTopics: ['this-basics'],
+    isFrontendEssential: true
   },
 {
     id: 'iife',
@@ -276,7 +280,8 @@ funcs[2](); // 2
         code: `const numbers = [1, 2, 3, 4];\n\nnumbers.map(n => n * 2); // [2, 4, 6, 8]\nnumbers.filter(n => n > 2); // [3, 4]\nnumbers.forEach(n => console.log(n));\n\n// Callback вызывается для каждого элемента`
       }
     ],
-    relatedTopics: ['promises', 'async-await', 'functions-types']
+    relatedTopics: ['promises', 'async-await', 'functions-types'],
+    isFrontendEssential: true
   },
 {
     id: 'higher-order-functions',
@@ -340,6 +345,7 @@ funcs[2](); // 2
         code: `// Обычная рекурсия\nfunction sum(n) {\n  if (n === 0) return 0;\n  return n + sum(n - 1);\n}\n\n// Хвостовая рекурсия (оптимизируется)\nfunction sumTail(n, acc = 0) {\n  if (n === 0) return acc;\n  return sumTail(n - 1, acc + n);\n}`
       }
     ],
-    relatedTopics: ['functions-types', 'callbacks', 'arrays-advanced']
+    relatedTopics: ['functions-types', 'callbacks', 'arrays-advanced'],
+    isFrontendEssential: true
   }
 ];

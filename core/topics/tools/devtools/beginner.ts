@@ -17,7 +17,8 @@ export const DEVTOOLS_BEGINNER_TOPICS: Topic[] = [
     tags: ['tools', 'devtools', 'debugging', 'basics', 'browser-api'],
     relatedTopics: [],
     funFact: 'Chrome DevTools изначально был отдельным расширением для браузера, но в 2009 году Google интегрировал его напрямую в Chrome. Сегодня DevTools настолько мощный, что многие разработчики используют его для полноценной разработки и отладки приложений.',
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   },
   {
     id: 'devtools-elements',
@@ -35,6 +36,7 @@ export const DEVTOOLS_BEGINNER_TOPICS: Topic[] = [
     ],
     tags: ['tools', 'devtools', 'dom', 'css', 'basics', 'debugging'],
     relatedTopics: ['devtools-intro'],
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   }
 ];

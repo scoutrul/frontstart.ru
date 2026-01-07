@@ -32,6 +32,7 @@ export const PERFORMANCE_BASICS_TOPICS: Topic[] = [
       'network-performance'
     ],
     funFact: 'Производительность тесно связана с эффективностью сайта и положительным пользовательским опытом, что напрямую влияет на бизнес-показатели. Для интернет-магазинов это критично: медленная загрузка снижает конверсии и продажи. Для обычных сайтов производительность влияет на SEO — поисковые системы (Google, Yandex) предпочитают быстрые сайты и ранжируют их выше в результатах поиска. В общем, производительность — это очень важно.',
+    isFrontendEssential: true,
     examples: []
   },
   {
@@ -64,6 +65,7 @@ export const PERFORMANCE_BASICS_TOPICS: Topic[] = [
       'browser-rendering',
       'devtools-performance'
     ],
+    isFrontendEssential: true,
     funFact: 'Web Vitals как методологию и инструментарий для измерения и оценки производительности Google представил в 2018 году. Цель инициативы — унифицировать управление метриками и упростить измерение производительности, отклика и визуальной стабильности. До этого каждый разработчик измерял производительность по-своему, в основном фокусируясь на скорости загрузки. Web Vitals стандартизировал подход и сделал метрики ориентированными на реальный пользовательский опыт.',
     examples: []
   },
@@ -95,6 +97,7 @@ export const PERFORMANCE_BASICS_TOPICS: Topic[] = [
       'devtools-performance',
       'network-performance'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Измерение производительности',
@@ -345,6 +348,7 @@ export const WEB_VITALS_TOPICS: Topic[] = [
       'performance-measurement',
       'browser-rendering'
     ],
+    isFrontendEssential: true,
     examples: []
   },
   {
@@ -375,6 +379,7 @@ export const WEB_VITALS_TOPICS: Topic[] = [
       'performance-measurement',
       'browser-rendering'
     ],
+    isFrontendEssential: true,
     examples: []
   },
   {
@@ -467,6 +472,7 @@ export const WEB_VITALS_TOPICS: Topic[] = [
       'lcp-largest-contentful-paint',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Неправильно (текст прыгает из-за изображения без размеров)',
@@ -513,6 +519,7 @@ export const WEB_VITALS_TOPICS: Topic[] = [
       'performance-measurement'
     ],
     funFact: 'FID был одной из трёх первоначальных метрик Core Web Vitals (вместе с LCP и CLS), но в 2024 году Google заменил его на INP (Interaction to Next Paint), который измеряет все взаимодействия, а не только первое. Однако понимание FID важно для понимания проблем отзывчивости интерфейса.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Пример высокого FID',
@@ -583,6 +590,7 @@ export const WEB_VITALS_TOPICS: Topic[] = [
       'performance-metrics',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     funFact: 'INP заменил FID в Core Web Vitals в марте 2024 года. Google объяснил это тем, что FID измеряет только первое взаимодействие, а сайт может быть отзывчивым сначала, но затем замедляться. INP учитывает все взаимодействия за сессию, что даёт более точную картину реального пользовательского опыта. Исследования Google показали, что INP лучше коррелирует с пользовательским восприятием отзывчивости сайта.',
     examples: [
       {
@@ -663,6 +671,7 @@ onINP((metric) => {
       'render-blocking-resources',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'HTML с preload и lazy-loading',
@@ -720,6 +729,7 @@ onINP((metric) => {
       'performance-metrics',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Изображения с размерами',
@@ -807,6 +817,7 @@ onINP((metric) => {
       'runtime-optimization',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Code Splitting и Async/Defer',
@@ -951,6 +962,7 @@ onFID((metric) => {
       'runtime-optimization',
       'performance-measurement'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Разбиение долгих задач',
@@ -1159,7 +1171,8 @@ arr.forEach(item => {
 });`
       }
     ],
-    relatedTopics: ['big-o-complexity', 'bundle-optimization']
+    relatedTopics: ['big-o-complexity', 'bundle-optimization'],
+    isFrontendEssential: true
   },
   {
     id: 'big-o-complexity',
@@ -1294,7 +1307,8 @@ function findPair(arr, target) {
 }`
       }
     ],
-    relatedTopics: ['code-optimization']
+    relatedTopics: ['code-optimization'],
+    isFrontendEssential: true
   },
   {
     id: 'bundle-optimization',
@@ -1327,7 +1341,8 @@ import { debounce } from 'lodash-es';  // ✅
 import _ from 'lodash';  // ❌ (весь lodash)`
       }
     ],
-    relatedTopics: ['code-optimization', 'runtime-optimization', 'bundle-splitting-strategies']
+    relatedTopics: ['code-optimization', 'runtime-optimization', 'bundle-splitting-strategies'],
+    isFrontendEssential: true
   },
   {
     id: 'bundle-splitting-strategies',
@@ -1609,7 +1624,8 @@ module.exports = {
       }
     ],
     relatedTopics: ['bundle-optimization', 'code-optimization', 'critical-rendering-path'],
-    funFact: 'Bundle splitting стал критичным с ростом размера JavaScript-приложений. В 2010-х годах типичный bundle был 50-100KB, сегодня он может достигать 1-2MB без разделения. Code splitting был популяризирован Webpack и стал стандартной практикой для оптимизации производительности. Современные инструменты (Vite, esbuild) делают code splitting ещё более эффективным благодаря более быстрой сборке и лучшей оптимизации.'
+    funFact: 'Bundle splitting стал критичным с ростом размера JavaScript-приложений. В 2010-х годах типичный bundle был 50-100KB, сегодня он может достигать 1-2MB без разделения. Code splitting был популяризирован Webpack и стал стандартной практикой для оптимизации производительности. Современные инструменты (Vite, esbuild) делают code splitting ещё более эффективным благодаря более быстрой сборке и лучшей оптимизации.',
+    isFrontendEssential: true
   },
   {
     id: 'critical-css',
@@ -1772,7 +1788,8 @@ module.exports = {
       }
     ],
     relatedTopics: ['critical-rendering-path', 'lcp-optimization', 'render-blocking-resources'],
-    funFact: 'Идея Critical CSS появилась в 2013 году, когда Google опубликовал исследование о том, что блокирующие CSS-файлы замедляют рендеринг. Техника стала популярной после того, как Addy Osmani и другие разработчики начали пропагандировать её как способ улучшения производительности. Сегодня Critical CSS считается обязательной техникой для оптимизации производительности.'
+    funFact: 'Идея Critical CSS появилась в 2013 году, когда Google опубликовал исследование о том, что блокирующие CSS-файлы замедляют рендеринг. Техника стала популярной после того, как Addy Osmani и другие разработчики начали пропагандировать её как способ улучшения производительности. Сегодня Critical CSS считается обязательной техникой для оптимизации производительности.',
+    isFrontendEssential: true
   },
   {
     id: 'list-virtualization',
@@ -2000,7 +2017,8 @@ function HorizontalList({ items }) {
       }
     ],
     relatedTopics: ['runtime-optimization', 'bundle-optimization'],
-    funFact: 'Виртуализация списков стала популярной в веб-разработке благодаря библиотеке react-virtualized, созданной Брайаном Воном в 2016 году. Идея пришла из нативных приложений (iOS UITableView, Android RecyclerView), где виртуализация использовалась с самого начала для работы с большими списками. В вебе эта техника стала критичной с ростом SPA-приложений и необходимостью отображать большие объёмы данных.'
+    funFact: 'Виртуализация списков стала популярной в веб-разработке благодаря библиотеке react-virtualized, созданной Брайаном Воном в 2016 году. Идея пришла из нативных приложений (iOS UITableView, Android RecyclerView), где виртуализация использовалась с самого начала для работы с большими списками. В вебе эта техника стала критичной с ростом SPA-приложений и необходимостью отображать большие объёмы данных.',
+    isFrontendEssential: true
   },
   {
     id: 'runtime-optimization',
@@ -2054,7 +2072,8 @@ function throttle(fn, limit) {
 }`
       }
     ],
-    relatedTopics: ['bundle-optimization']
+    relatedTopics: ['bundle-optimization'],
+    isFrontendEssential: true
   }
 ];
 

@@ -31,6 +31,7 @@ export const CACHING_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-caching-react-query'],
-    funFact: 'useEffect был добавлен в React 16.8 вместе с хуками в 2018 году. Он заменил lifecycle методы (componentDidMount, componentDidUpdate) и сделал работу с побочными эффектами проще и понятнее.'
+    funFact: 'useEffect был добавлен в React 16.8 вместе с хуками в 2018 году. Он заменил lifecycle методы (componentDidMount, componentDidUpdate) и сделал работу с побочными эффектами проще и понятнее.',
+    isFrontendEssential: true
   }
 ];

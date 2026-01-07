@@ -178,7 +178,8 @@ export const HTML_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-architecture', 'html-aria-intro'],
-    funFact: 'Правило "No ARIA is better than Bad ARIA" появилось из-за реальных случаев, когда плохая ARIA ломала опыт для пользователей скринридеров. Скринридер объявляет <button> как "кнопка", а <div role="button"> — как "кнопка, группа", что может сбивать с толку.'
+    funFact: 'Правило "No ARIA is better than Bad ARIA" появилось из-за реальных случаев, когда плохая ARIA ломала опыт для пользователей скринридеров. Скринридер объявляет <button> как "кнопка", а <div role="button"> — как "кнопка, группа", что может сбивать с толку.',
+    isFrontendEssential: true
   },
   {
     id: 'html-architecture',
@@ -341,6 +342,7 @@ export const HTML_ADVANCED_TOPICS: Topic[] = [
    оптимизировать рендеринг */`
       }
     ],
-    relatedTopics: ['html-deep-accessibility']
+    relatedTopics: ['html-deep-accessibility'],
+    isFrontendEssential: true
   }
 ];

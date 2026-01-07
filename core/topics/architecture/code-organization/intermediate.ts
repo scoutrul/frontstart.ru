@@ -68,7 +68,8 @@ export const CODE_ORGANIZATION_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-code-organization-basics', 'architecture-code-organization-advanced'],
-    funFact: 'Feature-Sliced Design был создан в 2021 году для решения проблем масштабирования фронтенд-проектов. Он стал популярным в русскоязычном сообществе и используется в крупных проектах. FSD вдохновлён Clean Architecture и Domain-Driven Design, адаптированными для фронтенда.'
+    funFact: 'Feature-Sliced Design был создан в 2021 году для решения проблем масштабирования фронтенд-проектов. Он стал популярным в русскоязычном сообществе и используется в крупных проектах. FSD вдохновлён Clean Architecture и Domain-Driven Design, адаптированными для фронтенда.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-code-organization-domains',
@@ -119,6 +120,7 @@ export const CODE_ORGANIZATION_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-code-organization-feature'],
-    funFact: 'Группировка по доменам пришла из Domain-Driven Design (DDD), методологии, созданной Эриком Эвансом в 2003 году. DDD изначально была для бэкенда, но принципы отлично применимы и к фронтенду. Многие крупные компании используют доменную организацию для фронтенд-проектов.'
+    funFact: 'Группировка по доменам пришла из Domain-Driven Design (DDD), методологии, созданной Эриком Эвансом в 2003 году. DDD изначально была для бэкенда, но принципы отлично применимы и к фронтенду. Многие крупные компании используют доменную организацию для фронтенд-проектов.',
+    isFrontendEssential: true
   }
 ];

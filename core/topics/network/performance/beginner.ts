@@ -109,7 +109,8 @@ GET /index.html
 // РЕЗУЛЬТАТ: страница загружается быстрее`
       }
     ],
-    relatedTopics: ['blocking-resources', 'critical-rendering-path', 'performance-prefetch']
+    relatedTopics: ['blocking-resources', 'critical-rendering-path', 'performance-prefetch'],
+    isFrontendEssential: true
   },
   {
     id: 'blocking-resources',
@@ -235,6 +236,7 @@ GET /index.html
 // - Использовать lazy loading`
       }
     ],
-    relatedTopics: ['resource-loading', 'critical-rendering-path']
+    relatedTopics: ['resource-loading', 'critical-rendering-path'],
+    isFrontendEssential: true
   }
 ];

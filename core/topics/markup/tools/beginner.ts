@@ -26,7 +26,8 @@ export const TOOLS_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['tools-devtools-advanced'],
-    funFact: 'В Chrome DevTools можно нажать Ctrl+Shift+P (Cmd+Shift+P на Mac) и найти команду "Capture node screenshot" для скриншота конкретного DOM-элемента. С помощью console.dir($0) можно вывести выбранный элемент в виде JS-объекта со всеми свойствами, что очень полезно для отладки.'
+    funFact: 'В Chrome DevTools можно нажать Ctrl+Shift+P (Cmd+Shift+P на Mac) и найти команду "Capture node screenshot" для скриншота конкретного DOM-элемента. С помощью console.dir($0) можно вывести выбранный элемент в виде JS-объекта со всеми свойствами, что очень полезно для отладки.',
+    isFrontendEssential: true
   },
   {
     id: 'tools-validation',
@@ -49,6 +50,7 @@ export const TOOLS_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['tools-devtools-elements'],
-    funFact: 'Существует инструмент "Nu Html Checker", который проверяет HTML строже, чем браузер. Валидация помогает находить проблемы, которые браузеры прощают, но которые могут вызвать проблемы с доступностью, SEO или будущей совместимостью.'
+    funFact: 'Существует инструмент "Nu Html Checker", который проверяет HTML строже, чем браузер. Валидация помогает находить проблемы, которые браузеры прощают, но которые могут вызвать проблемы с доступностью, SEO или будущей совместимостью.',
+    isFrontendEssential: true
   }
 ];

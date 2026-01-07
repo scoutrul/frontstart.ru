@@ -149,6 +149,7 @@ export const NETWORK_TOOLS_BEGINNER_TOPICS: Topic[] = [
 // Полезно для воспроизведения запроса`
       }
     ],
-    relatedTopics: ['network-timing', 'network-waterfall', 'network-production']
+    relatedTopics: ['network-timing', 'network-waterfall', 'network-production'],
+    isFrontendEssential: true
   }
 ];

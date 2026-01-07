@@ -30,7 +30,8 @@ console.log("Проверяем кнопку на странице");`
 console.log(sum(2, 3)); // 5`
       }
     ],
-    relatedTopics: ['testing-intermediate', 'ci-cd-basics']
+    relatedTopics: ['testing-intermediate', 'ci-cd-basics'],
+    isFrontendEssential: true
   }
 ];
 

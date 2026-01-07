@@ -108,7 +108,8 @@ Access-Control-Allow-Origin: *
 // Браузер заблокирует ответ (SOP)`
       }
     ],
-    relatedTopics: ['cors-basics', 'cors-preflight', 'csp-basics']
+    relatedTopics: ['cors-basics', 'cors-preflight', 'csp-basics'],
+    isFrontendEssential: true
   },
   {
     id: 'cors-basics',
@@ -215,6 +216,7 @@ Access-Control-Allow-Credentials: true
 // - Проверять Origin на сервере и динамически устанавливать заголовок`
       }
     ],
-    relatedTopics: ['same-origin-policy', 'cors-preflight', 'storage-comparison']
+    relatedTopics: ['same-origin-policy', 'cors-preflight', 'storage-comparison'],
+    isFrontendEssential: true
   }
 ];

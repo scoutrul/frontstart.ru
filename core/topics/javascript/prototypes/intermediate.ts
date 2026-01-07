@@ -168,6 +168,7 @@ console.log(child.c); // 3 (свое)`
       }
     ],
     relatedTopics: ['prototype-chain', 'constructors'],
+    isFrontendEssential: true
   },
 {
     id: 'hasownproperty-in',
@@ -202,6 +203,7 @@ console.log(child.c); // 3 (свое)`
       }
     ],
     relatedTopics: ['prototype-chain', 'objects-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'instanceof',
@@ -269,6 +271,7 @@ console.log(child.c); // 3 (свое)`
       }
     ],
     relatedTopics: ['prototype-chain', 'object-create'],
+    isFrontendEssential: true
   },
 {
     id: 'classes',
@@ -297,5 +300,6 @@ console.log(child.c); // 3 (свое)`
       }
     ],
     relatedTopics: ['prototype-chain', 'this-basics'],
+    isFrontendEssential: true
   }
 ];

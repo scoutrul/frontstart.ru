@@ -33,6 +33,7 @@ export const RESPONSIVE_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['responsive-approaches'],
-    funFact: 'Progressive Enhancement и Graceful Degradation — два философских подхода к разработке. Progressive Enhancement начинается с базовой функциональности и добавляет улучшения, Graceful Degradation начинается с полной функциональности и обеспечивает работу в старых браузерах. Mobile-first — это форма Progressive Enhancement.'
+    funFact: 'Progressive Enhancement и Graceful Degradation — два философских подхода к разработке. Progressive Enhancement начинается с базовой функциональности и добавляет улучшения, Graceful Degradation начинается с полной функциональности и обеспечивает работу в старых браузерах. Mobile-first — это форма Progressive Enhancement.',
+    isFrontendEssential: true
   }
 ];

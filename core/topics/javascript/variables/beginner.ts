@@ -48,6 +48,7 @@ export const JS_VARIABLES_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['functions-types', 'hoisting-basic', 'tdz-basic', 'function-scope', 'block-scope', 'mutability-immutability'],
+    isFrontendEssential: true
   },
 {
     id: 'function-scope',
@@ -125,6 +126,7 @@ func2();
       }
     ],
     relatedTopics: ['var-let-const', 'hoisting-basic', 'block-scope', 'scope-chain'],
+    isFrontendEssential: true
   },
 {
     id: 'block-scope',
@@ -202,6 +204,7 @@ function test2() {
       }
     ],
     relatedTopics: ['var-let-const', 'function-scope', 'tdz-basic', 'scope-chain'],
+    isFrontendEssential: true
   },
 {
     id: 'hoisting-basic',
@@ -230,6 +233,7 @@ function test2() {
       }
     ],
     relatedTopics: ['var-let-const', 'tdz-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'tdz-basic',
@@ -258,6 +262,7 @@ function test2() {
       }
     ],
     relatedTopics: ['hoisting-basic', 'var-let-const'],
+    isFrontendEssential: true
   },
 {
     id: 'scope-chain',
@@ -285,6 +290,7 @@ function test2() {
       }
     ],
     relatedTopics: ['hoisting-basic', 'lexical-env', 'closures-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'mutability-immutability',
@@ -383,5 +389,6 @@ console.log(original.nested.b); // 20 — оригинал не изменилс
       }
     ],
     relatedTopics: ['var-let-const', 'data-types-overview', 'immutability'],
+    isFrontendEssential: true
   }
 ];

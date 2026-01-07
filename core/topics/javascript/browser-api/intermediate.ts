@@ -61,7 +61,8 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const animateObserver = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      entry.target.style.animation = 'fadeIn 0.5s';\n      animateObserver.unobserve(entry.target);\n    }\n  });\n}, {\n  threshold: 0.1\n});\n\ndocument.querySelectorAll('.animate-on-scroll').forEach(el => {\n  animateObserver.observe(el);\n});`
       }
     ],
-    relatedTopics: ['dom-api', 'event-api', 'performance-optimization']
+    relatedTopics: ['dom-api', 'event-api', 'performance-optimization'],
+    isFrontendEssential: true
   },
 {
     id: 'web-workers',
@@ -119,7 +120,8 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const listObserver = new ResizeObserver((entries) => {\n  const { width, height } = entries[0].contentRect;\n  \n  // Пересчитываем видимые элементы при изменении размера\n  const itemHeight = 50;\n  const visibleCount = Math.ceil(height / itemHeight);\n  \n  updateVisibleItems(visibleCount);\n});\n\nconst listContainer = document.querySelector('.virtual-list');\nlistObserver.observe(listContainer);`
       }
     ],
-    relatedTopics: ['dom-api', 'intersection-observer', 'performance-optimization']
+    relatedTopics: ['dom-api', 'intersection-observer', 'performance-optimization'],
+    isFrontendEssential: true
   },
 {
     id: 'mutation-observer',
@@ -181,7 +183,8 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `function openDB(name, version) {\n  return new Promise((resolve, reject) => {\n    const request = indexedDB.open(name, version);\n    request.onsuccess = () => resolve(request.result);\n    request.onerror = () => reject(request.error);\n    request.onupgradeneeded = (event) => {\n      const db = event.target.result;\n      // настройка БД\n    };\n  });\n}\n\n// Использование\nconst db = await openDB('myDB', 1);`
       }
     ],
-    relatedTopics: ['web-storage', 'async-await', 'promises']
+    relatedTopics: ['web-storage', 'async-await', 'promises'],
+    isFrontendEssential: true
   },
 {
     id: 'abort-controller',
@@ -311,7 +314,8 @@ requestIdleCallback(() => processData()); // для фоновых задач, �
       }
     ],
     relatedTopics: ['event-loop', 'performance-optimization', 'debounce-throttle'],
-    funFact: 'requestAnimationFrame синхронизирован с частотой обновления дисплея (обычно 60 FPS), что делает его идеальным для анимации. Браузер может автоматически снижать частоту кадров, если вкладка неактивна, экономя ресурсы.'
+    funFact: 'requestAnimationFrame синхронизирован с частотой обновления дисплея (обычно 60 FPS), что делает его идеальным для анимации. Браузер может автоматически снижать частоту кадров, если вкладка неактивна, экономя ресурсы.',
+    isFrontendEssential: true
   },
 {
     id: 'events-advanced',
@@ -444,6 +448,7 @@ form.querySelectorAll('input').forEach(input => {
       }
     ],
     relatedTopics: ['event-api', 'dom-api', 'performance-optimization'],
-    funFact: 'Делегирование событий экономит память и CPU при большом количестве элементов. Вместо создания обработчика для каждого элемента, создается один обработчик на родителе, который проверяет event.target. Это особенно полезно для динамически добавляемых элементов.'
+    funFact: 'Делегирование событий экономит память и CPU при большом количестве элементов. Вместо создания обработчика для каждого элемента, создается один обработчик на родителе, который проверяет event.target. Это особенно полезно для динамически добавляемых элементов.',
+    isFrontendEssential: true
   }
 ];

@@ -34,6 +34,7 @@ export const RESPONSIVE_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['responsive-media-queries'],
-    funFact: 'Концепция "Container Queries" (@container) — это "мечта верстальщика", которая стала реальностью. В отличие от media queries, которые реагируют на размер экрана, container queries реагируют на размер родительского контейнера, что кардинально меняет подход к компонентам и их переиспользованию.'
+    funFact: 'Концепция "Container Queries" (@container) — это "мечта верстальщика", которая стала реальностью. В отличие от media queries, которые реагируют на размер экрана, container queries реагируют на размер родительского контейнера, что кардинально меняет подход к компонентам и их переиспользованию.',
+    isFrontendEssential: true
   }
 ];

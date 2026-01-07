@@ -132,7 +132,8 @@ map2.set('b', 2);
 console.log(map1.has('b')); // true (изменилось!)`
       }
     ],
-    relatedTopics: ['type-coercion', 'functions-types', 'comparison', 'objects-basic', 'arrays-basic', 'map-set', 'date-api']
+    relatedTopics: ['type-coercion', 'functions-types', 'comparison', 'objects-basic', 'arrays-basic', 'map-set', 'date-api'],
+    isFrontendEssential: true
   },
 {
     id: 'type-coercion',
@@ -161,7 +162,8 @@ console.log(map1.has('b')); // true (изменилось!)`
         code: `if ("text") { } // truthy\nif (0) { } // falsy\nif ([]) { } // truthy (массив)\nif ({}) { } // truthy (объект)`
       }
     ],
-    relatedTopics: ['data-types', 'comparison']
+    relatedTopics: ['data-types', 'comparison'],
+    isFrontendEssential: true
   },
   {
     id: 'comparison',
@@ -237,7 +239,8 @@ Object.is(NaN, NaN);   // true
 Object.is(+0, -0);     // false`
       }
     ],
-    relatedTopics: ['type-coercion', 'operators', 'objects-basic']
+    relatedTopics: ['type-coercion', 'operators', 'objects-basic'],
+    isFrontendEssential: true
   },
   {
     id: 'operators',
@@ -299,6 +302,7 @@ Object.is(+0, -0);     // false`
       }
     ],
     relatedTopics: ['comparison', 'functions-types'],
+    isFrontendEssential: true
   },
 {
     id: 'strings-methods',
@@ -328,6 +332,7 @@ Object.is(+0, -0);     // false`
       }
     ],
     relatedTopics: ['data-types', 'operators'],
+    isFrontendEssential: true
   },
 {
     id: 'conditions-loops',
@@ -356,7 +361,8 @@ Object.is(+0, -0);     // false`
         code: `const arr = [10, 20, 30];\nfor (const value of arr) {\n  console.log(value); // 10, 20, 30\n}\n\nconst obj = { a: 1, b: 2 };\nfor (const key in obj) {\n  console.log(key, obj[key]); // "a" 1, "b" 2\n}`
       }
     ],
-    relatedTopics: ['operators', 'comparison']
+    relatedTopics: ['operators', 'comparison'],
+    isFrontendEssential: true
   },
 {
     id: 'json-methods',
@@ -445,7 +451,8 @@ Object.is(+0, -0);     // false`
         code: `const obj = { name: "Alice" };\nObject.preventExtensions(obj);\n\nobj.name = "Bob"; // OK (можно изменять)\ndelete obj.name; // OK (можно удалять)\nobj.age = 30; // Игнорируется (нельзя добавлять)\n\nObject.isExtensible(obj); // false`
       }
     ],
-    relatedTopics: ['objects-basic', 'destructuring-basic', 'arrays-basic', 'object-copying']
+    relatedTopics: ['objects-basic', 'destructuring-basic', 'arrays-basic', 'object-copying'],
+    isFrontendEssential: true
   },
 {
     id: 'date-api',
@@ -475,7 +482,8 @@ Object.is(+0, -0);     // false`
         code: `const date = new Date();\n\ndate.toISOString(); // "2023-12-25T14:30:00.000Z"\ndate.toLocaleString('ru-RU'); // "25.12.2023, 14:30:00"\ndate.toLocaleDateString('ru-RU'); // "25.12.2023"\ndate.getTime(); // timestamp в миллисекундах`
       }
     ],
-    relatedTopics: ['objects-basic', 'strings-methods']
+    relatedTopics: ['objects-basic', 'strings-methods'],
+    isFrontendEssential: true
   },
 {
     id: 'strict-mode',
@@ -510,6 +518,7 @@ Object.is(+0, -0);     // false`
         code: `// ES6 модули автоматически в strict mode\nexport const x = 1;\n\n// Webpack, Babel, TypeScript используют strict mode\n// Классы автоматически в strict mode\nclass MyClass {\n  constructor() {\n    // В конструкторе this указывает на экземпляр класса\n    this.name = 'Example';\n    console.log(this); // MyClass { name: 'Example' }\n  }\n  \n  method() {\n    // В методах класса this также указывает на экземпляр\n    return this.name;\n  }\n}\n\n// В обычных функциях (вызванных без контекста) в strict mode:\nfunction regularFunction() {\n  console.log(this); // undefined (в strict mode)\n}\n\nregularFunction(); // undefined`
       }
     ],
-    relatedTopics: ['var-let-const', 'this-basics', 'functions-types', 'modules']
+    relatedTopics: ['var-let-const', 'this-basics', 'functions-types', 'modules'],
+    isFrontendEssential: true
   }
 ];

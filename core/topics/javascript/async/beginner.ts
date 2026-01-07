@@ -1,4 +1,4 @@
-﻿import { Topic } from '../../../types';
+import { Topic } from '../../../types';
 
 export const JS_ASYNC_BEGINNER_TOPICS: Topic[] = [
   {
@@ -88,6 +88,7 @@ self.onmessage = (e) => {
 };`
       }
     ],
-    relatedTopics: ['event-loop', 'promises', 'async-await', 'web-workers', 'callbacks']
+    relatedTopics: ['event-loop', 'promises', 'async-await', 'web-workers', 'callbacks'],
+    isFrontendEssential: true
   }
 ];

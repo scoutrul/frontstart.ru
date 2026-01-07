@@ -139,7 +139,8 @@ fetch('https://api.other.com/users', {
 });`
       }
     ],
-    relatedTopics: ['cors-basics', 'http-methods-status']
+    relatedTopics: ['cors-basics', 'http-methods-status'],
+    isFrontendEssential: true
   },
   {
     id: 'csrf-xss',
@@ -269,6 +270,7 @@ Set-Cookie: session_id=abc123; HttpOnly
 // validator.js для валидации`
       }
     ],
-    relatedTopics: ['csp-basics', 'same-origin-policy', 'storage-comparison']
+    relatedTopics: ['csp-basics', 'same-origin-policy', 'storage-comparison'],
+    isFrontendEssential: true
   }
 ];

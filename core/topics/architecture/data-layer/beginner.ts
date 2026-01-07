@@ -61,6 +61,7 @@ const newUser = await axios.post('/api/users', {
       }
     ],
     relatedTopics: ['architecture-data-layer-api-client'],
-    funFact: 'fetch API был добавлен в браузеры в 2015 году, заменив XMLHttpRequest. До этого все использовали jQuery.ajax() или библиотеки вроде axios. fetch сделал HTTP-запросы встроенной возможностью JavaScript, не требуя дополнительных библиотек.'
+    funFact: 'fetch API был добавлен в браузеры в 2015 году, заменив XMLHttpRequest. До этого все использовали jQuery.ajax() или библиотеки вроде axios. fetch сделал HTTP-запросы встроенной возможностью JavaScript, не требуя дополнительных библиотек.',
+    isFrontendEssential: true
   }
 ];

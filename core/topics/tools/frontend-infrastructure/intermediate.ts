@@ -19,6 +19,7 @@ export const FRONTEND_INFRASTRUCTURE_INTERMEDIATE_TOPICS: Topic[] = [
     additionalDescription: 'Важно различать JavaScript как язык и Node.js как среду выполнения. Во фронтенд-инфраструктуре Node.js выступает связующим слоем между операционной системой и инструментами разработки, обеспечивая единый runtime для всего процесса подготовки приложения.',
     tags: ['nodejs', 'runtime', 'infrastructure', 'tools', 'build', 'development', 'intermediate'],
     relatedTopics: ['operating-systems', 'frontend-infrastructure-intro'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Node.js в dev pipeline',
@@ -61,6 +62,7 @@ npm run build
     funFact: 'Dev server не существует в итоговом билде приложения — он нужен только разработчику.',
     tags: ['dev-server', 'infrastructure', 'tools', 'development', 'intermediate'],
     relatedTopics: ['nodejs-frontend-infrastructure', 'build-step-bundlers', 'hmr-and-dx'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Запуск dev server',
@@ -90,6 +92,7 @@ npm run build
     funFact: 'Bundler — это обычная программа на Node.js, которая читает и переписывает файлы.',
     tags: ['bundler', 'build', 'infrastructure', 'tools', 'intermediate'],
     relatedTopics: ['dev-server-basics', 'nodejs-frontend-infrastructure', 'vite-architecture'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Production build',
@@ -117,6 +120,7 @@ npm run build
     funFact: 'Плохой HMR может замедлять разработку сильнее, чем его отсутствие.',
     tags: ['hmr', 'dx', 'dev-server', 'infrastructure', 'tools', 'intermediate'],
     relatedTopics: ['dev-server-basics', 'vite-architecture'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Изменение компонента',
@@ -142,6 +146,7 @@ npm run build
     funFact: 'Vite стал де-факто стандартом для новых фронтенд-проектов.',
     tags: ['vite', 'bundler', 'dev-server', 'infrastructure', 'tools', 'intermediate'],
     relatedTopics: ['dev-server-basics', 'build-step-bundlers', 'hmr-and-dx'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Dev vs Build в Vite',
@@ -166,6 +171,7 @@ vite build  // production build`
     funFact: 'Bun может выполнять npm-пакеты без npm.',
     tags: ['bun', 'deno', 'runtime', 'infrastructure', 'tools', 'intermediate'],
     relatedTopics: ['nodejs-frontend-infrastructure', 'vite-architecture'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Запуск проекта на Bun',
@@ -193,6 +199,7 @@ bun run dev`
     funFact: 'Первоначально термин PWA был введён Google в 2015 году как маркетинговое название набора браузерных возможностей, а не отдельной технологии.',
     tags: ['pwa', 'infrastructure', 'browser-api', 'service-workers', 'offline', 'build', 'deployment', 'frontend', 'intermediate'],
     relatedTopics: ['build-step-bundlers', 'browser-support', 'vite-architecture'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Web App Manifest',

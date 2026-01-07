@@ -91,6 +91,7 @@ console.log(gen.next().value); // 3`
       }
     ],
     relatedTopics: ['data-types', 'hoisting-basic', 'this-basics', 'prototype-chain', 'iterators'],
+    isFrontendEssential: true
   },
 {
     id: 'this-basics',
@@ -119,5 +120,6 @@ console.log(gen.next().value); // 3`
       }
     ],
     relatedTopics: ['arrow-functions', 'context-loss'],
+    isFrontendEssential: true
   }
 ];

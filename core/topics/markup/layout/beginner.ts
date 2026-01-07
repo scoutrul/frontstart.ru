@@ -35,7 +35,8 @@ export const LAYOUT_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-flexbox-intro', 'layout-grid-intro'],
-    funFact: 'До появления Flexbox и Grid верстальщики использовали float для создания колонок, что требовало хаков вроде clearfix. Flexbox был предложен в 2009 году, но широкую поддержку получил только к 2015. Grid появился позже (2017) и стал "революцией" для сложных макетов.'
+    funFact: 'До появления Flexbox и Grid верстальщики использовали float для создания колонок, что требовало хаков вроде clearfix. Flexbox был предложен в 2009 году, но широкую поддержку получил только к 2015. Grid появился позже (2017) и стал "революцией" для сложных макетов.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-flexbox-intro',
@@ -67,7 +68,8 @@ export const LAYOUT_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-intro', 'layout-grid-intro'],
-    funFact: 'Flexbox изначально назывался "Flexible Box Layout" и был создан для решения проблем с выравниванием и распределением пространства. Его главное преимущество — простое центрирование элементов (justify-content: center; align-items: center), что раньше требовало хаков с margin: auto или абсолютным позиционированием.'
+    funFact: 'Flexbox изначально назывался "Flexible Box Layout" и был создан для решения проблем с выравниванием и распределением пространства. Его главное преимущество — простое центрирование элементов (justify-content: center; align-items: center), что раньше требовало хаков с margin: auto или абсолютным позиционированием.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-grid-intro',
@@ -100,6 +102,7 @@ export const LAYOUT_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-intro', 'layout-flexbox-intro'],
-    funFact: 'CSS Grid был предложен в 2011 году, но долго не поддерживался браузерами. Microsoft Edge был первым браузером с полной поддержкой Grid в 2017 году. Grid решает проблему двумерной раскладки, которую Flexbox не мог решить полностью. Именованные области (grid-template-areas) делают код визуально понятным.'
+    funFact: 'CSS Grid был предложен в 2011 году, но долго не поддерживался браузерами. Microsoft Edge был первым браузером с полной поддержкой Grid в 2017 году. Grid решает проблему двумерной раскладки, которую Flexbox не мог решить полностью. Именованные области (grid-template-areas) делают код визуально понятным.',
+    isFrontendEssential: true
   }
 ];

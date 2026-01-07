@@ -119,7 +119,8 @@ fetch('https://example.com/image.jpg')
   });`
       }
     ],
-    relatedTopics: ['fetch-error-handling', 'abort-controller', 'xhr-vs-fetch']
+    relatedTopics: ['fetch-error-handling', 'abort-controller', 'xhr-vs-fetch'],
+    isFrontendEssential: true
   },
   {
     id: 'fetch-error-handling',
@@ -265,6 +266,7 @@ fetch('https://api.example.com/users')
   });`
       }
     ],
-    relatedTopics: ['fetch-api', 'abort-controller']
+    relatedTopics: ['fetch-api', 'abort-controller'],
+    isFrontendEssential: true
   }
 ];

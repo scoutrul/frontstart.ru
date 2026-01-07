@@ -28,7 +28,8 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `// Плохо: создается новая функция при каждом рендере\n<button onClick={() => handleClick(id)}>Click</button>\n\n// Хорошо: мемоизированный callback\nconst handleClick = useCallback((id) => {\n  // обработка\n}, [dependencies]);\n\n<button onClick={handleClick}>Click</button>`
       }
     ],
-    relatedTopics: ['memoization', 'memory-management', 'debounce-throttle']
+    relatedTopics: ['memoization', 'memory-management', 'debounce-throttle'],
+    isFrontendEssential: true
   },
 {
     id: 'service-workers',
@@ -57,7 +58,8 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `// sw.js\nself.addEventListener('activate', (event) => {\n  console.log('Service Worker activating');\n  \n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames.map(cacheName => {\n          if (cacheName !== 'v2') { // удаляем старые кэши\n            return caches.delete(cacheName);\n          }\n        })\n      );\n    })\n  );\n});`
       }
     ],
-    relatedTopics: ['web-workers', 'fetch-api', 'web-storage']
+    relatedTopics: ['web-workers', 'fetch-api', 'web-storage'],
+    isFrontendEssential: true
   },
 {
     id: 'websocket-api',
@@ -115,7 +117,8 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `async function getLocation() {\n  return new Promise((resolve, reject) => {\n    navigator.geolocation.getCurrentPosition(\n      (position) => {\n        resolve({\n          lat: position.coords.latitude,\n          lng: position.coords.longitude\n        });\n      },\n      reject,\n      { enableHighAccuracy: true }\n    );\n  });\n}\n\n// Использование\nconst location = await getLocation();\n// Отправка на карту или API\nmap.setCenter([location.lat, location.lng]);`
       }
     ],
-    relatedTopics: ['async-await', 'promises', 'dom-api']
+    relatedTopics: ['async-await', 'promises', 'dom-api'],
+    isFrontendEssential: true
   },
 {
     id: 'mediadevices-api',
@@ -144,7 +147,8 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `let mediaRecorder;\nlet recordedChunks = [];\n\nasync function startRecording() {\n  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });\n  \n  mediaRecorder = new MediaRecorder(stream);\n  \n  mediaRecorder.ondataavailable = (event) => {\n    if (event.data.size > 0) {\n      recordedChunks.push(event.data);\n    }\n  };\n  \n  mediaRecorder.onstop = () => {\n    const blob = new Blob(recordedChunks, { type: 'video/webm' });\n    const url = URL.createObjectURL(blob);\n    // Сохранить или отправить\n  };\n  \n  mediaRecorder.start();\n}\n\nfunction stopRecording() {\n  mediaRecorder.stop();\n}`
       }
     ],
-    relatedTopics: ['file-api', 'async-await', 'dom-api']
+    relatedTopics: ['file-api', 'async-await', 'dom-api'],
+    isFrontendEssential: true
   },
 {
     id: 'page-visibility-api',
@@ -177,6 +181,7 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `let startTime = Date.now();\n\nfunction trackVisibility() {\n  document.addEventListener('visibilitychange', () => {\n    if (document.hidden) {\n      // Страница скрыта - отправляем время просмотра\n      const viewTime = Date.now() - startTime;\n      sendAnalytics({ viewTime, event: 'page_hidden' });\n    } else {\n      // Страница видна - начинаем отсчет\n      startTime = Date.now();\n      sendAnalytics({ event: 'page_visible' });\n    }\n  });\n}`
       }
     ],
-    relatedTopics: ['event-api', 'performance-optimization', 'dom-api']
+    relatedTopics: ['event-api', 'performance-optimization', 'dom-api'],
+    isFrontendEssential: true
   }
 ];

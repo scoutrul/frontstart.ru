@@ -60,7 +60,8 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-grid-deep'],
-    funFact: 'Flexbox свойство flex: 1 — это сокращение для flex-grow: 1, flex-shrink: 1, flex-basis: 0%. Интересно, что flex-basis: 0% означает, что базовый размер игнорируется, и элементы распределяются пропорционально flex-grow. Это позволяет создавать равномерные колонки без указания точных размеров.'
+    funFact: 'Flexbox свойство flex: 1 — это сокращение для flex-grow: 1, flex-shrink: 1, flex-basis: 0%. Интересно, что flex-basis: 0% означает, что базовый размер игнорируется, и элементы распределяются пропорционально flex-grow. Это позволяет создавать равномерные колонки без указания точных размеров.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-grid-deep',
@@ -125,7 +126,8 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-flexbox-deep', 'layout-combining'],
-    funFact: 'Grid функция repeat() была создана для упрощения повторяющихся паттернов. repeat(auto-fit, minmax(200px, 1fr)) создаёт адаптивную сетку: элементы автоматически переносятся, когда не помещаются, и занимают равное пространство. Это избавляет от необходимости media queries для простых сеток.'
+    funFact: 'Grid функция repeat() была создана для упрощения повторяющихся паттернов. repeat(auto-fit, minmax(200px, 1fr)) создаёт адаптивную сетку: элементы автоматически переносятся, когда не помещаются, и занимают равное пространство. Это избавляет от необходимости media queries для простых сеток.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-combining',
@@ -165,7 +167,8 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-flexbox-deep', 'layout-grid-deep'],
-    funFact: 'Единица в Grid называется fr (fraction — доля), потому что она представляет долю доступного пространства. История появления gap в Grid интересна: сначала gap был только в Grid, потом его "задним числом" добавили и в Flexbox, что значительно упростило создание отступов.'
+    funFact: 'Единица в Grid называется fr (fraction — доля), потому что она представляет долю доступного пространства. История появления gap в Grid интересна: сначала gap был только в Grid, потом его "задним числом" добавили и в Flexbox, что значительно упростило создание отступов.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-flexbox-deep',
@@ -226,7 +229,8 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-grid-deep'],
-    funFact: 'Flexbox свойство flex: 1 — это сокращение для flex-grow: 1, flex-shrink: 1, flex-basis: 0%. Интересно, что flex-basis: 0% означает, что базовый размер игнорируется, и элементы распределяются пропорционально flex-grow. Это позволяет создавать равномерные колонки без указания точных размеров.'
+    funFact: 'Flexbox свойство flex: 1 — это сокращение для flex-grow: 1, flex-shrink: 1, flex-basis: 0%. Интересно, что flex-basis: 0% означает, что базовый размер игнорируется, и элементы распределяются пропорционально flex-grow. Это позволяет создавать равномерные колонки без указания точных размеров.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-grid-deep',
@@ -291,7 +295,8 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-flexbox-deep', 'layout-combining'],
-    funFact: 'Grid функция repeat() была создана для упрощения повторяющихся паттернов. repeat(auto-fit, minmax(200px, 1fr)) создаёт адаптивную сетку: элементы автоматически переносятся, когда не помещаются, и занимают равное пространство. Это избавляет от необходимости media queries для простых сеток.'
+    funFact: 'Grid функция repeat() была создана для упрощения повторяющихся паттернов. repeat(auto-fit, minmax(200px, 1fr)) создаёт адаптивную сетку: элементы автоматически переносятся, когда не помещаются, и занимают равное пространство. Это избавляет от необходимости media queries для простых сеток.',
+    isFrontendEssential: true
   },
   {
     id: 'layout-combining',
@@ -331,6 +336,7 @@ export const LAYOUT_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['layout-flexbox-deep', 'layout-grid-deep'],
-    funFact: 'Выбор между Flexbox и Grid часто вызывает споры, но на практике они отлично дополняют друг друга. Grid для общего каркаса страницы, Flexbox для компонентов внутри. Это не конкуренция, а синергия: правильное комбинирование создаёт мощные и гибкие макеты.'
+    funFact: 'Выбор между Flexbox и Grid часто вызывает споры, но на практике они отлично дополняют друг друга. Grid для общего каркаса страницы, Flexbox для компонентов внутри. Это не конкуренция, а синергия: правильное комбинирование создаёт мощные и гибкие макеты.',
+    isFrontendEssential: true
   }
 ];

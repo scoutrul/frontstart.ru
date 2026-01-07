@@ -33,6 +33,7 @@ export const JS_PROTOTYPES_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'constructors', 'classes'],
+    isFrontendEssential: true
   },
 {
     id: 'getownpropertynames-keys',
@@ -99,6 +100,7 @@ export const JS_PROTOTYPES_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'classes', 'object-create'],
+    isFrontendEssential: true
   },
 {
     id: 'super-prototypes',
@@ -132,6 +134,7 @@ export const JS_PROTOTYPES_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['prototype-chain', 'classes', 'constructors'],
+    isFrontendEssential: true
   },
 {
     id: 'prototypes-vs-classes',

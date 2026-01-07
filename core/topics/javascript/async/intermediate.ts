@@ -115,6 +115,7 @@ Promise.race([p1, p2, p3]).then(first => console.log(first));`
       }
     ],
     relatedTopics: ['event-loop', 'async-await'],
+    isFrontendEssential: true
   },
 {
     id: 'async-await',
@@ -169,6 +170,7 @@ Promise.race([p1, p2, p3]).then(first => console.log(first));`
       }
     ],
     relatedTopics: ['promises', 'error-handling'],
+    isFrontendEssential: true
   },
 {
     id: 'error-handling',
@@ -197,6 +199,7 @@ Promise.race([p1, p2, p3]).then(first => console.log(first));`
         code: `class ValidationError extends Error {\n  constructor(message) {\n    super(message);\n    this.name = "ValidationError";\n  }\n}\n\ntry {\n  throw new ValidationError("Invalid input");\n} catch (e) {\n  if (e instanceof ValidationError) {\n    console.log("Validation error:", e.message);\n  }\n}`
       }
     ],
-    relatedTopics: ['promises', 'async-await']
+    relatedTopics: ['promises', 'async-await'],
+    isFrontendEssential: true
   }
 ];

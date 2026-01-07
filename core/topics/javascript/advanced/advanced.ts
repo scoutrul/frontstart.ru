@@ -218,7 +218,8 @@ first();
 example();`
       }
     ],
-    relatedTopics: ['lexical-env', 'call-stack', 'scope-chain', 'js-parsing-and-execution', 'this-basics', 'hoisting-advanced']
+    relatedTopics: ['lexical-env', 'call-stack', 'scope-chain', 'js-parsing-and-execution', 'this-basics', 'hoisting-advanced'],
+    isFrontendEssential: true
   },
 {
     id: 'lexical-env',
@@ -245,6 +246,7 @@ example();`
       }
     ],
     relatedTopics: ['scope-chain', 'closures-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'event-loop',
@@ -284,6 +286,7 @@ example();`
       }
     ],
     relatedTopics: ['promises', 'async-await', 'call-stack'],
+    isFrontendEssential: true
   },
 {
     id: 'proxy-reflect',
@@ -354,6 +357,7 @@ example();`
       }
     ],
     relatedTopics: ['weakmap-weakset', 'closures-basic', 'stack-heap'],
+    isFrontendEssential: true
   },
 {
     id: 'regexp-advanced',
@@ -381,7 +385,8 @@ example();`
         code: `const str = "Hello\\nWorld";\n\n// g: все совпадения\nstr.match(/o/g); // ["o", "o"]\n\n// i: игнор регистра\n"Hello".match(/hello/i); // ["Hello"]\n\n// m: многострочный (^ и $ для каждой строки)\nstr.match(/^W/m); // ["W"]\n\n// s: точка включает \\n\nstr.match(/o.W/s); // ["o\\nW"]`
       }
     ],
-    relatedTopics: ['strings-methods']
+    relatedTopics: ['strings-methods'],
+    isFrontendEssential: true
   },
 {
     id: 'design-patterns',
@@ -410,7 +415,8 @@ example();`
         code: `class EventEmitter {\n  constructor() {\n    this.events = {};\n  }\n  \n  on(event, callback) {\n    if (!this.events[event]) {\n      this.events[event] = [];\n    }\n    this.events[event].push(callback);\n  }\n  \n  emit(event, data) {\n    if (this.events[event]) {\n      this.events[event].forEach(cb => cb(data));\n    }\n  }\n}\n\nconst emitter = new EventEmitter();\nemitter.on('click', (data) => console.log(data));\nemitter.emit('click', 'Hello'); // "Hello"`
       }
     ],
-    relatedTopics: ['classes', 'closures-basic', 'higher-order-functions']
+    relatedTopics: ['classes', 'closures-basic', 'higher-order-functions'],
+    isFrontendEssential: true
   },
 {
     id: 'call-stack',
@@ -445,6 +451,7 @@ example();`
       }
     ],
     relatedTopics: ['event-loop', 'stack-heap', 'recursion'],
+    isFrontendEssential: true
   },
 {
     id: 'stack-heap',
@@ -483,6 +490,7 @@ example();`
       }
     ],
     relatedTopics: ['memory-management', 'call-stack', 'event-loop'],
+    isFrontendEssential: true
   },
 {
     id: 'blocking-non-blocking',
@@ -521,6 +529,7 @@ example();`
       }
     ],
     relatedTopics: ['event-loop', 'call-stack', 'web-workers', 'async-await'],
+    isFrontendEssential: true
   },
 {
     id: 'concurrency-parallelism',
@@ -559,6 +568,7 @@ example();`
       }
     ],
     relatedTopics: ['event-loop', 'web-workers', 'blocking-non-blocking', 'call-stack'],
+    isFrontendEssential: true
   },
 {
     id: 'to-primitive',
@@ -597,5 +607,6 @@ example();`
       }
     ],
     relatedTopics: ['type-coercion', 'symbol', 'objects-basic', 'object-comparison'],
+    isFrontendEssential: true
   }
 ];

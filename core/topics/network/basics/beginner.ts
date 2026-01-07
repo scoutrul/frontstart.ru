@@ -44,7 +44,8 @@ fetch('https://api.example.com/users')
 // 3. Обрабатывает и отвечает`
       }
     ],
-    relatedTopics: ['http-basics', 'dns-basics', 'url-navigation']
+    relatedTopics: ['http-basics', 'dns-basics', 'url-navigation'],
+    isFrontendEssential: true
   },
   {
     id: 'tcp-vs-udp',
@@ -105,7 +106,8 @@ fetch('https://api.example.com/users')
 // - VoIP (голосовая связь)`
       }
     ],
-    relatedTopics: ['osi-model', 'http-over-tcp', 'dns-basics']
+    relatedTopics: ['osi-model', 'http-over-tcp', 'dns-basics'],
+    isFrontendEssential: true
   },
   {
     id: 'dns-basics',
@@ -157,7 +159,8 @@ example.com.       A        192.0.2.1
 // Оба домена ведут на один IP: 192.0.2.1`
       }
     ],
-    relatedTopics: ['url-navigation', 'dns-caching', 'dns-records']
+    relatedTopics: ['url-navigation', 'dns-caching', 'dns-records'],
+    isFrontendEssential: true
   },
   {
     id: 'url-navigation',
@@ -234,6 +237,7 @@ example.com.       A        192.0.2.1
 // 3. Если нет в кеше → DNS → TCP → HTTP → Ответ`
       }
     ],
-    relatedTopics: ['dns-basics', 'http-basics', 'http-caching', 'critical-rendering-path']
+    relatedTopics: ['dns-basics', 'http-basics', 'http-caching', 'critical-rendering-path'],
+    isFrontendEssential: true
   }
 ];

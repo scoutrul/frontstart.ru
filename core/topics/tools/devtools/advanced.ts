@@ -18,6 +18,7 @@ export const DEVTOOLS_ADVANCED_TOPICS: Topic[] = [
     ],
     tags: ['tools', 'devtools', 'performance', 'web-vitals', 'optimization', 'metrics', 'lcp', 'cls', 'inp'],
     relatedTopics: ['devtools-intro', 'devtools-debugging'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Performance recording',
@@ -52,6 +53,7 @@ export const DEVTOOLS_ADVANCED_TOPICS: Topic[] = [
     tags: ['tools', 'devtools', 'memory', 'performance', 'profiling', 'memory-leaks', 'optimization'],
     relatedTopics: ['devtools-performance', 'devtools-debugging'],
     funFact: 'В 2013 году Facebook обнаружил утечку памяти в своем веб-приложении, которая приводила к потреблению нескольких гигабайт памяти за несколько часов работы. Проблема была найдена именно через Memory profiling в DevTools.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Типичная утечка памяти',
@@ -134,6 +136,7 @@ class ComponentFixed {
     tags: ['tools', 'devtools', 'lighthouse', 'performance', 'accessibility', 'seo', 'pwa', 'audit', 'optimization'],
     relatedTopics: ['devtools-performance', 'devtools-intro'],
     funFact: 'Lighthouse был создан Google в 2016 году и изначально был доступен только как расширение Chrome. Сегодня он встроен в Chrome DevTools и доступен через командную строку, что сделало его стандартом для аудита веб-приложений.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Запуск Lighthouse',
@@ -192,6 +195,7 @@ class ComponentFixed {
     tags: ['tools', 'devtools', 'remote-debugging', 'mobile', 'android', 'ios', 'debugging'],
     relatedTopics: ['devtools-mobile', 'browser-mobile'],
     funFact: 'Remote debugging был впервые реализован в Chrome для Android в 2012 году. До этого разработчикам приходилось полагаться только на логи и эмуляторы, что значительно усложняло отладку мобильных приложений.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Настройка Remote Debugging для Android',

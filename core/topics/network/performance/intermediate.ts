@@ -153,7 +153,8 @@ p { margin: 10px; }
 // РЕЗУЛЬТАТ: быстрый First Contentful Paint`
       }
     ],
-    relatedTopics: ['resource-loading', 'performance-compression', 'performance-prefetch']
+    relatedTopics: ['resource-loading', 'performance-compression', 'performance-prefetch'],
+    isFrontendEssential: true
   },
   {
     id: 'performance-compression',
@@ -289,7 +290,8 @@ location ~* \\.(js|css|html|json)$ {
 // Старые браузеры → Gzip (совместимость)`
       }
     ],
-    relatedTopics: ['critical-rendering-path', 'http-caching']
+    relatedTopics: ['critical-rendering-path', 'http-caching'],
+    isFrontendEssential: true
   },
   {
     id: 'core-web-vitals',
@@ -441,6 +443,7 @@ getINP(console.log);
 // - Больше конверсий`
       }
     ],
-    relatedTopics: ['critical-rendering-path', 'resource-loading', 'performance-prefetch']
+    relatedTopics: ['critical-rendering-path', 'resource-loading', 'performance-prefetch'],
+    isFrontendEssential: true
   }
 ];

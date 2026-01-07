@@ -44,7 +44,8 @@ export const FRONTEND_INFRASTRUCTURE_BEGINNER_TOPICS: Topic[] = [
 но браузер получает уже скомпилированный и оптимизированный JavaScript благодаря инфраструктуре сборки.`,
     tags: ['infrastructure', 'build', 'dev-server', 'runtime', 'bundler', 'pipeline', 'development'],
     relatedTopics: [],
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   },
   {
     id: 'operating-systems',
@@ -99,6 +100,7 @@ Linux:
 а результат одинаково успешно разворачивается на сервере.`,
     tags: ['tools', 'os', 'windows', 'macos', 'linux', 'basics', 'development', 'environment'],
     relatedTopics: ['frontend-infrastructure-intro', 'terminal-basics'],
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   }
 ];

@@ -17,6 +17,7 @@ export const NPM_ADVANCED_TOPICS: Topic[] = [
     additionalDescription: 'Workspaces особенно полезны для больших проектов, где несколько пакетов связаны между собой. npm link позволяет разрабатывать пакет локально и тестировать его в проекте без необходимости публиковать каждую версию.',
     tags: ['tools', 'npm', 'package-manager', 'workspaces', 'monorepo', 'publish'],
     relatedTopics: ['version-ranges', 'lock-files'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Workspaces в package.json',
@@ -68,6 +69,7 @@ npm publish --access public  // публикация публичного пак
     additionalDescription: 'CLI-инструменты стали стандартом в современной фронтенд-разработке. Они скрывают сложность настройки инструментов сборки и позволяют быстро начать работу над проектом. npm scripts делают эти инструменты доступными через простые команды.',
     tags: ['tools', 'npm', 'cli', 'build-tools', 'automation', 'workflow'],
     relatedTopics: ['npm-basics', 'terminal-development'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'npm scripts для CLI-инструментов',

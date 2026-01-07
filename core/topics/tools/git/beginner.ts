@@ -82,7 +82,8 @@ git commit -m "Добавить компонент Button"
 git commit -m "Обновить зависимости до версии 2.0"`
       }
     ],
-    relatedTopics: ['git-basics', 'git-status-history', 'terminal-basics']
+    relatedTopics: ['git-basics', 'git-status-history', 'terminal-basics'],
+    isFrontendEssential: true
   },
   {
     id: 'git-status-history',
@@ -158,6 +159,7 @@ git blame -L 10,20 file.js
 git blame -w file.js`
       }
     ],
-    relatedTopics: ['git-basics', 'git-basics-workflow', 'git-branches-merge']
+    relatedTopics: ['git-basics', 'git-basics-workflow', 'git-branches-merge'],
+    isFrontendEssential: true
   }
 ];

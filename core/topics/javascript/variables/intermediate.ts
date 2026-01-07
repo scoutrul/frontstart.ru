@@ -43,6 +43,7 @@ const sayHello = function() {
       }
     ],
     relatedTopics: ['var-let-const', 'tdz', 'functions-types'],
+    isFrontendEssential: true
   },
 {
     id: 'tdz',
@@ -84,6 +85,7 @@ function test2(x = 2, y = x) {
       }
     ],
     relatedTopics: ['var-let-const', 'tdz-basic', 'scope-chain', 'hoisting-advanced'],
+    isFrontendEssential: true
   },
 {
     id: 'property-descriptors',
@@ -141,5 +143,6 @@ const obj = Object.freeze({ name: "Alice" });
     ],
     funFact: 'В strict mode попытка изменить frozen-объект или writable: false свойство выбросит ошибку, а не будет просто проигнорирована.',
     relatedTopics: ['var-let-const', 'object-methods', 'mutability-immutability'],
+    isFrontendEssential: true
   }
 ];

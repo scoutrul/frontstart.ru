@@ -15,7 +15,8 @@ export const NPM_BEGINNER_TOPICS: Topic[] = [
     ],
     tags: ['tools', 'npm', 'package-manager', 'basics', 'productivity'],
     relatedTopics: ['terminal-basics'],
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   },
   {
     id: 'npm-basics',
@@ -34,6 +35,7 @@ export const NPM_BEGINNER_TOPICS: Topic[] = [
     tags: ['tools', 'npm', 'package-manager', 'basics', 'productivity'],
     relatedTopics: ['pm-intro', 'terminal-development'],
     funFact: 'npm был запущен в 2010 году и быстро стал крупнейшим реестром пакетов в мире. В 2020 году npm был куплен GitHub, что сделало его еще более интегрированным в экосистему разработки.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Установка пакетов',

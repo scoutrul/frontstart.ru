@@ -26,7 +26,8 @@ export const PERFORMANCE_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['performance-rendering'],
-    additionalDescription: 'Производительность UI — это не только скорость загрузки, но и плавность взаимодействия. Даже быстрая загрузка не поможет, если интерфейс "тормозит" при скролле или анимациях. Понимание факторов влияния помогает создавать действительно быстрые интерфейсы.'
+    additionalDescription: 'Производительность UI — это не только скорость загрузки, но и плавность взаимодействия. Даже быстрая загрузка не поможет, если интерфейс "тормозит" при скролле или анимациях. Понимание факторов влияния помогает создавать действительно быстрые интерфейсы.',
+    isFrontendEssential: true
   },
   {
     id: 'performance-rendering',
@@ -64,7 +65,8 @@ export const PERFORMANCE_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['performance-factors', 'performance-optimization'],
-    funFact: 'Про reflow: получение значений offsetWidth или getComputedStyle в JavaScript может вызывать синхронный форсированный reflow, убивая FPS. Браузер откладывает reflow для оптимизации, но чтение этих свойств заставляет его выполнить reflow немедленно, что может привести к "layout thrashing".'
+    funFact: 'Про reflow: получение значений offsetWidth или getComputedStyle в JavaScript может вызывать синхронный форсированный reflow, убивая FPS. Браузер откладывает reflow для оптимизации, но чтение этих свойств заставляет его выполнить reflow немедленно, что может привести к "layout thrashing".',
+    isFrontendEssential: true
   },
   {
     id: 'performance-optimization',
@@ -89,6 +91,7 @@ export const PERFORMANCE_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['performance-rendering'],
-    funFact: 'Атрибут loading="lazy" для изображений не работает эффективно, если у изображения нет явных width и height. Без размеров браузер не может резервировать место, что приводит к CLS (Cumulative Layout Shift) — сдвигу контента при загрузке изображения.'
+    funFact: 'Атрибут loading="lazy" для изображений не работает эффективно, если у изображения нет явных width и height. Без размеров браузер не может резервировать место, что приводит к CLS (Cumulative Layout Shift) — сдвигу контента при загрузке изображения.',
+    isFrontendEssential: true
   }
 ];

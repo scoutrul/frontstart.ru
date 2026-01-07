@@ -23,7 +23,8 @@ export const BROWSERS_BEGINNER_TOPICS: Topic[] = [
 // Не рекомендуется для логики, но полезно для диагностики`
       }
     ],
-    relatedTopics: ['browsers', 'browser-standards']
+    relatedTopics: ['browsers', 'browser-standards'],
+    isFrontendEssential: true
   },
   {
     id: 'browser-standards',
@@ -48,7 +49,8 @@ export const BROWSERS_BEGINNER_TOPICS: Topic[] = [
 // about:config`
       }
     ],
-    relatedTopics: ['browsers', 'browser-support']
+    relatedTopics: ['browsers', 'browser-support'],
+    isFrontendEssential: true
   },
   {
     id: 'browser-support',
@@ -74,7 +76,8 @@ export const BROWSERS_BEGINNER_TOPICS: Topic[] = [
 }`
       }
     ],
-    relatedTopics: ['browsers', 'browser-mobile']
+    relatedTopics: ['browsers', 'browser-mobile'],
+    isFrontendEssential: true
   },
   {
     id: 'browser-differences',
@@ -97,7 +100,8 @@ export const BROWSERS_BEGINNER_TOPICS: Topic[] = [
 // Используется только для диагностики`
       }
     ],
-    relatedTopics: ['browsers', 'browser-mobile']
+    relatedTopics: ['browsers', 'browser-mobile'],
+    isFrontendEssential: true
   },
   {
     id: 'browser-mobile',
@@ -120,6 +124,7 @@ export const BROWSERS_BEGINNER_TOPICS: Topic[] = [
 // Позволяет тестировать адаптивность`
       }
     ],
-    relatedTopics: ['browsers', 'browser-differences']
+    relatedTopics: ['browsers', 'browser-differences'],
+    isFrontendEssential: true
   }
 ];

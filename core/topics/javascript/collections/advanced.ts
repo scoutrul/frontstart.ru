@@ -28,6 +28,7 @@ export const JS_COLLECTIONS_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['map-set', 'memory-management'],
+    isFrontendEssential: true
   },
 {
     id: 'iterators-iterables',
@@ -56,5 +57,6 @@ export const JS_COLLECTIONS_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['generators', 'symbol', 'arrays-basic'],
+    isFrontendEssential: true
   }
 ];

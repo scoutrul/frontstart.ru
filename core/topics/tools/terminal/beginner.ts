@@ -16,6 +16,7 @@ export const TERMINAL_BEGINNER_TOPICS: Topic[] = [
     tags: ['tools', 'terminal', 'cli', 'basics', 'productivity'],
     relatedTopics: ['git-basics', 'package-managers'],
     funFact: 'Терминал появился раньше графического интерфейса и до сих пор используется в серверной и профессиональной разработке.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Запуск проекта',
@@ -40,6 +41,7 @@ npm run dev   // запуск dev-сервера`
     additionalDescription: 'Фронтендеру важно не запоминать все команды, а понимать принцип: где ты находишься и к какому проекту применяешь действия.',
     tags: ['tools', 'terminal', 'filesystem', 'cli', 'basics'],
     relatedTopics: ['terminal-basics'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Навигация по проекту',

@@ -207,6 +207,7 @@ import { Component } from '@angular/core';
       }
     ],
     relatedTopics: ['architecture-intro-history-mvc-spa', 'architecture-component-architecture-basics'],
-    funFact: 'Vue.js создал один человек — Эван Ю, когда работал в Google над Angular.js и решил, что может сделать фреймворк проще. Он взял лучшее из Angular (директивы, шаблоны) и React (компонентный подход) и создал фреймворк, который стал одним из самых популярных в мире.'
+    funFact: 'Vue.js создал один человек — Эван Ю, когда работал в Google над Angular.js и решил, что может сделать фреймворк проще. Он взял лучшее из Angular (директивы, шаблоны) и React (компонентный подход) и создал фреймворк, который стал одним из самых популярных в мире.',
+    isFrontendEssential: true
   }
 ];

@@ -26,5 +26,6 @@ export const JS_ASYNC_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['async-await'],
+    isFrontendEssential: true
   }
 ];

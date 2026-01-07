@@ -196,7 +196,8 @@ ws.send('request'); // Клиент отправляет данные
 // WebSocket → для real-time коммуникации`
       }
     ],
-    relatedTopics: ['sse-vs-websockets', 'fetch-api']
+    relatedTopics: ['sse-vs-websockets', 'fetch-api'],
+    isFrontendEssential: true
   },
   {
     id: 'sse-vs-websockets',
@@ -386,6 +387,7 @@ function sendMessage(text) {
 // Не смешивать без необходимости`
       }
     ],
-    relatedTopics: ['websockets', 'fetch-api']
+    relatedTopics: ['websockets', 'fetch-api'],
+    isFrontendEssential: true
   }
 ];

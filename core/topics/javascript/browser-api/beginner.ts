@@ -28,7 +28,8 @@ export const JS_BROWSER_API_BEGINNER_TOPICS: Topic[] = [
         code: `// localStorage - сохраняется после закрытия браузера\nlocalStorage.setItem('persistent', 'data');\n\n// sessionStorage - удаляется при закрытии вкладки\nsessionStorage.setItem('temporary', 'data');\n\n// Оба имеют одинаковый API\nsessionStorage.getItem('temporary');\nsessionStorage.removeItem('temporary');`
       }
     ],
-    relatedTopics: ['json-methods', 'objects-basic']
+    relatedTopics: ['json-methods', 'objects-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'dom-api',
@@ -61,7 +62,8 @@ export const JS_BROWSER_API_BEGINNER_TOPICS: Topic[] = [
         code: `const element = document.querySelector('.item');\n\n// Управление классами\nelement.classList.add('active');\nelement.classList.remove('hidden');\nelement.classList.toggle('selected');\nelement.classList.contains('active'); // true\n\n// Атрибуты\nelement.setAttribute('data-id', '123');\nelement.getAttribute('data-id'); // "123"`
       }
     ],
-    relatedTopics: ['objects-basic', 'strings-methods']
+    relatedTopics: ['objects-basic', 'strings-methods'],
+    isFrontendEssential: true
   },
 {
     id: 'fetch-api',
@@ -167,7 +169,8 @@ export const JS_BROWSER_API_BEGINNER_TOPICS: Topic[] = [
         code: `function navigate(path) {\n  history.pushState({ path }, '', path);\n  renderPage(path);\n}\n\nwindow.addEventListener('popstate', (event) => {\n  renderPage(event.state?.path || '/');\n});\n\n// Навигация\nnavigate('/about');\n// URL: /about, страница не перезагрузилась`
       }
     ],
-    relatedTopics: ['event-api', 'dom-api']
+    relatedTopics: ['event-api', 'dom-api'],
+    isFrontendEssential: true
   },
 {
     id: 'file-api',
@@ -225,6 +228,7 @@ export const JS_BROWSER_API_BEGINNER_TOPICS: Topic[] = [
         code: `const button = document.querySelector('#copyBtn');\nconst textToCopy = 'Скопируй меня!';\n\nbutton.addEventListener('click', async () => {\n  try {\n    await navigator.clipboard.writeText(textToCopy);\n    button.textContent = 'Скопировано!';\n    setTimeout(() => {\n      button.textContent = 'Копировать';\n    }, 2000);\n  } catch (error) {\n    alert('Не удалось скопировать');\n  }\n});`
       }
     ],
-    relatedTopics: ['async-await', 'promises', 'dom-api']
+    relatedTopics: ['async-await', 'promises', 'dom-api'],
+    isFrontendEssential: true
   }
 ];

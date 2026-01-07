@@ -17,6 +17,7 @@ export const DEVTOOLS_INTERMEDIATE_TOPICS: Topic[] = [
     ],
     tags: ['tools', 'devtools', 'debugging', 'javascript', 'console', 'sources'],
     relatedTopics: ['devtools-intro', 'devtools-elements'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Использование console',
@@ -51,6 +52,7 @@ console.table([{name: 'John', age: 30}]);`
     ],
     tags: ['tools', 'devtools', 'network', 'http', 'api', 'debugging'],
     relatedTopics: ['devtools-intro'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Анализ запроса в Network',
@@ -81,6 +83,7 @@ console.table([{name: 'John', age: 30}]);`
     ],
     tags: ['tools', 'devtools', 'storage', 'localStorage', 'sessionStorage', 'cookies', 'indexeddb', 'pwa', 'service-workers'],
     relatedTopics: ['devtools-intro'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Работа с Storage',
@@ -112,6 +115,7 @@ document.cookie = 'name=value; expires=...';`
     ],
     tags: ['tools', 'devtools', 'mobile', 'responsive', 'performance', 'testing'],
     relatedTopics: ['devtools-intro', 'browser-mobile'],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Device Toolbar',

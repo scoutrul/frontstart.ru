@@ -29,7 +29,8 @@ export const RESOURCE_DELIVERY_TOPICS: Topic[] = [
       'lcp-optimization',
       'bundle-optimization'
     ],
-    examples: []
+    examples: [],
+    isFrontendEssential: true
   },
   {
     id: 'cdn-content-delivery-network',
@@ -112,6 +113,7 @@ export const RESOURCE_DELIVERY_TOPICS: Topic[] = [
       'cdn-content-delivery-network',
       'bundle-optimization'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'HTTP-кэширование с Cache-Control',
@@ -208,6 +210,7 @@ self.addEventListener('fetch', (event) => {
       'bundle-optimization',
       'cdn-content-delivery-network'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Настройка Gzip/Brotli на nginx',
@@ -289,6 +292,7 @@ app.min.js.br: 50 KB (уменьшение на 90%)`
       'lcp-optimization',
       'cdn-content-delivery-network'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Использование WebP с fallback',
@@ -381,6 +385,7 @@ app.min.js.br: 50 KB (уменьшение на 90%)`
       'cdn-content-delivery-network',
       'lcp-optimization'
     ],
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Preload, Preconnect, Prefetch',

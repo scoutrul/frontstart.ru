@@ -27,6 +27,7 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['closures-basic', 'mutability-immutability'],
+    isFrontendEssential: true
   },
 {
     id: 'arrays-advanced',
@@ -84,6 +85,7 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'arrays-basic'],
+    isFrontendEssential: true
   },
 {
     id: 'destructuring-advanced',
@@ -141,7 +143,8 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const numbers = [1, 2, 3, 4, 5];\n\nnumbers.find(n => n > 3); // 4\nnumbers.find(n => n > 10); // undefined\n\nnumbers.some(n => n > 4); // true\nnumbers.some(n => n > 10); // false\n\nnumbers.every(n => n > 0); // true\nnumbers.every(n => n > 3); // false`
       }
     ],
-    relatedTopics: ['arrays-basic', 'arrays-advanced', 'immutability']
+    relatedTopics: ['arrays-basic', 'arrays-advanced', 'immutability'],
+    isFrontendEssential: true
   },
 {
     id: 'object-copying',
@@ -178,6 +181,7 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'object-methods', 'json-methods', 'structured-clone'],
+    isFrontendEssential: true
   },
 {
     id: 'structured-clone',
@@ -211,6 +215,7 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['object-copying', 'objects-basic', 'json-methods'],
+    isFrontendEssential: true
   },
 {
     id: 'object-comparison',
@@ -244,5 +249,6 @@ export const JS_COLLECTIONS_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['objects-basic', 'object-copying', 'comparison'],
+    isFrontendEssential: true
   }
 ];

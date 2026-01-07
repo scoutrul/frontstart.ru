@@ -16,6 +16,7 @@ export const NODEJS_BEGINNER_TOPICS: Topic[] = [
     tags: ['tools', 'nodejs', 'javascript', 'runtime', 'basics'],
     relatedTopics: ['npm-basics', 'terminal-basics'],
     funFact: 'Node.js был создан Райаном Далем всего за несколько дней в 2009 году. Изначально он хотел просто запускать JavaScript на сервере, но это изменило всю экосистему веб-разработки.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Запуск скрипта',
@@ -38,6 +39,7 @@ npx vite       # Запуск dev-сервера через CLI`
     tags: ['tools', 'nodejs', 'installation', 'nvm', 'basics'],
     relatedTopics: ['node-intro'],
     funFact: 'Node.js включает npm по умолчанию, но интересно, что npm изначально был отдельным проектом. Теперь они неразрывно связаны, и установка Node.js автоматически устанавливает npm.',
+    isFrontendEssential: true,
     examples: [
       {
         title: 'Установка и проверка',

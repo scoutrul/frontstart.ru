@@ -168,7 +168,8 @@ controller.abort();
 // Все три запроса отменяются`
       }
     ],
-    relatedTopics: ['fetch-api', 'fetch-error-handling']
+    relatedTopics: ['fetch-api', 'fetch-error-handling'],
+    isFrontendEssential: true
   },
   {
     id: 'xhr-vs-fetch',
@@ -322,6 +323,7 @@ function uploadFile(file) {
 // Для остальных случаев → fetch`
       }
     ],
-    relatedTopics: ['fetch-api', 'abort-controller']
+    relatedTopics: ['fetch-api', 'abort-controller'],
+    isFrontendEssential: true
   }
 ];

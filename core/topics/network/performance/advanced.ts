@@ -300,7 +300,8 @@ export const NETWORK_PERFORMANCE_ADVANCED_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['critical-rendering-path', 'performance-rendering', 'render-blocking-resources'],
-    funFact: 'Composite layers и GPU-ускорение были добавлены в браузеры для поддержки плавных анимаций и скролла. Идея пришла из игровой индустрии, где GPU используется для отрисовки. Современные браузеры могут создавать сотни слоёв на странице, но слишком много слоёв может перегрузить GPU и ухудшить производительность. Правильный баланс — ключ к оптимальной производительности.'
+    funFact: 'Composite layers и GPU-ускорение были добавлены в браузеры для поддержки плавных анимаций и скролла. Идея пришла из игровой индустрии, где GPU используется для отрисовки. Современные браузеры могут создавать сотни слоёв на странице, но слишком много слоёв может перегрузить GPU и ухудшить производительность. Правильный баланс — ключ к оптимальной производительности.',
+    isFrontendEssential: true
   },
   {
     id: 'performance-multiplexing',
@@ -404,7 +405,8 @@ export const NETWORK_PERFORMANCE_ADVANCED_TOPICS: Topic[] = [
 // - Страница отображается раньше`
       }
     ],
-    relatedTopics: ['http-versions', 'http-over-tcp']
+    relatedTopics: ['http-versions', 'http-over-tcp'],
+    isFrontendEssential: true
   },
   {
     id: 'performance-prefetch',
@@ -548,6 +550,7 @@ export const NETWORK_PERFORMANCE_ADVANCED_TOPICS: Topic[] = [
 // - DNS-prefetch для всех внешних доменов`
       }
     ],
-    relatedTopics: ['critical-rendering-path', 'resource-loading', 'tls-handshake']
+    relatedTopics: ['critical-rendering-path', 'resource-loading', 'tls-handshake'],
+    isFrontendEssential: true
   }
 ];

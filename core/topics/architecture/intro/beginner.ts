@@ -196,6 +196,7 @@ createUser({
       }
     ],
     relatedTopics: ['architecture-intro-spa-vs-mpa', 'architecture-data-layer-basics'],
-    funFact: 'Термин "AJAX" (Asynchronous JavaScript and XML) был придуман в 2005 году, но сама технология использовалась в Outlook Web Access ещё в 1998 году. Microsoft создала XMLHttpRequest для Outlook Web Access, и этот API стал основой всех современных SPA, хотя изначально был проприетарной технологией.'
+    funFact: 'Термин "AJAX" (Asynchronous JavaScript and XML) был придуман в 2005 году, но сама технология использовалась в Outlook Web Access ещё в 1998 году. Microsoft создала XMLHttpRequest для Outlook Web Access, и этот API стал основой всех современных SPA, хотя изначально был проприетарной технологией.',
+    isFrontendEssential: true
   }
 ];

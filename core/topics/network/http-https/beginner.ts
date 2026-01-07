@@ -104,7 +104,8 @@ GET /api/users/1
 // - JWT токены в заголовках`
       }
     ],
-    relatedTopics: ['http-methods-status', 'http-request-structure', 'http-caching', 'https-basics']
+    relatedTopics: ['http-methods-status', 'http-request-structure', 'http-caching', 'https-basics'],
+    isFrontendEssential: true
   },
   {
     id: 'http-methods-status',
@@ -232,7 +233,8 @@ Retry-After: 60
 // Прокси-сервер не получил ответ от upstream вовремя`
       }
     ],
-    relatedTopics: ['http-basics', 'rest-api', 'http-request-structure']
+    relatedTopics: ['http-basics', 'rest-api', 'http-request-structure'],
+    isFrontendEssential: true
   },
   {
     id: 'http-request-structure',
@@ -340,6 +342,7 @@ ETag: "abc123"
 Location: /new-page`
       }
     ],
-    relatedTopics: ['http-basics', 'http-methods-status', 'http-caching']
+    relatedTopics: ['http-basics', 'http-methods-status', 'http-caching'],
+    isFrontendEssential: true
   }
 ];

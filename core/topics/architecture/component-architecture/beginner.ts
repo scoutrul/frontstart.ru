@@ -109,7 +109,8 @@ function SecondaryButton({ onClick, children }) {
       }
     ],
     relatedTopics: ['architecture-component-separation', 'architecture-code-organization-basics'],
-    funFact: 'Знаешь, первый хук useState в React был реализован всего в 50 строках кода? Весь React до хуков был в 2 раза больше. Это отличный пример KISS: простое решение (хуки) заменило сложные паттерны (HOC, render props) и сделало код проще.'
+    funFact: 'Знаешь, первый хук useState в React был реализован всего в 50 строках кода? Весь React до хуков был в 2 раза больше. Это отличный пример KISS: простое решение (хуки) заменило сложные паттерны (HOC, render props) и сделало код проще.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-component-separation',
@@ -338,6 +339,7 @@ function ProductCard({ product }) {
       }
     ],
     relatedTopics: ['architecture-component-separation', 'architecture-code-organization-basics'],
-    funFact: 'React изначально назывался "FaxJS" и был создан для Instagram в 2011 году. Джордан Волк (создатель React) говорил, что не ожидал, что его библиотека станет настолько популярной. Компонентный подход React изменил всю индустрию фронтенд-разработки.'
+    funFact: 'React изначально назывался "FaxJS" и был создан для Instagram в 2011 году. Джордан Волк (создатель React) говорил, что не ожидал, что его библиотека станет настолько популярной. Компонентный подход React изменил всю индустрию фронтенд-разработки.',
+    isFrontendEssential: true
   }
 ];

@@ -99,7 +99,8 @@ sessionStorage.clear();
 // - Все три: доступны только в том же домене (Same-Origin Policy)`
       }
     ],
-    relatedTopics: ['cors-basics', 'same-origin-policy', 'xss-protection']
+    relatedTopics: ['cors-basics', 'same-origin-policy', 'xss-protection'],
+    isFrontendEssential: true
   },
   {
     id: 'https-basics',
@@ -211,7 +212,8 @@ https://example.com
 // Браузер показывает "Защищено" для HTTPS`
       }
     ],
-    relatedTopics: ['tls-handshake', 'http-basics', 'browser-security']
+    relatedTopics: ['tls-handshake', 'http-basics', 'browser-security'],
+    isFrontendEssential: true
   },
   {
     id: 'http-caching',
@@ -347,7 +349,8 @@ Cache-Control: max-age=3600, stale-while-revalidate=86400
 // Браузер → Прокси → CDN → Сервер`
       }
     ],
-    relatedTopics: ['http-basics', 'performance-caching', 'critical-rendering-path']
+    relatedTopics: ['http-basics', 'performance-caching', 'critical-rendering-path'],
+    isFrontendEssential: true
   },
   {
     id: 'http-content-negotiation',
@@ -563,6 +566,7 @@ app.get('/api/users', (req, res) => {
       }
     ],
     relatedTopics: ['http-caching', 'performance-compression', 'https-basics'],
-    funFact: 'Content Negotiation был частью HTTP с версии 1.0 (1996 год), но широкое использование началось только с ростом веб-приложений и необходимостью оптимизации. Современные браузеры автоматически отправляют оптимальные заголовки Accept-Encoding (Brotli, Gzip), что позволяет серверам эффективно сжимать данные без дополнительной настройки на клиенте.'
+    funFact: 'Content Negotiation был частью HTTP с версии 1.0 (1996 год), но широкое использование началось только с ростом веб-приложений и необходимостью оптимизации. Современные браузеры автоматически отправляют оптимальные заголовки Accept-Encoding (Brotli, Gzip), что позволяет серверам эффективно сжимать данные без дополнительной настройки на клиенте.',
+    isFrontendEssential: true
   }
 ];

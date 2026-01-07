@@ -122,7 +122,8 @@ class Animal {
 // }`
       }
     ],
-    relatedTopics: ['what-is-javascript', 'typing-system', 'execution-threading']
+    relatedTopics: ['what-is-javascript', 'typing-system', 'execution-threading'],
+    isFrontendEssential: true
   },
   {
     id: 'what-is-javascript',
@@ -223,7 +224,8 @@ const data = createData();
 // Не нужно вызывать free() или delete[]`
       }
     ],
-    relatedTopics: ['what-is-javascript', 'garbage-collection', 'memory-management']
+    relatedTopics: ['what-is-javascript', 'garbage-collection', 'memory-management'],
+    isFrontendEssential: true
   },
   {
     id: 'runtime-environments',
@@ -342,7 +344,8 @@ function test() {
 }`
       }
     ],
-    relatedTopics: ['what-is-javascript', 'this-basics', 'dom-api', 'modules']
+    relatedTopics: ['what-is-javascript', 'this-basics', 'dom-api', 'modules'],
+    isFrontendEssential: true
   },
   {
     id: 'multiparadigm',
@@ -425,6 +428,7 @@ fetch('/api/data')
   .then(data => console.log(data));`
       }
     ],
-    relatedTopics: ['higher-order-functions', 'classes', 'prototype-chain', 'promises', 'event-loop']
+    relatedTopics: ['higher-order-functions', 'classes', 'prototype-chain', 'promises', 'event-loop'],
+    isFrontendEssential: true
   },
 ];

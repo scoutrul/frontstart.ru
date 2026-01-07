@@ -43,6 +43,7 @@ let x = 5;
 console.log(x); // 5 (после инициализации)`
       }
     ],
-    relatedTopics: ['var-let-const', 'hoisting-basic', 'tdz-basic', 'js-parsing-and-execution', 'execution-context-basics', 'hoisting-tdz-mechanism']
+    relatedTopics: ['var-let-const', 'hoisting-basic', 'tdz-basic', 'js-parsing-and-execution', 'execution-context-basics', 'hoisting-tdz-mechanism'],
+    isFrontendEssential: true
   }
 ];

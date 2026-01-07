@@ -43,6 +43,7 @@ function UserProfile({ userId }) {
       }
     ],
     relatedTopics: ['architecture-caching-basics', 'architecture-caching-advanced'],
-    funFact: 'React Query был создан Таннером Линсли в 2019 году. Он решил проблему, с которой сталкивался в каждом проекте: кэширование данных с сервера. React Query стал одним из самых популярных решений для работы с серверными данными в React.'
+    funFact: 'React Query был создан Таннером Линсли в 2019 году. Он решил проблему, с которой сталкивался в каждом проекте: кэширование данных с сервера. React Query стал одним из самых популярных решений для работы с серверными данными в React.',
+    isFrontendEssential: true
   }
 ];

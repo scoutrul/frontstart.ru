@@ -66,7 +66,8 @@ export const STATE_MANAGEMENT_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-state-lifting', 'architecture-state-context'],
-    funFact: 'Знаешь, первый хук useState в React был реализован всего в 50 строках кода? Весь React до хуков был в 2 раза больше. Это отличный пример того, как простое решение (хуки) заменило сложные паттерны и сделало управление состоянием доступным для всех.'
+    funFact: 'Знаешь, первый хук useState в React был реализован всего в 50 строках кода? Весь React до хуков был в 2 раза больше. Это отличный пример того, как простое решение (хуки) заменило сложные паттерны и сделало управление состоянием доступным для всех.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-state-lifting',
@@ -223,6 +224,7 @@ function Profile() {
       }
     ],
     relatedTopics: ['architecture-state-lifting', 'architecture-state-global'],
-    funFact: 'Context API был добавлен в React 16.3 в 2018 году как решение проблемы prop drilling. До этого разработчики использовали библиотеки вроде react-redux или создавали свои решения. Context API сделал передачу данных через дерево компонентов встроенной возможностью React.'
+    funFact: 'Context API был добавлен в React 16.3 в 2018 году как решение проблемы prop drilling. До этого разработчики использовали библиотеки вроде react-redux или создавали свои решения. Context API сделал передачу данных через дерево компонентов встроенной возможностью React.',
+    isFrontendEssential: true
   }
 ];

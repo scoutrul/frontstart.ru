@@ -293,7 +293,8 @@ Cache-Control: public, max-age=31536000
       }
     ],
     relatedTopics: ['http-caching', 'performance-caching', 'critical-rendering-path'],
-    funFact: 'Stale-while-revalidate был добавлен в HTTP стандарт относительно недавно и стал популярным благодаря улучшению воспринимаемой производительности. Идея в том, чтобы показывать контент сразу (даже если немного устаревший), а обновлять в фоне. Это особенно важно для мобильных устройств с медленным интернетом, где задержка в 500ms заметна пользователю.'
+    funFact: 'Stale-while-revalidate был добавлен в HTTP стандарт относительно недавно и стал популярным благодаря улучшению воспринимаемой производительности. Идея в том, чтобы показывать контент сразу (даже если немного устаревший), а обновлять в фоне. Это особенно важно для мобильных устройств с медленным интернетом, где задержка в 500ms заметна пользователю.',
+    isFrontendEssential: true
   },
   {
     id: 'http-versions',
@@ -435,7 +436,8 @@ Cache-Control: public, max-age=31536000
 // Chrome: chrome://flags/#enable-quic`
       }
     ],
-    relatedTopics: ['http-over-tcp', 'tls-handshake', 'performance-multiplexing']
+    relatedTopics: ['http-over-tcp', 'tls-handshake', 'performance-multiplexing'],
+    isFrontendEssential: true
   },
   {
     id: 'tls-handshake',
@@ -589,6 +591,7 @@ Cache-Control: public, max-age=31536000
 //    - Уменьшает RTT (задержку сети)`
       }
     ],
-    relatedTopics: ['https-basics', 'http-versions', 'performance-prefetch']
+    relatedTopics: ['https-basics', 'http-versions', 'performance-prefetch'],
+    isFrontendEssential: true
   }
 ];

@@ -34,6 +34,7 @@ export const JS_SECURITY_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['dom-api', 'security', 'cookies'],
+    isFrontendEssential: true
   },
 {
     id: 'same-origin-policy',
@@ -68,6 +69,7 @@ export const JS_SECURITY_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'cors', 'xss', 'csrf'],
+    isFrontendEssential: true
   },
 {
     id: 'csrf',
@@ -101,6 +103,7 @@ export const JS_SECURITY_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['fetch-api', 'cors', 'same-origin-policy', 'cookies'],
+    isFrontendEssential: true
   },
 {
     id: 'cookies',
@@ -134,6 +137,7 @@ export const JS_SECURITY_INTERMEDIATE_TOPICS: Topic[] = [
         code: `// Cookies автоматически отправляются с запросами\nfetch('/api/data')\n  .then(res => res.json());\n// Cookies отправляются автоматически\n\n// Отключение отправки cookies\nfetch('/api/data', {\n  credentials: 'omit' // не отправлять cookies\n});\n\n// Включение (для cross-origin)\nfetch('https://api.example.com/data', {\n  credentials: 'include' // отправлять cookies\n});\n// Требует CORS с Access-Control-Allow-Credentials: true`
       }
     ],
-    relatedTopics: ['web-storage', 'xss', 'csrf', 'same-origin-policy']
+    relatedTopics: ['web-storage', 'xss', 'csrf', 'same-origin-policy'],
+    isFrontendEssential: true
   }
 ];

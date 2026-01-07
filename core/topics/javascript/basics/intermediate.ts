@@ -77,7 +77,8 @@ test(1, 2);
 example();`
       }
     ],
-    relatedTopics: ['parsing-and-execution', 'lexical-environment-basics', 'call-stack-basics', 'execution-context']
+    relatedTopics: ['parsing-and-execution', 'lexical-environment-basics', 'call-stack-basics', 'execution-context'],
+    isFrontendEssential: true
   },
   {
     id: 'lexical-environment-basics',
@@ -152,7 +153,8 @@ test();`
 // console.log(b); // ReferenceError (блок завершился)`
       }
     ],
-    relatedTopics: ['execution-context-basics', 'scope-types', 'scope-chain', 'lexical-env']
+    relatedTopics: ['execution-context-basics', 'scope-types', 'scope-chain', 'lexical-env'],
+    isFrontendEssential: true
   },
   {
     id: 'scope-types',
@@ -333,7 +335,8 @@ function test2(x = 2, y = x) {
 test2();`
       }
     ],
-    relatedTopics: ['execution-context-basics', 'parsing-and-execution', 'hoisting-basic', 'tdz-basic', 'var-let-const']
+    relatedTopics: ['execution-context-basics', 'parsing-and-execution', 'hoisting-basic', 'tdz-basic', 'var-let-const'],
+    isFrontendEssential: true
   },
   {
     id: 'call-stack-basics',
@@ -445,6 +448,7 @@ test();
 // Test Execution Context удален из стека`
       }
     ],
-    relatedTopics: ['execution-context-basics', 'lexical-environment-basics', 'call-stack', 'event-loop']
+    relatedTopics: ['execution-context-basics', 'lexical-environment-basics', 'call-stack', 'event-loop'],
+    isFrontendEssential: true
   }
 ];

@@ -110,7 +110,8 @@ export const HTML_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-document-structure', 'html-accessibility-basics'],
-    funFact: 'В HTML5 существуют нативные теги <dialog> для модальных окон и <details>/<summary> для аккордеонов, о которых многие забывают. Эти теги обеспечивают доступность "из коробки" без дополнительного JavaScript.'
+    funFact: 'В HTML5 существуют нативные теги <dialog> для модальных окон и <details>/<summary> для аккордеонов, о которых многие забывают. Эти теги обеспечивают доступность "из коробки" без дополнительного JavaScript.',
+    isFrontendEssential: true
   },
   {
     id: 'html-document-structure',
@@ -189,7 +190,8 @@ export const HTML_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-semantic-markup', 'html-forms-basics'],
-    funFact: 'DOCTYPE в HTML5 — это просто <!DOCTYPE html>, без указания версии. В HTML4 было несколько вариантов (HTML 4.01 Strict, Transitional), но в HTML5 решили упростить. Браузеры используют DOCTYPE для выбора режима рендеринга: стандартный или режим совместимости (quirks mode).'
+    funFact: 'DOCTYPE в HTML5 — это просто <!DOCTYPE html>, без указания версии. В HTML4 было несколько вариантов (HTML 4.01 Strict, Transitional), но в HTML5 решили упростить. Браузеры используют DOCTYPE для выбора режима рендеринга: стандартный или режим совместимости (quirks mode).',
+    isFrontendEssential: true
   },
   {
     id: 'html-forms-basics',
@@ -312,7 +314,8 @@ export const HTML_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-document-structure', 'html-accessibility-basics'],
-    funFact: 'Атрибут placeholder был добавлен в HTML5 и изначально предназначался только для подсказок, но многие разработчики использовали его вместо label, что создавало проблемы с доступностью. Важно помнить: placeholder исчезает при вводе, а label остаётся всегда видимым.'
+    funFact: 'Атрибут placeholder был добавлен в HTML5 и изначально предназначался только для подсказок, но многие разработчики использовали его вместо label, что создавало проблемы с доступностью. Важно помнить: placeholder исчезает при вводе, а label остаётся всегда видимым.',
+    isFrontendEssential: true
   },
   {
     id: 'html-accessibility-basics',
@@ -437,7 +440,8 @@ export const HTML_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-semantic-markup', 'html-forms-basics', 'html-viewport'],
-    funFact: 'Атрибут alt для изображений был обязательным в HTML4, но в HTML5 стал опциональным. Однако для доступности он критически важен: скринридеры читают alt, а если его нет — читают имя файла, что бесполезно для пользователя. Пустой alt (alt="") означает, что изображение декоративное.'
+    funFact: 'Атрибут alt для изображений был обязательным в HTML4, но в HTML5 стал опциональным. Однако для доступности он критически важен: скринридеры читают alt, а если его нет — читают имя файла, что бесполезно для пользователя. Пустой alt (alt="") означает, что изображение декоративное.',
+    isFrontendEssential: true
   },
   {
     id: 'html-viewport',
@@ -520,6 +524,7 @@ export const HTML_BEGINNER_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['html-document-structure', 'html-accessibility-basics'],
-    funFact: 'Мета-тег viewport был введён Apple для iPhone в 2007 году, чтобы мобильные браузеры правильно отображали веб-страницы. До этого мобильные браузеры показывали страницы в уменьшенном виде, требуя масштабирования. Viewport стал стандартом и критически важен для адаптивной вёрстки.'
+    funFact: 'Мета-тег viewport был введён Apple для iPhone в 2007 году, чтобы мобильные браузеры правильно отображали веб-страницы. До этого мобильные браузеры показывали страницы в уменьшенном виде, требуя масштабирования. Viewport стал стандартом и критически важен для адаптивной вёрстки.',
+    isFrontendEssential: true
   }
 ];

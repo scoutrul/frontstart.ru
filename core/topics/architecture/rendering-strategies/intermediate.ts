@@ -31,7 +31,8 @@ export const RENDERING_STRATEGIES_INTERMEDIATE_TOPICS: Topic[] = [
       }
     ],
     relatedTopics: ['architecture-rendering-csr', 'architecture-rendering-advanced', 'architecture-rendering-hydration'],
-    funFact: 'Hydration (гидратация) — это термин из химии, означающий присоединение молекул воды. В вебе он означает "оживление" статичного HTML JavaScript\'ом. Процесс hydration критичен для производительности: если он медленный, пользователь видит статичный контент без интерактивности.'
+    funFact: 'Hydration (гидратация) — это термин из химии, означающий присоединение молекул воды. В вебе он означает "оживление" статичного HTML JavaScript\'ом. Процесс hydration критичен для производительности: если он медленный, пользователь видит статичный контент без интерактивности.',
+    isFrontendEssential: true
   },
   {
     id: 'architecture-rendering-hydration',
@@ -298,6 +299,7 @@ function App() {
       }
     ],
     relatedTopics: ['architecture-rendering-ssr-ssg-isr', 'architecture-rendering-csr', 'architecture-rendering-advanced'],
-    funFact: 'Hydration была одной из самых сложных проблем при создании React SSR. Команда React потратила годы на оптимизацию процесса hydration, чтобы сделать его быстрым и надёжным. В React 18 была добавлена поддержка selective hydration и streaming, что значительно улучшило производительность SSR-приложений.'
+    funFact: 'Hydration была одной из самых сложных проблем при создании React SSR. Команда React потратила годы на оптимизацию процесса hydration, чтобы сделать его быстрым и надёжным. В React 18 была добавлена поддержка selective hydration и streaming, что значительно улучшило производительность SSR-приложений.',
+    isFrontendEssential: true
   }
 ];
