@@ -373,5 +373,482 @@ function Form() {
     ],
     relatedTopics: ['architecture-state-global', 'architecture-component-solid'],
     funFact: 'State Machines были изобретены в 1950-х годах для описания поведения цифровых схем. В программировании они используются с 1960-х. В фронтенд-разработке они стали популярными с появлением XState в 2017 году, который сделал State Machines доступными для JavaScript-разработчиков.'
+  },
+  {
+    id: 'architecture-state-reducer-pattern',
+    title: 'Reducer Pattern',
+    difficulty: 'intermediate',
+    description: 'Reducer Pattern — архитектурный паттерн для управления сложным состоянием через чистые функции, принимающие предыдущее состояние и действие, и возвращающие новое состояние. Паттерн обеспечивает предсказуемость, тестируемость и отладку. Основа Redux, но может использоваться без библиотек. Senior-разработчик должен понимать паттерн как концепцию, а не только как часть Redux.',
+    keyPoints: [
+      'Reducer: чистая функция (state, action) => newState, не мутирует исходное состояние.',
+      'Предсказуемость: одинаковые входные данные всегда дают одинаковый результат.',
+      'Тестируемость: легко тестировать чистые функции без моков и зависимостей.',
+      'Композиция: редюсеры можно комбинировать для управления разными частями состояния.',
+      'Неизменяемость: возвращает новое состояние, а не изменяет существующее.',
+      'Когда использовать: сложное состояние с множеством операций, нужна предсказуемость и отладка.'
+    ],
+    tags: ['architecture', 'state', 'reducer', 'pattern', 'redux', 'functional', 'intermediate'],
+    examples: [
+      {
+        title: 'Базовый reducer без библиотек',
+        code: `// Reducer - чистая функция
+function counterReducer(state = { count: 0 }, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return { count: state.count + 1 };
+    case 'DECREMENT':
+      return { count: state.count - 1 };
+    case 'RESET':
+      return { count: 0 };
+    default:
+      return state; // Важно: возвращать state, если action не распознан
+  }
+}
+
+// Использование
+let state = counterReducer(undefined, { type: 'INCREMENT' }); // { count: 1 }
+state = counterReducer(state, { type: 'INCREMENT' }); // { count: 2 }
+state = counterReducer(state, { type: 'DECREMENT' }); // { count: 1 }
+state = counterReducer(state, { type: 'RESET' }); // { count: 0 }
+
+// Предсказуемость: всегда одинаковый результат для одинаковых входных данных`
+      },
+      {
+        title: 'Reducer с payload',
+        code: `// Reducer с данными в action
+function todosReducer(state = { todos: [] }, action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return {
+        todos: [...state.todos, {
+          id: action.payload.id,
+          text: action.payload.text,
+          completed: false
+        }]
+      };
+    case 'TOGGLE_TODO':
+      return {
+        todos: state.todos.map(todo =>
+          todo.id === action.payload.id
+            ? { ...todo, completed: !todo.completed }
+            : todo
+        )
+      };
+    case 'DELETE_TODO':
+      return {
+        todos: state.todos.filter(todo => todo.id !== action.payload.id)
+      };
+    default:
+      return state;
+  }
+}
+
+// Использование
+let state = todosReducer(undefined, {
+  type: 'ADD_TODO',
+  payload: { id: 1, text: 'Изучить Reducer Pattern' }
+});
+// { todos: [{ id: 1, text: 'Изучить Reducer Pattern', completed: false }] }
+
+state = todosReducer(state, {
+  type: 'TOGGLE_TODO',
+  payload: { id: 1 }
+});
+// { todos: [{ id: 1, text: 'Изучить Reducer Pattern', completed: true }] }`
+      },
+      {
+        title: 'Композиция редюсеров',
+        code: `// Разделение на несколько редюсеров
+function counterReducer(state = 0, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+function todosReducer(state = [], action) {
+  switch (action.type) {
+    case 'ADD_TODO':
+      return [...state, action.payload];
+    case 'DELETE_TODO':
+      return state.filter(todo => todo.id !== action.payload.id);
+    default:
+      return state;
+  }
+}
+
+// Комбинирование редюсеров
+function rootReducer(state = {}, action) {
+  return {
+    counter: counterReducer(state.counter, action),
+    todos: todosReducer(state.todos, action)
+  };
+}
+
+// Использование
+let state = rootReducer(undefined, { type: 'INCREMENT' });
+// { counter: 1, todos: [] }
+
+state = rootReducer(state, {
+  type: 'ADD_TODO',
+  payload: { id: 1, text: 'Задача' }
+});
+// { counter: 1, todos: [{ id: 1, text: 'Задача' }] }`
+      },
+      {
+        title: 'Тестирование редюсеров',
+        code: `// Легко тестировать чистые функции
+function counterReducer(state = 0, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return state + 1;
+    case 'DECREMENT':
+      return state - 1;
+    default:
+      return state;
+  }
+}
+
+// Тесты
+describe('counterReducer', () => {
+  it('должен увеличивать счётчик', () => {
+    expect(counterReducer(0, { type: 'INCREMENT' })).toBe(1);
+    expect(counterReducer(5, { type: 'INCREMENT' })).toBe(6);
+  });
+  
+  it('должен уменьшать счётчик', () => {
+    expect(counterReducer(1, { type: 'DECREMENT' })).toBe(0);
+    expect(counterReducer(5, { type: 'DECREMENT' })).toBe(4);
+  });
+  
+  it('должен возвращать начальное состояние', () => {
+    expect(counterReducer(undefined, { type: 'UNKNOWN' })).toBe(0);
+  });
+  
+  it('не должен мутировать исходное состояние', () => {
+    const state = { count: 5 };
+    const newState = counterReducer(state, { type: 'INCREMENT' });
+    expect(state).not.toBe(newState); // Новый объект
+    expect(state.count).toBe(5); // Исходное состояние не изменилось
+  });
+});
+
+// Преимущества:
+// - Нет моков
+// - Нет зависимостей
+// - Быстрые тесты
+// - Легко отлаживать`
+      },
+      {
+        title: 'Reducer в React без Redux',
+        code: `// Использование useReducer в React
+import { useReducer } from 'react';
+
+function counterReducer(state, action) {
+  switch (action.type) {
+    case 'INCREMENT':
+      return { count: state.count + 1 };
+    case 'DECREMENT':
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+}
+
+function Counter() {
+  const [state, dispatch] = useReducer(counterReducer, { count: 0 });
+  
+  return (
+    <div>
+      <p>Счёт: {state.count}</p>
+      <button onClick={() => dispatch({ type: 'INCREMENT' })}>
+        Увеличить
+      </button>
+      <button onClick={() => dispatch({ type: 'DECREMENT' })}>
+        Уменьшить
+      </button>
+    </div>
+  );
+}
+
+// useReducer полезен когда:
+// - Сложная логика состояния
+// - Множество операций
+// - Нужна предсказуемость`
+      },
+      {
+        title: 'Почему reducer, а не setState',
+        code: `// ❌ ПЛОХО: множественные setState
+function Component() {
+  const [state, setState] = useState({ count: 0, todos: [] });
+  
+  const handleIncrement = () => {
+    setState({ ...state, count: state.count + 1 }); // Легко забыть spread
+  };
+  
+  const handleAddTodo = () => {
+    setState({ ...state, todos: [...state.todos, newTodo] }); // Сложная логика
+  };
+  
+  // Проблемы:
+  // - Легко забыть spread оператор
+  // - Сложная логика в компоненте
+  // - Трудно тестировать
+  // - Нет предсказуемости
+}
+
+// ✅ ХОРОШО: reducer pattern
+function Component() {
+  const [state, dispatch] = useReducer(appReducer, initialState);
+  
+  const handleIncrement = () => {
+    dispatch({ type: 'INCREMENT' }); // Просто и предсказуемо
+  };
+  
+  const handleAddTodo = () => {
+    dispatch({ type: 'ADD_TODO', payload: newTodo }); // Логика в reducer
+  };
+  
+  // Преимущества:
+  // - Логика в одном месте (reducer)
+  // - Легко тестировать
+  // - Предсказуемость
+  // - Можно использовать Redux DevTools`
+      }
+    ],
+    relatedTopics: ['architecture-state-global', 'architecture-state-machines'],
+    funFact: 'Reducer Pattern пришёл из функционального программирования, где функции высшего порядка (как reduce) принимают функцию-аккумулятор. В Redux название "reducer" было выбрано потому, что функция похожа на Array.prototype.reduce: она принимает аккумулятор (state) и текущее значение (action), возвращая новый аккумулятор. Паттерн стал популярным благодаря Redux, но может использоваться независимо.'
+  },
+  {
+    id: 'architecture-state-essential',
+    title: 'Essential State (Существенное состояние)',
+    difficulty: 'intermediate',
+    description: 'Essential State — концепция минимально необходимого представления данных (state) для отрисовки интерфейса. Умение выделять и минимизировать состояние, избегая его дублирования. Essential state хранится, derived state вычисляется. Это основа Single Source of Truth и нормализации данных. Senior-разработчик должен уметь различать, что нужно хранить, а что можно вычислить.',
+    keyPoints: [
+      'Essential state: минимально необходимое состояние для UI, хранится в store или компоненте.',
+      'Derived state: вычисляется из essential state, не хранится отдельно (useMemo, селекторы).',
+      'Проблема дублирования: одно и то же состояние в разных местах приводит к рассинхронизации.',
+      'Нормализация: структурирование данных для избежания дублирования (entities по ID).',
+      'Single Source of Truth: каждое значение хранится в одном месте, остальное вычисляется.',
+      'Когда хранить: данные с сервера, пользовательский ввод, состояние UI (модалки, формы).'
+    ],
+    tags: ['architecture', 'state', 'essential-state', 'normalization', 'single-source-of-truth', 'intermediate'],
+    examples: [
+      {
+        title: 'Essential vs Derived State',
+        code: `// ❌ ПЛОХО: храним всё
+const state = {
+  users: [
+    { id: 1, name: 'Иван', age: 25 },
+    { id: 2, name: 'Мария', age: 30 }
+  ],
+  userCount: 2, // Дублирование: можно вычислить
+  averageAge: 27.5, // Дублирование: можно вычислить
+  activeUsers: [...], // Дублирование: можно вычислить
+  userNames: ['Иван', 'Мария'] // Дублирование: можно вычислить
+};
+
+// ✅ ХОРОШО: храним только essential
+const state = {
+  users: [
+    { id: 1, name: 'Иван', age: 25, active: true },
+    { id: 2, name: 'Мария', age: 30, active: false }
+  ]
+};
+
+// Derived state вычисляется
+const userCount = state.users.length;
+const averageAge = state.users.reduce((sum, u) => sum + u.age, 0) / state.users.length;
+const activeUsers = state.users.filter(u => u.active);
+const userNames = state.users.map(u => u.name);
+
+// Преимущества:
+// - Нет дублирования
+// - Нет рассинхронизации
+// - Меньше места в памяти
+// - Легче обновлять`
+      },
+      {
+        title: 'Нормализация для избежания дублирования',
+        code: `// ❌ ПЛОХО: вложенная структура с дублированием
+const state = {
+  posts: [
+    {
+      id: 1,
+      title: 'Пост 1',
+      author: { id: 1, name: 'Иван' }, // Дублирование автора
+      comments: [
+        { id: 1, text: 'Комментарий', author: { id: 1, name: 'Иван' } } // Дублирование
+      ]
+    },
+    {
+      id: 2,
+      title: 'Пост 2',
+      author: { id: 1, name: 'Иван' }, // Дублирование
+      comments: [...]
+    }
+  ]
+};
+
+// Проблема: если изменится имя автора, нужно обновить во всех местах
+
+// ✅ ХОРОШО: нормализованная структура
+const state = {
+  entities: {
+    users: {
+      1: { id: 1, name: 'Иван' } // Один источник истины
+    },
+    posts: {
+      1: {
+        id: 1,
+        title: 'Пост 1',
+        authorId: 1, // Ссылка на пользователя
+        commentIds: [1, 2]
+      },
+      2: {
+        id: 2,
+        title: 'Пост 2',
+        authorId: 1,
+        commentIds: [3]
+      }
+    },
+    comments: {
+      1: { id: 1, text: 'Комментарий', authorId: 1, postId: 1 },
+      2: { id: 2, text: 'Комментарий 2', authorId: 2, postId: 1 },
+      3: { id: 3, text: 'Комментарий 3', authorId: 1, postId: 2 }
+    }
+  }
+};
+
+// Derived: вычисляем при необходимости
+const getPostWithAuthor = (postId) => {
+  const post = state.entities.posts[postId];
+  return {
+    ...post,
+    author: state.entities.users[post.authorId],
+    comments: post.commentIds.map(id => ({
+      ...state.entities.comments[id],
+      author: state.entities.users[state.entities.comments[id].authorId]
+    }))
+  };
+};
+
+// Преимущества:
+// - Один источник истины для каждого entity
+// - Легко обновлять
+// - Нет дублирования`
+      },
+      {
+        title: 'Что хранить, что вычислять',
+        code: `// ХРАНИТЬ (Essential State):
+// 1. Данные с сервера
+const state = {
+  users: [...], // С сервера
+  posts: [...] // С сервера
+};
+
+// 2. Пользовательский ввод
+const state = {
+  formData: {
+    name: '',
+    email: ''
+  }
+};
+
+// 3. Состояние UI
+const state = {
+  isModalOpen: false,
+  selectedTab: 'home',
+  isLoading: true
+};
+
+// ВЫЧИСЛЯТЬ (Derived State):
+// 1. Агрегации
+const userCount = users.length;
+const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+
+// 2. Фильтрации
+const activeUsers = users.filter(u => u.active);
+const completedTodos = todos.filter(t => t.completed);
+
+// 3. Сортировки
+const sortedUsers = [...users].sort((a, b) => a.name.localeCompare(b.name));
+
+// 4. Трансформации
+const userNames = users.map(u => u.name);
+const userMap = users.reduce((map, u) => ({ ...map, [u.id]: u }), {});
+
+// 5. Условные значения
+const hasActiveUsers = users.some(u => u.active);
+const isFormValid = formData.name && formData.email;`
+      },
+      {
+        title: 'Использование селекторов для derived state',
+        code: `// Redux с reselect
+import { createSelector } from 'reselect';
+
+// Essential state
+const usersSelector = state => state.users;
+const filterSelector = state => state.filter;
+
+// Derived state через селектор
+const filteredUsersSelector = createSelector(
+  [usersSelector, filterSelector],
+  (users, filter) => users.filter(u => u.name.includes(filter))
+);
+
+// Использование
+const filteredUsers = useSelector(filteredUsersSelector);
+
+// Преимущества:
+// - Мемоизация: пересчитывается только при изменении зависимостей
+// - Разделение: логика вычисления отделена от компонента
+// - Тестируемость: легко тестировать селекторы
+
+// React useMemo для derived state
+function UserList({ users, filter }) {
+  const filteredUsers = useMemo(
+    () => users.filter(u => u.name.includes(filter)),
+    [users, filter] // Пересчитывается только при изменении
+  );
+  
+  return <div>{filteredUsers.map(u => <User key={u.id} user={u} />)}</div>;
+}`
+      },
+      {
+        title: 'Избегание дублирования состояния',
+        code: `// ❌ ПЛОХО: дублирование
+const [users, setUsers] = useState([]);
+const [userCount, setUserCount] = useState(0);
+const [activeUsers, setActiveUsers] = useState([]);
+
+// Проблема: нужно синхронизировать все три состояния
+useEffect(() => {
+  setUserCount(users.length);
+  setActiveUsers(users.filter(u => u.active));
+}, [users]);
+
+// ✅ ХОРОШО: один источник истины
+const [users, setUsers] = useState([]);
+
+// Вычисляем при необходимости
+const userCount = users.length;
+const activeUsers = useMemo(
+  () => users.filter(u => u.active),
+  [users]
+);
+
+// Преимущества:
+// - Нет рассинхронизации
+// - Меньше кода
+// - Проще поддерживать`
+      }
+    ],
+    relatedTopics: ['architecture-state-global', 'architecture-state-local', 'architecture-state-reducer-pattern'],
+    funFact: 'Концепция Essential State пришла из функционального программирования и теории баз данных, где нормализация данных используется для избежания дублирования и аномалий. В фронтенд-разработке эта концепция стала популярной благодаря Redux и его принципу Single Source of Truth. Понимание того, что хранить, а что вычислять, — один из ключевых навыков senior-разработчика.'
   }
 ];

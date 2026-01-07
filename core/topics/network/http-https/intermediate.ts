@@ -348,5 +348,221 @@ Cache-Control: max-age=3600, stale-while-revalidate=86400
       }
     ],
     relatedTopics: ['http-basics', 'performance-caching', 'critical-rendering-path']
+  },
+  {
+    id: 'http-content-negotiation',
+    title: 'Content Negotiation (Согласование содержимого)',
+    difficulty: 'intermediate',
+    description: 'Content Negotiation — механизм, при котором клиент и сервер договариваются о формате ресурса через HTTP-заголовки. Клиент указывает, какие форматы он поддерживает (Accept, Accept-Encoding, Accept-Language), сервер выбирает лучший вариант и отправляет его. Это позволяет оптимизировать передачу данных (сжатие), локализацию (язык) и форматы (JSON, XML). Senior-разработчик должен понимать механизм согласования для оптимизации производительности.',
+    keyPoints: [
+      'Accept: клиент указывает предпочитаемые MIME-типы (application/json, text/html).',
+      'Accept-Encoding: клиент указывает поддерживаемые алгоритмы сжатия (gzip, br, deflate).',
+      'Accept-Language: клиент указывает предпочитаемые языки (ru, en-US, en).',
+      'Сервер выбирает: сервер анализирует заголовки и выбирает лучший вариант из поддерживаемых.',
+      'Приоритизация: клиент может указать качество (q-value) для приоритизации форматов.',
+      'Fallback: если запрошенный формат недоступен, сервер выбирает альтернативу или возвращает ошибку.'
+    ],
+    tags: ['networks', 'http', 'content-negotiation', 'compression', 'localization', 'intermediate'],
+    examples: [
+      {
+        title: 'Accept-Encoding для сжатия',
+        code: `// КЛИЕНТ отправляет:
+GET /api/data HTTP/1.1
+Accept-Encoding: gzip, deflate, br
+
+// Сервер анализирует:
+// 1. Поддерживает ли сервер Brotli? → Да
+// 2. Поддерживает ли клиент Brotli? → Да (br в списке)
+// 3. Выбирает Brotli (лучшее сжатие)
+
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Encoding: br
+Content-Type: application/json
+
+[сжатые данные]
+
+// Если сервер не поддерживает Brotli:
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Encoding: gzip
+Content-Type: application/json
+
+[сжатые данные gzip]
+
+// Если клиент не поддерживает сжатие:
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[несжатые данные]`
+      },
+      {
+        title: 'Accept для форматов данных',
+        code: `// КЛИЕНТ запрашивает JSON:
+GET /api/users HTTP/1.1
+Accept: application/json, application/xml, text/plain
+
+// Сервер выбирает JSON (первый в списке, поддерживается)
+
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"users": [...]}
+
+// Если сервер не поддерживает JSON:
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Type: application/xml
+
+<users>...</users>
+
+// Если ни один формат не поддерживается:
+// СЕРВЕР отвечает:
+HTTP/1.1 406 Not Acceptable`
+      },
+      {
+        title: 'Accept-Language для локализации',
+        code: `// КЛИЕНТ указывает языки:
+GET /page HTTP/1.1
+Accept-Language: ru-RU, ru, en-US, en;q=0.9
+
+// Приоритет:
+// 1. ru-RU (русский, Россия) - q=1.0 (по умолчанию)
+// 2. ru (русский) - q=1.0
+// 3. en-US (английский, США) - q=0.9
+// 4. en (английский) - q=0.9
+
+// Сервер выбирает ru-RU (высший приоритет)
+
+// СЕРВЕР отвечает:
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Language: ru-RU
+
+<html lang="ru">...</html>
+
+// Если ru-RU недоступен, выбирает ru
+// Если ru недоступен, выбирает en-US`
+      },
+      {
+        title: 'Приоритизация с q-value',
+        code: `// q-value (quality value) указывает приоритет (0.0 - 1.0)
+
+// КЛИЕНТ:
+Accept-Encoding: br;q=1.0, gzip;q=0.8, deflate;q=0.6, identity;q=0.4
+
+// Приоритет:
+// 1. br (Brotli) - q=1.0 (наивысший)
+// 2. gzip - q=0.8
+// 3. deflate - q=0.6
+// 4. identity (без сжатия) - q=0.4 (низший)
+
+// Сервер выбирает формат с наивысшим q-value из поддерживаемых
+
+// Если сервер поддерживает только gzip:
+// Content-Encoding: gzip (q=0.8)
+
+// Если сервер поддерживает br и gzip:
+// Content-Encoding: br (q=1.0, выше чем gzip)
+
+// Если q-value не указан, считается 1.0`
+      },
+      {
+        title: 'Настройка на сервере (nginx)',
+        code: `# nginx.conf
+
+# Включение сжатия с приоритетом
+location ~* \\.(js|css|html|json)$ {
+  # Проверка Accept-Encoding
+  gzip on;
+  gzip_vary on;
+  gzip_types text/plain text/css application/json application/javascript;
+  
+  # Brotli (если установлен модуль)
+  brotli on;
+  brotli_types text/plain text/css application/json application/javascript;
+  
+  # Приоритет: Brotli > Gzip
+  # nginx автоматически выбирает на основе Accept-Encoding
+}
+
+# Локализация
+location / {
+  # Проверка Accept-Language
+  if ($http_accept_language ~* ^ru) {
+    set $lang "ru";
+  }
+  if ($http_accept_language ~* ^en) {
+    set $lang "en";
+  }
+  
+  # Отправка соответствующего файла
+  try_files /$lang$uri /$uri =404;
+}`
+      },
+      {
+        title: 'Content Negotiation в API',
+        code: `// Express.js пример
+app.get('/api/users', (req, res) => {
+  const accept = req.headers.accept || '';
+  const acceptEncoding = req.headers['accept-encoding'] || '';
+  
+  // Выбор формата
+  let contentType = 'application/json';
+  if (accept.includes('application/xml')) {
+    contentType = 'application/xml';
+  }
+  
+  // Выбор сжатия
+  let encoding = null;
+  if (acceptEncoding.includes('br')) {
+    encoding = 'br';
+  } else if (acceptEncoding.includes('gzip')) {
+    encoding = 'gzip';
+  }
+  
+  const data = { users: [...] };
+  let response = JSON.stringify(data);
+  
+  // Сжатие
+  if (encoding === 'br') {
+    response = brotliCompress(response);
+    res.setHeader('Content-Encoding', 'br');
+  } else if (encoding === 'gzip') {
+    response = gzipCompress(response);
+    res.setHeader('Content-Encoding', 'gzip');
+  }
+  
+  res.setHeader('Content-Type', contentType);
+  res.send(response);
+});`
+      },
+      {
+        title: 'Преимущества Content Negotiation',
+        code: `// 1. ОПТИМИЗАЦИЯ РАЗМЕРА
+// Клиент получает сжатые данные (Brotli/Gzip)
+// Экономия трафика: 60-80%
+
+// 2. ЛОКАЛИЗАЦИЯ
+// Автоматический выбор языка
+// Улучшение UX для пользователей
+
+// 3. ГИБКОСТЬ ФОРМАТОВ
+// Один endpoint, разные форматы (JSON/XML)
+// Удобно для разных клиентов
+
+// 4. ПРОИЗВОДИТЕЛЬНОСТЬ
+// Меньше данных = быстрее загрузка
+// Лучшие метрики (LCP, TTFB)
+
+// 5. СОВМЕСТИМОСТЬ
+// Fallback на альтернативные форматы
+// Работает со старыми клиентами`
+      }
+    ],
+    relatedTopics: ['http-caching', 'performance-compression', 'https-basics'],
+    funFact: 'Content Negotiation был частью HTTP с версии 1.0 (1996 год), но широкое использование началось только с ростом веб-приложений и необходимостью оптимизации. Современные браузеры автоматически отправляют оптимальные заголовки Accept-Encoding (Brotli, Gzip), что позволяет серверам эффективно сжимать данные без дополнительной настройки на клиенте.'
   }
 ];

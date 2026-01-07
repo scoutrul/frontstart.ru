@@ -2,6 +2,307 @@ import { Topic } from '../../../types';
 
 export const NETWORK_PERFORMANCE_ADVANCED_TOPICS: Topic[] = [
   {
+    id: 'critical-rendering-path-advanced',
+    title: 'Critical Rendering Path (Advanced)',
+    difficulty: 'advanced',
+    description: 'Продвинутое понимание Critical Rendering Path включает детали работы браузера на уровне композиции слоёв, GPU-ускорения и оптимизаций. Composite layers — отдельные слои для элементов, которые можно отрисовывать независимо. GPU-ускорение использует видеокарту для быстрой отрисовки. Продвинутые техники оптимизации (will-change, contain, transform) позволяют контролировать процесс рендеринга на глубоком уровне. Senior-разработчик должен понимать эти механизмы для максимальной оптимизации производительности.',
+    keyPoints: [
+      'Composite layers: отдельные слои для элементов, отрисовываются независимо, ускоряют анимации и скролл.',
+      'GPU-ускорение: использование видеокарты для отрисовки слоёв, особенно эффективно для transform и opacity.',
+      'Paint: отрисовка пикселей в растровое изображение, может быть несколько слоёв для разных элементов.',
+      'Composite: объединение слоёв в финальное изображение, происходит на GPU для производительности.',
+      'Оптимизации: will-change (предупреждение браузеру), contain (изоляция layout), transform (GPU-ускорение).',
+      'Производительность: правильное использование слоёв и GPU критично для плавности анимаций и скролла.'
+    ],
+    tags: ['networks', 'performance', 'browser', 'rendering', 'critical-rendering-path', 'gpu', 'composite', 'advanced'],
+    examples: [
+      {
+        title: 'Composite Layers (слои композиции)',
+        code: `// БРАУЗЕР создаёт слои для оптимизации рендеринга
+
+// ЭЛЕМЕНТЫ В ОТДЕЛЬНЫХ СЛОЯХ:
+// 1. Элементы с transform или opacity
+.element {
+  transform: translateZ(0); /* Создаёт слой */
+  /* или */
+  will-change: transform; /* Предупреждение браузеру */
+}
+
+// 2. Видео и canvas
+<video> <!-- Автоматически в отдельном слое -->
+<canvas> <!-- Автоматически в отдельном слое -->
+
+// 3. Элементы с position: fixed
+.fixed-header {
+  position: fixed; /* В отдельном слое */
+}
+
+// 4. Элементы с фильтрами
+.filtered {
+  filter: blur(5px); /* В отдельном слое */
+}
+
+// ПРЕИМУЩЕСТВА СЛОЁВ:
+// - Отрисовываются независимо
+// - Можно обновлять без перерисовки других элементов
+// - GPU-ускорение для transform/opacity
+// - Плавные анимации`
+      },
+      {
+        title: 'GPU-ускорение',
+        code: `// GPU-УСКОРЕНИЕ для определённых свойств
+
+// ✅ GPU-УСКОРЯЕТСЯ (Composite):
+.element {
+  transform: translateX(100px); /* GPU */
+  opacity: 0.5; /* GPU */
+  filter: blur(5px); /* GPU */
+  will-change: transform; /* Предупреждение для GPU */
+}
+
+// ❌ НЕ GPU-УСКОРЯЕТСЯ (Layout/Paint):
+.element {
+  left: 100px; /* Layout + Paint */
+  top: 100px; /* Layout + Paint */
+  width: 200px; /* Layout + Paint */
+  background-color: red; /* Paint */
+  color: blue; /* Paint */
+}
+
+// ПРАВИЛО:
+// - transform и opacity → только Composite (быстро)
+// - Другие свойства → Layout + Paint (медленнее)
+
+// ПРИМЕР АНИМАЦИИ:
+// ❌ ПЛОХО: вызывает Layout и Paint
+@keyframes slide {
+  from { left: 0; }
+  to { left: 100px; }
+}
+
+// ✅ ХОРОШО: только Composite
+@keyframes slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(100px); }
+}`
+      },
+      {
+        title: 'Процесс Composite',
+        code: `// ПОЛНЫЙ ПРОЦЕСС РЕНДЕРИНГА:
+
+// 1. LAYOUT (Reflow)
+// Вычисление позиций и размеров элементов
+// Результат: геометрия элементов
+
+// 2. PAINT
+// Отрисовка пикселей в растровое изображение
+// Результат: изображение слоя
+
+// 3. COMPOSITE
+// Объединение слоёв в финальное изображение
+// Происходит на GPU
+// Результат: финальная картинка на экране
+
+// ПРИМЕР:
+// Слой 1: Фон страницы
+// Слой 2: Контент
+// Слой 3: Анимированный элемент (transform)
+// Слой 4: Fixed header
+
+// При анимации элемента:
+// - Слои 1, 2, 4 не перерисовываются
+// - Только слой 3 обновляется (transform)
+// - Composite объединяет все слои
+// - Результат: плавная анимация`
+      },
+      {
+        title: 'will-change для оптимизации',
+        code: `// WILL-CHANGE: предупреждение браузеру о будущих изменениях
+
+// ✅ ПРАВИЛЬНОЕ ИСПОЛЬЗОВАНИЕ:
+.element {
+  will-change: transform; /* Элемент будет анимироваться */
+}
+
+// Браузер:
+// - Создаёт отдельный слой заранее
+// - Подготавливает GPU-ускорение
+// - Оптимизирует для анимации
+
+// ❌ НЕПРАВИЛЬНОЕ ИСПОЛЬЗОВАНИЕ:
+.element {
+  will-change: transform; /* На всех элементах */
+}
+
+// Проблемы:
+// - Создаёт много слоёв (память)
+// - Перегружает GPU
+// - Может ухудшить производительность
+
+// ПРАВИЛО:
+// - Использовать только для элементов, которые будут анимироваться
+// - Удалять после анимации
+.element {
+  will-change: transform;
+  transition: transform 0.3s;
+}
+
+.element.animated {
+  transform: translateX(100px);
+  will-change: auto; /* Удалить после анимации */
+}`
+      },
+      {
+        title: 'CSS contain для изоляции',
+        code: `// CONTAIN: изоляция layout, paint, composite
+
+// LAYOUT ИЗОЛЯЦИЯ:
+.container {
+  contain: layout;
+  /* Изменения внутри не влияют на внешний layout */
+}
+
+// PAINT ИЗОЛЯЦИЯ:
+.container {
+  contain: paint;
+  /* Контент внутри не отрисовывается за пределами */
+  /* Как overflow: hidden, но на уровне браузера */
+}
+
+// COMPOSITE ИЗОЛЯЦИЯ:
+.container {
+  contain: strict; /* layout + paint + style */
+  /* Полная изоляция, создаёт отдельный слой */
+}
+
+// ПРЕИМУЩЕСТВА:
+// - Браузер может оптимизировать изолированные части
+// - Изменения внутри не вызывают пересчёт снаружи
+// - Лучшая производительность для больших списков
+
+// ПРИМЕР:
+.list-item {
+  contain: layout style paint;
+  /* Каждый элемент изолирован */
+  /* Изменение одного не влияет на другие */
+}`
+      },
+      {
+        title: 'Оптимизация анимаций',
+        code: `// ПРАВИЛА ОПТИМИЗАЦИИ АНИМАЦИЙ:
+
+// 1. ИСПОЛЬЗОВАТЬ TRANSFORM И OPACITY
+// ✅ ХОРОШО: только Composite
+.element {
+  animation: slide 0.3s;
+}
+@keyframes slide {
+  from { transform: translateX(0); opacity: 1; }
+  to { transform: translateX(100px); opacity: 0.5; }
+}
+
+// ❌ ПЛОХО: Layout + Paint
+.element {
+  animation: slide 0.3s;
+}
+@keyframes slide {
+  from { left: 0; }
+  to { left: 100px; }
+}
+
+// 2. ИСПОЛЬЗОВАТЬ WILL-CHANGE
+.element {
+  will-change: transform;
+  transition: transform 0.3s;
+}
+
+// 3. ИЗБЕГАТЬ АНИМАЦИИ СВОЙСТВ, ВЫЗЫВАЮЩИХ LAYOUT
+// ❌ Вызывает Layout:
+// - width, height
+// - top, left, right, bottom
+// - margin, padding
+// - border-width
+
+// ✅ Не вызывает Layout:
+// - transform
+// - opacity
+// - filter (может быть медленным)`
+      },
+      {
+        title: 'Анализ слоёв в DevTools',
+        code: `// CHROME DEVTOOLS → Layers
+
+// 1. Открыть DevTools
+// 2. More tools → Layers
+// 3. Увидеть все слои страницы
+
+// ИНФОРМАЦИЯ О СЛОЯХ:
+// - Размер слоя
+// - Память, используемая слоем
+// - Причина создания слоя
+// - GPU-ускорение
+
+// ПРОБЛЕМЫ:
+// - Слишком много слоёв → много памяти
+// - Большие слои → медленный composite
+// - Ненужные слои → перегрузка GPU
+
+// ОПТИМИЗАЦИЯ:
+// - Удалить will-change где не нужно
+// - Объединить похожие слои
+// - Уменьшить размер слоёв
+
+// PERFORMANCE TIMELINE:
+// - Показать этапы: Layout, Paint, Composite
+// - Время каждого этапа
+// - Проблемные элементы`
+      },
+      {
+        title: 'Производительность: до и после оптимизации',
+        code: `// БЕЗ ОПТИМИЗАЦИИ:
+// Анимация через left/top
+.element {
+  animation: move 1s;
+}
+@keyframes move {
+  from { left: 0; }
+  to { left: 500px; }
+}
+
+// Процесс:
+// - Layout: 5ms (каждый кадр)
+// - Paint: 3ms (каждый кадр)
+// - Composite: 1ms
+// - FPS: ~30-40 (не плавно)
+
+// С ОПТИМИЗАЦИЕЙ:
+// Анимация через transform
+.element {
+  will-change: transform;
+  animation: move 1s;
+}
+@keyframes move {
+  from { transform: translateX(0); }
+  to { transform: translateX(500px); }
+}
+
+// Процесс:
+// - Layout: 0ms (не вызывается)
+// - Paint: 0ms (не вызывается)
+// - Composite: 0.5ms (GPU)
+// - FPS: 60 (плавно)
+
+// УЛУЧШЕНИЕ:
+// - Время на кадр: 9ms → 0.5ms (18x быстрее)
+// - FPS: 30-40 → 60 (плавно)
+// - Использование CPU: высокое → низкое
+// - Использование GPU: низкое → оптимальное`
+      }
+    ],
+    relatedTopics: ['critical-rendering-path', 'performance-rendering', 'render-blocking-resources'],
+    funFact: 'Composite layers и GPU-ускорение были добавлены в браузеры для поддержки плавных анимаций и скролла. Идея пришла из игровой индустрии, где GPU используется для отрисовки. Современные браузеры могут создавать сотни слоёв на странице, но слишком много слоёв может перегрузить GPU и ухудшить производительность. Правильный баланс — ключ к оптимальной производительности.'
+  },
+  {
     id: 'performance-multiplexing',
     title: 'HTTP/2 multiplexing',
     difficulty: 'advanced',

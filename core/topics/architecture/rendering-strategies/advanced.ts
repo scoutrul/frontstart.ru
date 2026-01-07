@@ -44,18 +44,19 @@ export const RENDERING_STRATEGIES_ADVANCED_TOPICS: Topic[] = [
     id: 'architecture-rendering-rsc',
     title: 'React Server Components',
     difficulty: 'advanced',
-    description: 'React Server Components (RSC) — компоненты, которые рендерятся на сервере и не отправляются на клиент. Они могут напрямую обращаться к БД, не требуя API. Это уменьшает JavaScript на клиенте и улучшает производительность. RSC работают вместе с Client Components для интерактивности.',
+    description: 'React Server Components (RSC) — компоненты, которые рендерятся на сервере и не отправляются на клиент. Они могут напрямую обращаться к БД, не требуя API. Это уменьшает JavaScript на клиенте и улучшает производительность. RSC работают вместе с Client Components для интерактивности. Streaming позволяет отправлять контент по частям, Suspense boundaries разделяют синхронный и асинхронный контент. Senior-разработчик должен понимать детали работы RSC, ограничения и best practices.',
     keyPoints: [
-      'RSC: компоненты рендерятся на сервере, не отправляются на клиент.',
-      'Преимущества: меньше JavaScript, прямой доступ к БД, лучшая производительность.',
-      'Ограничения: нет интерактивности, нет хуков, нет браузерных API.',
-      'Client Components: для интерактивности, используют директиву "use client".',
-      'Применение: статический контент в RSC, интерактивность в Client Components.'
+      'RSC: компоненты рендерятся на сервере, не отправляются на клиент, уменьшают JavaScript на 30-50%.',
+      'Streaming: контент отправляется по частям через React Streaming, улучшает Time to First Byte.',
+      'Suspense boundaries: разделяют синхронный и асинхронный контент, показывают fallback во время загрузки.',
+      'Ограничения: нет интерактивности (onClick, onChange), нет хуков (useState, useEffect), нет браузерных API (window, document).',
+      'Client Components: для интерактивности, используют директиву "use client", отправляются на клиент.',
+      'Best practices: максимум контента в RSC, минимум в Client Components, правильное использование Suspense.'
     ],
-    tags: ['architecture', 'rendering', 'rsc', 'react', 'advanced'],
+    tags: ['architecture', 'rendering', 'rsc', 'react', 'streaming', 'suspense', 'advanced'],
     examples: [
       {
-        title: 'React Server Components',
+        title: 'Базовое использование RSC',
         code: `// Server Component (рендерится на сервере)
 async function UserList() {
   // Прямой доступ к БД
@@ -84,9 +85,456 @@ function UserCard({ user }) {
     </div>
   );
 }`
+      },
+      {
+        title: 'Streaming с Suspense',
+        code: `// RSC поддерживает Streaming через Suspense
+
+async function Page() {
+  return (
+    <div>
+      {/* Синхронный контент отправляется сразу */}
+      <Header />
+      <Navigation />
+      
+      {/* Асинхронный контент стримится */}
+      <Suspense fallback={<UserListSkeleton />}>
+        <UserList /> {/* Загружается с сервера */}
+      </Suspense>
+      
+      <Suspense fallback={<PostsSkeleton />}>
+        <PostsList /> {/* Загружается параллельно */}
+      </Suspense>
+      
+      <Footer />
+    </div>
+  );
+}
+
+// Процесс:
+// 1. Синхронный контент отправляется сразу
+// 2. Fallback показывается для асинхронного
+// 3. Когда данные готовы, они заменяют fallback
+// 4. Пользователь видит контент постепенно
+
+// Преимущества:
+// - Быстрый Time to First Byte
+// - Постепенное появление контента
+// - Лучший UX`
+      },
+      {
+        title: 'Ограничения RSC',
+        code: `// ❌ НЕ РАБОТАЕТ В RSC:
+
+// 1. Интерактивность
+function Component() {
+  return <button onClick={() => alert('Click')}>Клик</button>;
+  // ❌ onClick не работает в RSC
+}
+
+// 2. Хуки
+function Component() {
+  const [state, setState] = useState(0); // ❌ useState не работает
+  useEffect(() => {}, []); // ❌ useEffect не работает
+}
+
+// 3. Браузерные API
+function Component() {
+  const width = window.innerWidth; // ❌ window не доступен
+  const element = document.getElementById('id'); // ❌ document не доступен
+}
+
+// 4. Случайные значения
+function Component() {
+  const id = Math.random(); // ❌ Разные значения на сервере и клиенте
+  const date = new Date(); // ❌ Разное время на сервере и клиенте
+}
+
+// ✅ РАБОТАЕТ В RSC:
+// - Асинхронные операции (fetch, БД)
+// - Прямой доступ к файловой системе
+// - Серверные API
+// - Статический контент`
+      },
+      {
+        title: 'Композиция RSC и Client Components',
+        code: `// Server Component может использовать Client Component
+// Но Client Component не может использовать Server Component напрямую
+
+// ✅ ПРАВИЛЬНО:
+// Server Component
+async function Page() {
+  const data = await fetchData();
+  
+  return (
+    <div>
+      <StaticContent data={data} /> {/* Server Component */}
+      <InteractiveButton /> {/* Client Component */}
+    </div>
+  );
+}
+
+// Client Component
+'use client';
+function InteractiveButton() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+
+// ❌ НЕПРАВИЛЬНО:
+'use client';
+function ClientComponent() {
+  // Нельзя импортировать Server Component напрямую
+  // const ServerComponent = await import('./ServerComponent');
+  
+  // Но можно передать как children
+  return <div>{children}</div>; // children может быть Server Component
+}`
+      },
+      {
+        title: 'Производительность RSC',
+        code: `// СРАВНЕНИЕ:
+
+// БЕЗ RSC (только Client Components):
+// - JavaScript на клиенте: 500KB
+// - Время загрузки: 2-3 секунды
+// - Time to Interactive: 3-4 секунды
+// - Нужен API для данных
+
+// С RSC:
+// - JavaScript на клиенте: 200KB (только Client Components)
+// - Время загрузки: 500ms (HTML готов сразу)
+// - Time to Interactive: 1-2 секунды
+// - Прямой доступ к БД
+
+// УЛУЧШЕНИЕ:
+// - JavaScript: 60% меньше
+// - Загрузка: 4-6x быстрее
+// - TTI: 2x быстрее
+// - Меньше запросов к API
+
+// ПРИМЕР:
+// Страница с 10 Server Components:
+// - Без RSC: 10 API запросов + большой JavaScript
+// - С RSC: 0 API запросов + маленький JavaScript`
+      },
+      {
+        title: 'Best practices для RSC',
+        code: `// 1. МАКСИМУМ КОНТЕНТА В RSC
+// ✅ ХОРОШО: статический контент в RSC
+async function Article({ id }) {
+  const article = await db.articles.findUnique({ where: { id } });
+  return (
+    <article>
+      <h1>{article.title}</h1>
+      <p>{article.content}</p>
+      {/* Интерактивность только где нужно */}
+      <LikeButton articleId={id} />
+    </article>
+  );
+}
+
+// 2. МИНИМУМ В CLIENT COMPONENTS
+// ✅ ХОРОШО: только интерактивные части
+'use client';
+function LikeButton({ articleId }) {
+  const [liked, setLiked] = useState(false);
+  return <button onClick={handleLike}>❤️</button>;
+}
+
+// 3. ИСПОЛЬЗОВАТЬ SUSPENSE
+// ✅ ХОРОШО: разделение синхронного и асинхронного
+<Suspense fallback={<Skeleton />}>
+  <AsyncContent />
+</Suspense>
+
+// 4. ИЗБЕГАТЬ ПРОПС ДРИЛЛИНГА
+// ❌ ПЛОХО: передача данных через много уровней
+<Page>
+  <Layout>
+    <Content>
+      <Article data={data} /> {/* Много уровней */}
+    </Content>
+  </Layout>
+</Page>
+
+// ✅ ХОРОШО: получение данных там, где нужно
+async function Article() {
+  const data = await fetchData(); // Прямо в компоненте
+  return <div>{data.content}</div>;
+}
+
+// 5. КЭШИРОВАНИЕ ДАННЫХ
+// ✅ ХОРОШО: кэширование в RSC
+async function Component() {
+  const data = await fetch('...', {
+    cache: 'force-cache', // Кэширование
+    next: { revalidate: 3600 } // ISR
+  });
+  return <div>{data}</div>;
+}`
+      },
+      {
+        title: 'Отладка RSC',
+        code: `// 1. ПРОВЕРКА СЕРВЕРНОГО РЕНДЕРА
+// В Next.js: проверить исходный HTML
+// View Page Source → должен быть контент от RSC
+
+// 2. ПРОВЕРКА КЛИЕНТСКОГО КОДА
+// Chrome DevTools → Sources
+// Должен быть только код Client Components
+
+// 3. ЛОГИРОВАНИЕ
+// Server Component
+async function Component() {
+  console.log('Server render'); // Видно в серверных логах
+  return <div>Content</div>;
+}
+
+// Client Component
+'use client';
+function Component() {
+  console.log('Client render'); // Видно в браузерной консоли
+  return <div>Content</div>;
+}
+
+// 4. ПРОВЕРКА РАЗМЕРА BUNDLE
+// Next.js автоматически показывает размер каждого компонента
+// Большие Client Components → оптимизировать
+
+// 5. REACT DEVTOOLS
+// Показывает, какие компоненты Server, какие Client
+// Помогает найти проблемы`
       }
     ],
-    relatedTopics: ['architecture-rendering-advanced'],
-    funFact: 'React Server Components были анонсированы в 2020 году, но стали доступны только в Next.js 13 в 2022 году. Они представляют фундаментальное изменение в том, как работает React, позволяя рендерить компоненты на сервере без отправки на клиент.'
+    relatedTopics: ['architecture-rendering-advanced', 'architecture-rendering-ssr-ssg-isr', 'architecture-rendering-hydration'],
+    funFact: 'React Server Components были анонсированы в 2020 году, но стали доступны только в Next.js 13 в 2022 году. Они представляют фундаментальное изменение в том, как работает React, позволяя рендерить компоненты на сервере без отправки на клиент. Команда React потратила годы на разработку этой технологии, решая сложные проблемы с сериализацией, streaming и композицией Server и Client Components.'
+  },
+  {
+    id: 'architecture-rendering-partial-pre-rendering',
+    title: 'Partial Pre-Rendering (PPR)',
+    difficulty: 'advanced',
+    description: 'Partial Pre-Rendering (PPR) — комбинированная стратегия рендеринга в Next.js 15+, при которой статичные части страницы рендерятся заранее (на этапе сборки), а динамические части — по запросу или на клиенте. Это компромисс между SSG (быстро, но статично) и SSR (динамично, но медленнее). PPR позволяет получить быструю загрузку статичного контента и динамичность там, где нужно.',
+    keyPoints: [
+      'PPR: статичные части рендерятся заранее, динамические — по запросу или на клиенте.',
+      'Преимущества: быстрая загрузка статичного контента (как SSG) + динамичность где нужно (как SSR).',
+      'Отличие от SSG/SSR/ISR: комбинирует статичный и динамический рендеринг на одной странице.',
+      'Suspense boundaries: динамические части оборачиваются в Suspense, рендерятся асинхронно.',
+      'Streaming: статичный контент отправляется сразу, динамический стримится по готовности.',
+      'Когда использовать: страницы с большим статичным контентом и небольшими динамическими частями.'
+    ],
+    tags: ['architecture', 'rendering', 'ppr', 'nextjs', 'ssg', 'ssr', 'streaming', 'advanced'],
+    examples: [
+      {
+        title: 'PPR в Next.js 15+',
+        code: `// app/page.tsx
+import { Suspense } from 'react';
+
+// Статичная часть - рендерится на этапе сборки
+export default function Page() {
+  return (
+    <div>
+      {/* Статичный контент */}
+      <header>
+        <h1>Заголовок сайта</h1>
+        <nav>Навигация</nav>
+      </header>
+      
+      <main>
+        <article>
+          <h2>Статичная статья</h2>
+          <p>Этот контент рендерится на этапе сборки.</p>
+        </article>
+        
+        {/* Динамическая часть - рендерится по запросу */}
+        <Suspense fallback={<div>Загрузка...</div>}>
+          <DynamicContent />
+        </Suspense>
+      </main>
+      
+      <footer>
+        <p>Статичный футер</p>
+      </footer>
+    </div>
+  );
+}
+
+// Динамический компонент
+async function DynamicContent() {
+  // Запрос к API или БД
+  const data = await fetch('https://api.example.com/data', {
+    cache: 'no-store' // Не кэшировать
+  });
+  const json = await data.json();
+  
+  return <div>{json.content}</div>;
+}
+
+// next.config.js
+module.exports = {
+  experimental: {
+    ppr: true // Включить PPR
+  }
+};`
+      },
+      {
+        title: 'Сравнение стратегий',
+        code: `// SSG (Static Site Generation)
+// Вся страница рендерится на этапе сборки
+// ✅ Быстро
+// ❌ Нет динамики
+
+// SSR (Server-Side Rendering)
+// Вся страница рендерится на каждом запросе
+// ✅ Динамично
+// ❌ Медленнее
+
+// ISR (Incremental Static Regeneration)
+// Страница рендерится статически, обновляется периодически
+// ✅ Быстро + периодические обновления
+// ❌ Не полностью динамично
+
+// PPR (Partial Pre-Rendering)
+// Статичные части - на этапе сборки
+// Динамические части - по запросу
+// ✅ Быстро для статики + динамика где нужно
+// ✅ Лучшее из обоих миров`
+      },
+      {
+        title: 'Streaming с PPR',
+        code: `// PPR использует React Streaming для отправки контента
+
+// 1. Статичный контент отправляется сразу
+<html>
+  <head>...</head>
+  <body>
+    <header>Статичный заголовок</header>
+    <main>
+      <article>Статичная статья</article>
+      
+      <!-- 2. Динамический контент стримится -->
+      <div id="dynamic">
+        <!-- Suspense fallback показывается сразу -->
+        <div>Загрузка...</div>
+      </div>
+    </main>
+  </body>
+</html>
+
+// 3. Когда динамический контент готов, он заменяет fallback
+<script>
+  // React заменяет fallback на реальный контент
+  document.getElementById('dynamic').innerHTML = '<div>Динамический контент</div>';
+</script>
+
+// Преимущества:
+// - Пользователь видит контент сразу (статичный)
+// - Динамический контент появляется по готовности
+// - Нет белого экрана`
+      },
+      {
+        title: 'Использование с разными типами данных',
+        code: `// app/product/[id]/page.tsx
+export default async function ProductPage({ params }) {
+  return (
+    <div>
+      {/* Статичная часть */}
+      <header>
+        <h1>Магазин</h1>
+        <nav>Навигация</nav>
+      </header>
+      
+      <main>
+        {/* Динамический контент продукта */}
+        <Suspense fallback={<ProductSkeleton />}>
+          <ProductDetails id={params.id} />
+        </Suspense>
+        
+        {/* Статичные рекомендации */}
+        <RecommendedProducts />
+        
+        {/* Динамические отзывы */}
+        <Suspense fallback={<ReviewsSkeleton />}>
+          <ProductReviews id={params.id} />
+        </Suspense>
+      </main>
+    </div>
+  );
+}
+
+// ProductDetails - динамический (зависит от ID)
+async function ProductDetails({ id }) {
+  const product = await fetch(\`/api/products/\${id}\`);
+  return <div>{product.name}</div>;
+}
+
+// RecommendedProducts - статичный (одинаковый для всех)
+function RecommendedProducts() {
+  return <div>Рекомендуемые товары</div>;
+}
+
+// ProductReviews - динамический
+async function ProductReviews({ id }) {
+  const reviews = await fetch(\`/api/reviews/\${id}\`);
+  return <div>{reviews.map(...)}</div>;
+}`
+      },
+      {
+        title: 'Когда использовать PPR',
+        code: `// ✅ ИСПОЛЬЗОВАТЬ PPR:
+// 1. Страницы с большим статичным контентом
+//    - Блоги (статьи статичны, комментарии динамичны)
+//    - Каталоги (навигация статична, товары динамичны)
+//    - Документация (контент статичен, примеры динамичны)
+
+// 2. Когда нужна быстрая загрузка + динамика
+//    - Главная страница (статика) + персональные рекомендации (динамика)
+//    - Статьи (статика) + связанные статьи (динамика)
+
+// 3. Когда большая часть контента не меняется
+//    - 80% статичного контента, 20% динамического
+
+// ❌ НЕ ИСПОЛЬЗОВАТЬ PPR:
+// 1. Полностью статичные страницы
+//    - Использовать SSG
+
+// 2. Полностью динамические страницы
+//    - Использовать SSR
+
+// 3. Когда динамический контент критичен для первого экрана
+//    - PPR не поможет, если динамика нужна сразу`
+      },
+      {
+        title: 'Производительность PPR',
+        code: `// СРАВНЕНИЕ МЕТРИК:
+
+// SSG:
+// - TTFB: ~50ms (статика)
+// - FCP: ~100ms
+// - LCP: ~200ms
+// - Динамика: ❌ Нет
+
+// SSR:
+// - TTFB: ~300ms (рендер на сервере)
+// - FCP: ~400ms
+// - LCP: ~500ms
+// - Динамика: ✅ Есть
+
+// PPR:
+// - TTFB: ~50ms (статичная часть сразу)
+// - FCP: ~100ms (статичный контент)
+// - LCP: ~200ms (статичный контент)
+// - Динамика: ✅ Есть (стримится)
+// - Лучшее из обоих миров!
+
+// ПРЕИМУЩЕСТВА PPR:
+// - Быстрая загрузка статичного контента
+// - Динамический контент не блокирует рендер
+// - Пользователь видит контент сразу
+// - SEO-дружелюбно (статичный контент индексируется)`
+      }
+    ],
+    relatedTopics: ['architecture-rendering-ssr-ssg-isr', 'architecture-rendering-rsc', 'architecture-rendering-advanced'],
+    funFact: 'Partial Pre-Rendering был анонсирован Next.js в 2023 году и стал доступен в Next.js 15. Концепция объединяет лучшие стороны SSG (быстрота) и SSR (динамичность), позволяя разработчикам получать быструю загрузку статичного контента и динамичность там, где она нужна. Это следующий шаг в эволюции стратегий рендеринга после SSG, SSR и ISR.'
   }
 ];

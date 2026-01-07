@@ -1327,7 +1327,680 @@ import { debounce } from 'lodash-es';  // ✅
 import _ from 'lodash';  // ❌ (весь lodash)`
       }
     ],
-    relatedTopics: ['code-optimization', 'runtime-optimization']
+    relatedTopics: ['code-optimization', 'runtime-optimization', 'bundle-splitting-strategies']
+  },
+  {
+    id: 'bundle-splitting-strategies',
+    title: 'Bundle Splitting (Разделение бандла)',
+    description: 'Bundle Splitting — разделение общего JavaScript-бандла на части (чанки), загружаемые по отдельности для разных страниц/маршрутов, чтобы уменьшить начальный размер загружаемого кода. Стратегии разделения: route-based (по маршрутам), feature-based (по функциям), vendor (отдельно библиотеки). Оптимизация chunk loading, preloading chunks, решение проблем waterfall loading и дублирования зависимостей критично для производительности.',
+    difficulty: 'intermediate',
+    tags: ['performance', 'optimization', 'bundling', 'code-splitting', 'webpack', 'intermediate'],
+    keyPoints: [
+      'Route-based splitting: отдельный чанк для каждого маршрута, загружается при переходе.',
+      'Feature-based splitting: отдельный чанк для каждой функции, загружается при использовании.',
+      'Vendor splitting: отдельный чанк для библиотек (React, lodash), кэшируется отдельно.',
+      'Waterfall loading: проблема последовательной загрузки чанков, решается preloading.',
+      'Дублирование зависимостей: одна библиотека в нескольких чанках, решается через splitChunks.',
+      'Оптимизация: правильная стратегия разделения уменьшает начальный bundle на 50-70%.'
+    ],
+    examples: [
+      {
+        title: 'Route-based splitting',
+        code: `// React Router с lazy loading
+import { lazy, Suspense } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+// Каждый маршрут = отдельный чанк
+const Home = lazy(() => import('./pages/Home'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+      </Routes>
+    </Suspense>
+  );
+}
+
+// Результат:
+// - main.js: основной код (50KB)
+// - Home.chunk.js: код Home (30KB)
+// - About.chunk.js: код About (25KB)
+// - Contact.chunk.js: код Contact (20KB)
+
+// При загрузке /: только main.js + Home.chunk.js (80KB)
+// Вместо всех чанков сразу (125KB)`
+      },
+      {
+        title: 'Feature-based splitting',
+        code: `// Разделение по функциям
+const Chart = lazy(() => import('./features/Chart'));
+const Editor = lazy(() => import('./features/Editor'));
+const Analytics = lazy(() => import('./features/Analytics'));
+
+function Dashboard() {
+  const [activeTab, setActiveTab] = useState('overview');
+  
+  return (
+    <div>
+      <Tabs value={activeTab} onChange={setActiveTab}>
+        <Tab value="overview">Обзор</Tab>
+        <Tab value="chart">Графики</Tab>
+        <Tab value="editor">Редактор</Tab>
+        <Tab value="analytics">Аналитика</Tab>
+      </Tabs>
+      
+      <Suspense fallback={<div>Loading...</div>}>
+        {activeTab === 'chart' && <Chart />}
+        {activeTab === 'editor' && <Editor />}
+        {activeTab === 'analytics' && <Analytics />}
+      </Suspense>
+    </div>
+  );
+}
+
+// Результат:
+// - Код загружается только при открытии вкладки
+// - Начальный bundle меньше
+// - Быстрее первая загрузка`
+      },
+      {
+        title: 'Vendor splitting (Webpack)',
+        code: `// webpack.config.js
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Vendor chunk (библиотеки)
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          priority: 10,
+          reuseExistingChunk: true
+        },
+        // React отдельно (часто обновляется)
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react',
+          priority: 20,
+          reuseExistingChunk: true
+        },
+        // Общие компоненты
+        common: {
+          minChunks: 2,
+          priority: 5,
+          reuseExistingChunk: true
+        }
+      }
+    }
+  }
+};
+
+// Результат:
+// - vendors.js: все библиотеки (200KB)
+// - react.js: React + ReactDOM (150KB)
+// - common.js: общие компоненты (50KB)
+// - main.js: основной код (100KB)
+
+// Преимущества:
+// - Vendor кэшируется отдельно (редко меняется)
+// - React кэшируется отдельно
+// - При обновлении кода vendor не перезагружается`
+      },
+      {
+        title: 'Проблема waterfall loading',
+        code: `// ❌ ПРОБЛЕМА: последовательная загрузка чанков
+
+// 1. Загружается main.js (100ms)
+// 2. main.js требует Home.chunk.js
+// 3. Загружается Home.chunk.js (80ms)
+// 4. Home.chunk.js требует vendor.js
+// 5. Загружается vendor.js (150ms)
+// ИТОГО: 330ms (последовательно)
+
+// ✅ РЕШЕНИЕ: preloading чанков
+// В main.js:
+import(/* webpackPreload: true */ './pages/Home');
+import(/* webpackPreload: true */ './vendors');
+
+// Браузер загружает чанки параллельно:
+// - main.js (100ms)
+// - Home.chunk.js (80ms) параллельно
+// - vendor.js (150ms) параллельно
+// ИТОГО: 150ms (параллельно)
+
+// Или через <link rel="preload">:
+<link rel="preload" href="/static/js/Home.chunk.js" as="script">
+<link rel="preload" href="/static/js/vendors.chunk.js" as="script">`
+      },
+      {
+        title: 'Дублирование зависимостей',
+        code: `// ❌ ПРОБЛЕМА: одна библиотека в нескольких чанках
+
+// Home.chunk.js содержит lodash (50KB)
+// About.chunk.js содержит lodash (50KB)
+// Contact.chunk.js содержит lodash (50KB)
+// ИТОГО: 150KB lodash (дублирование)
+
+// ✅ РЕШЕНИЕ: splitChunks для общих зависимостей
+// webpack.config.js
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+      cacheGroups: {
+        // Общие зависимости
+        common: {
+          minChunks: 2, // Если используется в 2+ чанках
+          name: 'common',
+          priority: 5
+        }
+      }
+    }
+  }
+};
+
+// Результат:
+// - common.js: lodash (50KB) - один раз
+// - Home.chunk.js: без lodash
+// - About.chunk.js: без lodash
+// - Contact.chunk.js: без lodash
+// ИТОГО: 50KB lodash (без дублирования)`
+      },
+      {
+        title: 'Оптимизация chunk loading',
+        code: `// 1. PRELOADING критичных чанков
+// webpack.config.js
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      // Автоматически добавляет preload для критичных чанков
+    })
+  ]
+};
+
+// Или вручную:
+<link rel="preload" href="/static/js/vendors.js" as="script">
+<link rel="preload" href="/static/js/main.js" as="script">
+
+// 2. PREFETCHING для будущих чанков
+// В коде:
+import(/* webpackPrefetch: true */ './pages/About');
+
+// Браузер загружает в фоне при простаивании
+
+// 3. ПРИОРИТИЗАЦИЯ ЧАНКОВ
+// Критичные чанки загружаются первыми
+// Некритичные - в фоне
+
+// 4. АНАЛИЗ РАЗМЕРОВ
+// webpack-bundle-analyzer
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+module.exports = {
+  plugins: [
+    new BundleAnalyzerPlugin()
+  ]
+};
+
+// Показывает размер каждого чанка
+// Помогает найти большие зависимости`
+      },
+      {
+        title: 'Стратегии выбора',
+        code: `// ROUTE-BASED SPLITTING:
+// ✅ Использовать для:
+// - SPA с множеством маршрутов
+// - Когда каждый маршрут независим
+// - Когда пользователь не посещает все маршруты
+
+// FEATURE-BASED SPLITTING:
+// ✅ Использовать для:
+// - Большие функции, используемые редко
+// - Тяжёлые компоненты (редакторы, графики)
+// - Функции, загружаемые по требованию
+
+// VENDOR SPLITTING:
+// ✅ Использовать всегда:
+// - Библиотеки редко меняются
+// - Кэшируются отдельно
+// - Ускоряет повторные визиты
+
+// КОМБИНИРОВАННАЯ СТРАТЕГИЯ:
+// - Vendor: отдельно (React, lodash)
+// - Routes: по маршрутам
+// - Features: тяжёлые функции
+// - Common: общие компоненты
+
+// РЕЗУЛЬТАТ:
+// - Начальный bundle: 50-100KB
+// - Остальное загружается по требованию
+// - Быстрая первая загрузка
+// - Оптимальное кэширование`
+      },
+      {
+        title: 'Производительность: до и после',
+        code: `// БЕЗ SPLITTING:
+// - Один bundle: 500KB
+// - Время загрузки: 2-3 секунды
+// - Время парсинга: 500ms
+// - Time to Interactive: 3-4 секунды
+// - При обновлении: перезагружается весь bundle
+
+// С SPLITTING:
+// - Начальный bundle: 100KB (main + vendor)
+// - Время загрузки: 400ms
+// - Время парсинга: 100ms
+// - Time to Interactive: 600ms
+// - Остальные чанки: загружаются по требованию
+// - При обновлении: перезагружается только изменённый чанк
+
+// УЛУЧШЕНИЕ:
+// - Начальная загрузка: 5x быстрее
+// - Time to Interactive: 5-6x быстрее
+// - Кэширование: эффективнее (vendor не перезагружается)
+// - UX: страница интерактивна быстрее`
+      }
+    ],
+    relatedTopics: ['bundle-optimization', 'code-optimization', 'critical-rendering-path'],
+    funFact: 'Bundle splitting стал критичным с ростом размера JavaScript-приложений. В 2010-х годах типичный bundle был 50-100KB, сегодня он может достигать 1-2MB без разделения. Code splitting был популяризирован Webpack и стал стандартной практикой для оптимизации производительности. Современные инструменты (Vite, esbuild) делают code splitting ещё более эффективным благодаря более быстрой сборке и лучшей оптимизации.'
+  },
+  {
+    id: 'critical-css',
+    title: 'Critical CSS',
+    description: 'Critical CSS — техника извлечения и инлайнинга CSS, необходимого для отображения контента "выше сгиба" (above the fold), чтобы ускорить первичную отрисовку. Браузер блокирует рендеринг до загрузки всех CSS-файлов, поэтому критический CSS инлайнится в <head>, а остальной CSS загружается асинхронно. Это уменьшает время до First Contentful Paint (FCP) и Largest Contentful Paint (LCP).',
+    difficulty: 'intermediate',
+    tags: ['performance', 'optimization', 'css', 'critical-css', 'fcp', 'lcp', 'intermediate'],
+    keyPoints: [
+      'Critical CSS: стили для контента выше сгиба, инлайнятся в <head> для быстрой отрисовки.',
+      'Проблема: браузер блокирует рендеринг до загрузки всех CSS, что замедляет FCP.',
+      'Решение: критический CSS inline, остальной CSS загружается асинхронно после рендера.',
+      'Инструменты: critical, penthouse, inline-critical для автоматического извлечения.',
+      'Влияние на метрики: уменьшает FCP на 200-500ms, улучшает LCP за счёт быстрого отображения контента.',
+      'Best practices: извлекать только видимые стили, минимизировать размер критического CSS (<14KB).'
+    ],
+    examples: [
+      {
+        title: 'Базовое использование Critical CSS',
+        code: `<!-- БЕЗ Critical CSS -->
+<head>
+  <link rel="stylesheet" href="styles.css"> <!-- Блокирует рендер -->
+</head>
+<body>
+  <h1>Заголовок</h1>
+  <p>Контент...</p>
+</body>
+
+<!-- С Critical CSS -->
+<head>
+  <!-- Критический CSS inline -->
+  <style>
+    h1 { font-size: 2rem; color: #333; }
+    p { font-size: 1rem; line-height: 1.5; }
+    .header { background: #fff; padding: 1rem; }
+  </style>
+  
+  <!-- Остальной CSS загружается асинхронно -->
+  <link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles.css"></noscript>
+</head>
+<body>
+  <h1>Заголовок</h1> <!-- Отображается сразу -->
+  <p>Контент...</p>
+</body>`
+      },
+      {
+        title: 'Автоматическое извлечение с critical',
+        code: `// Установка: npm install --save-dev critical
+
+// gulpfile.js
+const critical = require('critical');
+
+critical.generate({
+  base: 'dist/',
+  src: 'index.html',
+  target: {
+    css: 'styles/critical.css',
+    html: 'index.html',
+    uncritical: 'styles/uncritical.css'
+  },
+  width: 1300,
+  height: 900,
+  minify: true
+});
+
+// Результат:
+// - critical.css: стили для above-the-fold
+// - uncritical.css: остальные стили
+// - index.html: обновлённый с inline critical CSS`
+      },
+      {
+        title: 'Асинхронная загрузка некритического CSS',
+        code: `<!-- Метод 1: preload + onload -->
+<link rel="preload" href="styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+<!-- Метод 2: media="print" + onload -->
+<link rel="stylesheet" href="styles.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="styles.css"></noscript>
+
+<!-- Метод 3: JavaScript -->
+<script>
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = 'styles.css';
+  document.head.appendChild(link);
+</script>
+
+// Все методы позволяют загружать CSS без блокировки рендера`
+      },
+      {
+        title: 'Интеграция в сборку (Webpack)',
+        code: `// webpack.config.js
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CriticalCssPlugin = require('html-critical-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    }),
+    new CriticalCssPlugin({
+      base: './dist/',
+      src: 'index.html',
+      inline: true,
+      minify: true,
+      extract: true,
+      width: 1300,
+      height: 900,
+      penthouse: {
+        blockJSRequests: false
+      }
+    })
+  ]
+};
+
+// Автоматически извлекает и инлайнит Critical CSS при сборке`
+      },
+      {
+        title: 'Влияние на метрики',
+        code: `// БЕЗ Critical CSS:
+// 1. HTML загружается
+// 2. CSS загружается (блокирует рендер) - 200ms
+// 3. Рендер начинается
+// FCP: ~400ms
+
+// С Critical CSS:
+// 1. HTML загружается
+// 2. Critical CSS уже в HTML (0ms)
+// 3. Рендер начинается сразу
+// 4. Остальной CSS загружается асинхронно
+// FCP: ~150ms
+
+// Улучшение: ~250ms (62% быстрее)
+
+// LCP также улучшается, так как основной контент
+// отображается быстрее`
+      },
+      {
+        title: 'Best practices',
+        code: `// 1. РАЗМЕР КРИТИЧЕСКОГО CSS
+// Держать < 14KB (размер одного TCP-пакета)
+// Если больше - разбить на несколько inline блоков
+
+// 2. ИЗВЛЕЧЕНИЕ
+// Использовать инструменты (critical, penthouse)
+// Не делать вручную - легко пропустить стили
+
+// 3. МИНИФИКАЦИЯ
+// Минифицировать критический CSS
+// Удалять комментарии, пробелы
+
+// 4. ОБНОВЛЕНИЕ
+// Пересчитывать при изменении стилей
+// Автоматизировать в CI/CD
+
+// 5. ТЕСТИРОВАНИЕ
+// Проверять на разных разрешениях
+// Убедиться, что контент не "прыгает" при загрузке остального CSS`
+      }
+    ],
+    relatedTopics: ['critical-rendering-path', 'lcp-optimization', 'render-blocking-resources'],
+    funFact: 'Идея Critical CSS появилась в 2013 году, когда Google опубликовал исследование о том, что блокирующие CSS-файлы замедляют рендеринг. Техника стала популярной после того, как Addy Osmani и другие разработчики начали пропагандировать её как способ улучшения производительности. Сегодня Critical CSS считается обязательной техникой для оптимизации производительности.'
+  },
+  {
+    id: 'list-virtualization',
+    title: 'Виртуализация списков (Windowing)',
+    description: 'Виртуализация списков (Windowing) — техника рендеринга только видимых пользователю элементов в большом списке для поддержания производительности. Вместо рендеринга всех 1000+ элементов, рендерятся только те, что видны в viewport, плюс небольшой буфер. Это критично для производительности при работе с большими списками данных.',
+    difficulty: 'intermediate',
+    tags: ['performance', 'optimization', 'virtualization', 'windowing', 'react', 'lists', 'intermediate'],
+    keyPoints: [
+      'Проблема: рендеринг 1000+ элементов замедляет приложение, увеличивает память и время рендера.',
+      'Решение: рендерить только видимые элементы + небольшой буфер сверху/снизу для плавного скролла.',
+      'Принцип работы: вычисление видимого диапазона на основе позиции скролла и высоты элементов.',
+      'Библиотеки: react-window (легковесная), react-virtualized (функциональная), @tanstack/react-virtual (современная).',
+      'Когда использовать: списки с 100+ элементами, таблицы с большим количеством строк, бесконечный скролл.',
+      'Преимущества: постоянная производительность независимо от размера данных, меньше использование памяти.'
+    ],
+    examples: [
+      {
+        title: 'Проблема без виртуализации',
+        code: `// ❌ ПЛОХО: рендерим все элементы
+function UserList({ users }) {
+  return (
+    <div style={{ height: '400px', overflow: 'auto' }}>
+      {users.map(user => (
+        <UserItem key={user.id} user={user} />
+      ))}
+    </div>
+  );
+}
+
+// Проблемы:
+// - 1000 пользователей = 1000 DOM элементов
+// - Медленный рендер (500ms+)
+// - Большое использование памяти
+// - Медленный скролл
+// - Плохой UX`
+      },
+      {
+        title: 'Виртуализация с react-window',
+        code: `// Установка: npm install react-window
+import { FixedSizeList } from 'react-window';
+
+function UserList({ users }) {
+  return (
+    <FixedSizeList
+      height={400} // Высота контейнера
+      itemCount={users.length} // Количество элементов
+      itemSize={50} // Высота одного элемента
+      width="100%"
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          <UserItem user={users[index]} />
+        </div>
+      )}
+    </FixedSizeList>
+  );
+}
+
+// Преимущества:
+// - Рендерит только ~10 видимых элементов
+// - Быстрый рендер (<50ms)
+// - Малое использование памяти
+// - Плавный скролл
+// - Отличный UX`
+      },
+      {
+        title: 'Виртуализация с @tanstack/react-virtual',
+        code: `// Установка: npm install @tanstack/react-virtual
+import { useVirtualizer } from '@tanstack/react-virtual';
+
+function UserList({ users }) {
+  const parentRef = useRef();
+  
+  const virtualizer = useVirtualizer({
+    count: users.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 50, // Примерная высота элемента
+    overscan: 5 // Буфер элементов сверху/снизу
+  });
+  
+  return (
+    <div ref={parentRef} style={{ height: '400px', overflow: 'auto' }}>
+      <div
+        style={{
+          height: \`\${virtualizer.getTotalSize()}px\`,
+          width: '100%',
+          position: 'relative'
+        }}
+      >
+        {virtualizer.getVirtualItems().map(virtualItem => (
+          <div
+            key={virtualItem.key}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: \`\${virtualItem.size}px\`,
+              transform: \`translateY(\${virtualItem.start}px)\`
+            }}
+          >
+            <UserItem user={users[virtualItem.index]} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Преимущества:
+// - Современный API
+// - Гибкая настройка
+// - Поддержка динамических размеров`
+      },
+      {
+        title: 'Виртуализация с динамическими размерами',
+        code: `// react-window VariableSizeList для элементов разной высоты
+import { VariableSizeList } from 'react-window';
+
+function UserList({ users }) {
+  const getItemSize = (index) => {
+    // Вычисляем высоту элемента
+    return users[index].hasAvatar ? 80 : 50;
+  };
+  
+  return (
+    <VariableSizeList
+      height={400}
+      itemCount={users.length}
+      itemSize={getItemSize}
+      width="100%"
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          <UserItem user={users[index]} />
+        </div>
+      )}
+    </VariableSizeList>
+  );
+}
+
+// Для @tanstack/react-virtual
+const virtualizer = useVirtualizer({
+  count: users.length,
+  getScrollElement: () => parentRef.current,
+  estimateSize: (index) => users[index].hasAvatar ? 80 : 50,
+  // Кэширование размеров для производительности
+  measureElement: (element) => element?.getBoundingClientRect().height
+});`
+      },
+      {
+        title: 'Горизонтальная виртуализация',
+        code: `// Виртуализация для горизонтального скролла
+import { FixedSizeList } from 'react-window';
+
+function HorizontalList({ items }) {
+  return (
+    <FixedSizeList
+      height={100}
+      itemCount={items.length}
+      itemSize={200} // Ширина элемента
+      layout="horizontal" // Горизонтальная ориентация
+      width={600}
+    >
+      {({ index, style }) => (
+        <div style={style}>
+          <Item data={items[index]} />
+        </div>
+      )}
+    </FixedSizeList>
+  );
+}
+
+// Полезно для:
+// - Галерей изображений
+// - Горизонтальных каруселей
+// - Таблиц с большим количеством колонок`
+      },
+      {
+        title: 'Когда использовать виртуализацию',
+        code: `// ✅ ИСПОЛЬЗОВАТЬ:
+// 1. Списки с 100+ элементами
+<UserList users={users} /> // 1000+ пользователей
+
+// 2. Таблицы с большим количеством строк
+<DataTable rows={rows} /> // 5000+ строк
+
+// 3. Бесконечный скролл
+<InfiniteScroll items={items} /> // Тысячи элементов
+
+// 4. Длинные формы
+<Form fields={fields} /> // 200+ полей
+
+// ❌ НЕ ИСПОЛЬЗОВАТЬ:
+// 1. Маленькие списки (<50 элементов)
+//    - Overhead виртуализации больше выгоды
+
+// 2. Элементы с очень сложным рендером
+//    - Виртуализация не поможет, если сам элемент тяжёлый
+
+// 3. Когда нужен доступ ко всем элементам
+//    - Виртуализация скрывает невидимые элементы
+
+// 4. Когда элементы имеют очень разную высоту
+//    - Сложнее реализовать, нужны точные измерения`
+      },
+      {
+        title: 'Производительность: до и после',
+        code: `// БЕЗ виртуализации (1000 элементов):
+// - DOM узлов: 1000+
+// - Время рендера: ~500ms
+// - Память: ~50MB
+// - FPS при скролле: 10-20
+
+// С виртуализацией (1000 элементов, видно 10):
+// - DOM узлов: ~15 (10 видимых + буфер)
+// - Время рендера: ~20ms
+// - Память: ~2MB
+// - FPS при скролле: 60
+
+// Улучшение:
+// - Рендер: 25x быстрее
+// - Память: 25x меньше
+// - UX: плавный скролл`
+      }
+    ],
+    relatedTopics: ['runtime-optimization', 'bundle-optimization'],
+    funFact: 'Виртуализация списков стала популярной в веб-разработке благодаря библиотеке react-virtualized, созданной Брайаном Воном в 2016 году. Идея пришла из нативных приложений (iOS UITableView, Android RecyclerView), где виртуализация использовалась с самого начала для работы с большими списками. В вебе эта техника стала критичной с ростом SPA-приложений и необходимостью отображать большие объёмы данных.'
   },
   {
     id: 'runtime-optimization',
