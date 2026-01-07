@@ -7,7 +7,9 @@ import { CS_ELECTRONIC_COMPUTERS_TOPICS } from './electronic-computers';
 import { CS_PROCESSORS_TOPICS } from './processors-and-microprocessors';
 import { CS_PROGRAMMING_LANGUAGES_TOPICS } from './programming-languages';
 import { CS_OPERATING_SYSTEMS_TOPICS } from './operating-systems';
+import { CS_NETWORK_AND_INTERNET_TOPICS } from './network-and-internet';
 import { CS_ARCHITECTURE_SEPARATION_TOPICS } from './architecture-separation';
+import { CS_IT_INDUSTRY_TOPICS } from './it-industry';
 import { CS_FUTURE_TOPICS } from './future';
 
 export const CS_KNOWLEDGE_BASE: Category[] = [
@@ -52,9 +54,19 @@ export const CS_KNOWLEDGE_BASE: Category[] = [
     topics: CS_OPERATING_SYSTEMS_TOPICS
   },
   {
+    id: 'network-and-internet',
+    title: 'Сети и интернет',
+    topics: CS_NETWORK_AND_INTERNET_TOPICS
+  },
+  {
     id: 'architecture-separation',
     title: 'Архитектурное разделение',
     topics: CS_ARCHITECTURE_SEPARATION_TOPICS
+  },
+  {
+    id: 'it-industry',
+    title: 'Информатика, индустрия и капитал',
+    topics: CS_IT_INDUSTRY_TOPICS
   },
   {
     id: 'future',
