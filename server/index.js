@@ -1,4 +1,5 @@
 import Fastify from 'fastify'
+import cors from '@fastify/cors'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
@@ -15,11 +16,46 @@ const fastify = Fastify({
   disableRequestLogging: true
 })
 
+// Чтение конфигурации из .env
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+const API_SECRET = process.env.API_SECRET
+const ALLOWED_ORIGINS_STR = process.env.ALLOWED_ORIGINS || ''
 
 if (!GEMINI_API_KEY) {
   throw new Error('GEMINI_API_KEY not found in .env')
 }
+
+if (!API_SECRET) {
+  throw new Error('API_SECRET not found in .env')
+}
+
+// Парсинг разрешенных origin'ов
+const allowedOrigins = ALLOWED_ORIGINS_STR
+  .split(',')
+  .map(origin => origin.trim())
+  .filter(origin => origin.length > 0)
+
+// Настройка CORS с проверкой origin
+await fastify.register(cors, {
+  origin: (origin, callback) => {
+    // Разрешаем запросы без origin (например, Postman, curl)
+    if (!origin) {
+      return callback(null, true)
+    }
+    
+    // Проверяем localhost (любой порт)
+    if (origin.startsWith('http://localhost:') || origin.startsWith('https://localhost:')) {
+      return callback(null, true)
+    }
+    
+    // Проверяем точное совпадение с разрешенными origin'ами
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    
+    callback(new Error('Not allowed by CORS'), false)
+  }
+})
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY)
 
@@ -84,6 +120,19 @@ Assistant:
   }
 }
 
+// Проверка секретного ключа
+const checkApiSecret = async (request, reply) => {
+  const apiKey = request.headers['x-api-key']
+  
+  if (!apiKey) {
+    return reply.code(401).send({ error: 'X-API-Key header is required' })
+  }
+  
+  if (apiKey !== API_SECRET) {
+    return reply.code(401).send({ error: 'Invalid API secret' })
+  }
+}
+
 fastify.post('/api/chat', {
   schema: {
     body: {
@@ -95,7 +144,8 @@ fastify.post('/api/chat', {
         userMessage: { type: 'string' }
       }
     }
-  }
+  },
+  preHandler: checkApiSecret
 }, chatHandler)
 
 fastify.listen({ port: 30024, host: '0.0.0.0' }, err => {
