@@ -1,4 +1,5 @@
 import { Topic } from '../../../types';
+import { JS_BROWSER_API_GROUPED_TOPICS } from './grouped';
 
 export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
 {
@@ -117,7 +118,7 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `async function getLocation() {\n  return new Promise((resolve, reject) => {\n    navigator.geolocation.getCurrentPosition(\n      (position) => {\n        resolve({\n          lat: position.coords.latitude,\n          lng: position.coords.longitude\n        });\n      },\n      reject,\n      { enableHighAccuracy: true }\n    );\n  });\n}\n\n// Использование\nconst location = await getLocation();\n// Отправка на карту или API\nmap.setCenter([location.lat, location.lng]);`
       }
     ],
-    relatedTopics: ['async-await', 'promises', 'dom-api'],
+    relatedTopics: ['async-await', 'promises', 'device-sensors-apis', 'dom-api'],
     isFrontendEssential: true
   },
 {
@@ -147,7 +148,7 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `let mediaRecorder;\nlet recordedChunks = [];\n\nasync function startRecording() {\n  const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });\n  \n  mediaRecorder = new MediaRecorder(stream);\n  \n  mediaRecorder.ondataavailable = (event) => {\n    if (event.data.size > 0) {\n      recordedChunks.push(event.data);\n    }\n  };\n  \n  mediaRecorder.onstop = () => {\n    const blob = new Blob(recordedChunks, { type: 'video/webm' });\n    const url = URL.createObjectURL(blob);\n    // Сохранить или отправить\n  };\n  \n  mediaRecorder.start();\n}\n\nfunction stopRecording() {\n  mediaRecorder.stop();\n}`
       }
     ],
-    relatedTopics: ['file-api', 'async-await', 'dom-api'],
+    relatedTopics: ['file-api', 'media-apis', 'async-await', 'dom-api'],
     isFrontendEssential: true
   },
 {
@@ -181,7 +182,7 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `let startTime = Date.now();\n\nfunction trackVisibility() {\n  document.addEventListener('visibilitychange', () => {\n    if (document.hidden) {\n      // Страница скрыта - отправляем время просмотра\n      const viewTime = Date.now() - startTime;\n      sendAnalytics({ viewTime, event: 'page_hidden' });\n    } else {\n      // Страница видна - начинаем отсчет\n      startTime = Date.now();\n      sendAnalytics({ event: 'page_visible' });\n    }\n  });\n}`
       }
     ],
-    relatedTopics: ['event-api', 'performance-optimization', 'dom-api'],
+    relatedTopics: ['event-api', 'performance-apis', 'performance-optimization', 'dom-api'],
     isFrontendEssential: true
   },
   {
@@ -360,8 +361,15 @@ const fragmentShaderWithTexture = \`
 \`;`
       }
     ],
-    relatedTopics: ['canvas-api', 'animation-event-loop', 'performance-optimization'],
+    relatedTopics: ['canvas-api', 'graphics-apis-advanced', 'animation-event-loop', 'performance-optimization'],
     funFact: 'WebGL использует GPU для рендеринга, что позволяет обрабатывать миллионы полигонов в реальном времени. WebGL основан на OpenGL ES 2.0, который используется в мобильных устройствах, что делает его кроссплатформенным решением для 3D графики.',
     isFrontendEssential: false
-  }
+  },
+  // Группированные темы advanced уровня
+  ...JS_BROWSER_API_GROUPED_TOPICS.filter(t => 
+    t.id === 'media-apis' ||
+    t.id === 'graphics-apis-advanced' ||
+    t.id === 'device-sensors-apis' ||
+    t.id === 'advanced-experimental-apis'
+  )
 ];

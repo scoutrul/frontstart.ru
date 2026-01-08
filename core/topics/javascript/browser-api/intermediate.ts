@@ -1,4 +1,5 @@
 import { Topic } from '../../../types';
+import { JS_BROWSER_API_GROUPED_TOPICS } from './grouped';
 
 export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
 {
@@ -61,7 +62,7 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const animateObserver = new IntersectionObserver((entries) => {\n  entries.forEach(entry => {\n    if (entry.isIntersecting) {\n      entry.target.style.animation = 'fadeIn 0.5s';\n      animateObserver.unobserve(entry.target);\n    }\n  });\n}, {\n  threshold: 0.1\n});\n\ndocument.querySelectorAll('.animate-on-scroll').forEach(el => {\n  animateObserver.observe(el);\n});`
       }
     ],
-    relatedTopics: ['dom-api', 'event-api', 'performance-optimization'],
+    relatedTopics: ['dom-api', 'event-api', 'observers-api-overview', 'performance-optimization'],
     isFrontendEssential: true
   },
 {
@@ -120,7 +121,7 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `const listObserver = new ResizeObserver((entries) => {\n  const { width, height } = entries[0].contentRect;\n  \n  // Пересчитываем видимые элементы при изменении размера\n  const itemHeight = 50;\n  const visibleCount = Math.ceil(height / itemHeight);\n  \n  updateVisibleItems(visibleCount);\n});\n\nconst listContainer = document.querySelector('.virtual-list');\nlistObserver.observe(listContainer);`
       }
     ],
-    relatedTopics: ['dom-api', 'intersection-observer', 'performance-optimization'],
+    relatedTopics: ['dom-api', 'intersection-observer', 'observers-api-overview', 'performance-optimization'],
     isFrontendEssential: true
   },
 {
@@ -150,7 +151,7 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
         code: `// Синхронизация с внешним состоянием\nconst syncObserver = new MutationObserver(() => {\n  // При изменении DOM обновляем состояние\n  updateState(getStateFromDOM());\n});\n\nsyncObserver.observe(document.querySelector('#app'), {\n  childList: true,\n  subtree: true,\n  attributes: true\n});\n\n// Остановка наблюдения\nsyncObserver.disconnect();`
       }
     ],
-    relatedTopics: ['dom-api', 'event-api']
+    relatedTopics: ['dom-api', 'event-api', 'observers-api-overview']
   },
 {
     id: 'indexeddb',
@@ -800,5 +801,13 @@ document.body.appendChild(svg);`
     ],
     relatedTopics: ['dom-api', 'canvas-api', 'animation-event-loop'],
     isFrontendEssential: true
-  }
+  },
+  // Группированные темы intermediate уровня
+  ...JS_BROWSER_API_GROUPED_TOPICS.filter(t => 
+    t.id === 'observers-api-overview' ||
+    t.id === 'performance-apis' ||
+    t.id === 'storage-apis-additional' ||
+    t.id === 'network-apis-additional' ||
+    t.id === 'ui-interaction-apis'
+  )
 ];
