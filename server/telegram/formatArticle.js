@@ -1,4 +1,4 @@
-import { findTopicMetaCategory, findTopicCategories } from '../services/topics.js';
+import { findTopicMetaCategory, findTopicCategories, getTopicPath } from '../services/topics.js';
 
 /**
  * Экранирование HTML для Telegram
@@ -64,11 +64,12 @@ export function formatExampleForComment(example, frontendBaseUrl) {
 export function formatArticleForTelegram(topic, frontendBaseUrl) {
   const metaCategoryId = findTopicMetaCategory(topic.id);
   const articleUrl = `${frontendBaseUrl}/${metaCategoryId}/${topic.id}`;
+  const topicPath = getTopicPath(topic.id);
   
   const parts = [];
   
-  // Заголовок
-  parts.push(`<b>${escapeHtml(topic.title)}</b>`);
+  // Заголовок с полным путём
+  parts.push(`<b>${escapeHtml(topicPath || topic.title)}</b>`);
   parts.push(`\n${formatDifficulty(topic.difficulty)}`);
   parts.push('');
   

@@ -13,6 +13,11 @@ dist-ssr
 *.local
 .env
 
+# Telegram posting state and logs (per-environment)
+server/posted-topics.json
+server/posting-log.json
+
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

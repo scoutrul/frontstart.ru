@@ -6,7 +6,10 @@
     "dev": "npx tsx watch index.js",
     "start": "npx tsx index.js",
     "post:random": "npx tsx telegram/cli.js random",
-    "post:topic": "npx tsx telegram/cli.js topic"
+    "post:topic": "npx tsx telegram/cli.js topic",
+    "post:schedule": "npx tsx telegram/cli.js schedule",
+    "post:single": "npx tsx telegram/cli.js single",
+    "post:preview": "npx tsx telegram/cli.js preview"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

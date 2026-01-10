@@ -14,7 +14,14 @@ const DEFAULT_STATE = {
   posted: [],
   lastPostDate: null,
   metaCategoryRotation: {}, // { metaCategoryId: lastIndex }
-  lastMetaCategories: [] // Последние использованные мета-категории для ротации
+  lastMetaCategories: [], // Последние использованные мета-категории для ротации
+  // Поля для циклического расписания
+  cycleDay: 0, // День технического цикла (0-8)
+  humanitarianIndex: 0, // Индекс гуманитарного раздела (0-1)
+  metaCategoryPointers: {}, // Указатели позиций внутри каждого мета-раздела
+  // Отслеживание постов за день
+  postsTodayCount: 0, // Количество постов, отправленных сегодня
+  dailyPostIndex: 0 // Индекс текущего поста в дневном плане (0-3)
 };
 
 /**
@@ -35,7 +42,14 @@ export async function loadState() {
       posted: Array.isArray(state.posted) ? state.posted : [],
       lastPostDate: state.lastPostDate || null,
       metaCategoryRotation: state.metaCategoryRotation || {},
-      lastMetaCategories: Array.isArray(state.lastMetaCategories) ? state.lastMetaCategories : []
+      lastMetaCategories: Array.isArray(state.lastMetaCategories) ? state.lastMetaCategories : [],
+      // Поля циклического расписания
+      cycleDay: state.cycleDay ?? 0,
+      humanitarianIndex: state.humanitarianIndex ?? 0,
+      metaCategoryPointers: state.metaCategoryPointers || {},
+      // Отслеживание постов за день
+      postsTodayCount: state.postsTodayCount ?? 0,
+      dailyPostIndex: state.dailyPostIndex ?? 0
     };
   } catch (error) {
     console.error('Error loading state:', error);
@@ -53,7 +67,14 @@ export async function saveState(state) {
       posted: Array.isArray(state.posted) ? state.posted : [],
       lastPostDate: state.lastPostDate || null,
       metaCategoryRotation: state.metaCategoryRotation || {},
-      lastMetaCategories: Array.isArray(state.lastMetaCategories) ? state.lastMetaCategories : []
+      lastMetaCategories: Array.isArray(state.lastMetaCategories) ? state.lastMetaCategories : [],
+      // Поля циклического расписания
+      cycleDay: state.cycleDay ?? 0,
+      humanitarianIndex: state.humanitarianIndex ?? 0,
+      metaCategoryPointers: state.metaCategoryPointers || {},
+      // Отслеживание постов за день
+      postsTodayCount: state.postsTodayCount ?? 0,
+      dailyPostIndex: state.dailyPostIndex ?? 0
     };
     
     await writeFile(STATE_FILE, JSON.stringify(data, null, 2), 'utf-8');

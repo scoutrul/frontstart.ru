@@ -19,7 +19,7 @@ async function start() {
   await registerTelegramRoutes(fastify);
 
   // Настройка cron для автоматического постинга (опционально)
-  // setupTelegramCron();
+  setupTelegramCron();
 
   // Запускаем сервер
   fastify.listen({ port: 30024, host: '0.0.0.0' }, err => {

@@ -49,7 +49,12 @@ export async function addLogEntry(entry) {
     topicId: entry.topicId,
     status: entry.status, // 'success' | 'error'
     messageId: entry.messageId || null,
-    error: entry.error || null
+    error: entry.error || null,
+    // Дополнительные поля для расписания
+    type: entry.type || null, // 'scheduled' | 'random' | 'manual'
+    cycleDay: entry.cycleDay !== undefined ? entry.cycleDay : null,
+    humanitarianIndex: entry.humanitarianIndex !== undefined ? entry.humanitarianIndex : null,
+    posts: entry.posts || null // Массив постов для scheduled типа
   };
   
   log.push(logEntry);
