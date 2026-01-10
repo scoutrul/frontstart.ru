@@ -58,6 +58,18 @@ export function findTopicMetaCategory(topicId) {
 }
 
 /**
+ * Найти метараздел и подраздел для темы по ID
+ */
+export function findTopicCategories(topicId) {
+  const data = loadTopicsData();
+  const topicMeta = data.topicsWithMeta?.find(t => t.topicId === topicId);
+  return topicMeta ? {
+    metaCategoryId: topicMeta.metaCategoryId,
+    categoryId: topicMeta.categoryId
+  } : null;
+}
+
+/**
  * Получить все мета-категории с их темами
  */
 export function getTopicsByMetaCategory() {

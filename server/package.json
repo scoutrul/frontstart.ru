@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch index.js",
-    "start": "tsx index.js",
-    "test:telegram": "tsx test-telegram.js"
+    "dev": "npx tsx watch index.js",
+    "start": "npx tsx index.js",
+    "post:random": "npx tsx telegram/cli.js random",
+    "post:topic": "npx tsx telegram/cli.js topic"
   },
   "dependencies": {
     "@fastify/cors": "^10.0.1",

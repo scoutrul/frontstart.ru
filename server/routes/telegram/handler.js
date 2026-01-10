@@ -1,4 +1,4 @@
-import { postRandomTopic } from '../../telegram/mvpPosting.js';
+import { postRandomTopic, postTopicById } from '../../telegram/posting.js';
 import { getLastLogs } from '../../telegram/postingLog.js';
 
 /**
@@ -35,6 +35,33 @@ export async function getLogsHandler(request, reply) {
     request.log.error(error);
     reply.code(500).send({ 
       error: 'Failed to get logs', 
+      message: error.message 
+    });
+  }
+}
+
+/**
+ * Обработчик для постинга конкретной статьи по ID
+ */
+export async function postTopicHandler(request, reply) {
+  try {
+    const topicId = request.body?.topicId;
+    if (!topicId) {
+      return reply.code(400).send({ error: 'topicId is required' });
+    }
+    
+    const result = await postTopicById(topicId);
+    
+    if (!result.success) {
+      reply.code(500).send(result);
+      return;
+    }
+    
+    return result;
+  } catch (error) {
+    request.log.error(error);
+    reply.code(500).send({ 
+      error: 'Telegram posting failed', 
       message: error.message 
     });
   }

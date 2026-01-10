@@ -364,7 +364,7 @@ const Content: React.FC<ContentProps> = (props) => {
               : 'bg-blue-500/20 border-blue-500/60 text-blue-300 hover:bg-blue-500/30 hover:border-blue-500/80 shadow-[0_0_15px_rgba(59,130,246,0.2)]'
           }`}
         >
-          <i className={`fa-solid ${learned ? 'fa-check-circle' : 'fa-circle'} text-lg`}></i>
+          <i className={`fa-solid ${learned ? 'fa-check-circle' : 'fa-check'} text-lg`}></i>
           <span className="text-sm">{learned ? 'Изучено' : 'Отметить как изученное'}</span>
         </button>
         

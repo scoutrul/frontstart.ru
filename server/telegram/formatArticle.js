@@ -1,4 +1,4 @@
-import { findTopicMetaCategory } from '../services/topics.js';
+import { findTopicMetaCategory, findTopicCategories } from '../services/topics.js';
 
 /**
  * Экранирование HTML для Telegram
@@ -22,24 +22,44 @@ function truncateCode(code, maxLength = 1500) {
 }
 
 /**
- * Форматировать сложность (звезды)
+ * Форматировать сложность
  */
 function formatDifficulty(difficulty) {
-  const stars = {
-    beginner: '⭐',
-    intermediate: '⭐⭐',
-    advanced: '⭐⭐⭐'
+  const levels = {
+    beginner: '⭐junior⭐',
+    intermediate: '⭐⭐middle⭐⭐',
+    advanced: '⭐⭐⭐senior⭐⭐⭐'
   };
-  const labels = {
-    beginner: 'Начальный',
-    intermediate: 'Средний',
-    advanced: 'Продвинутый'
+  const level = levels[difficulty] || difficulty;
+  return `Обязательно знать для: ${level}`;
+}
+
+/**
+ * Получить хештег сложности
+ */
+function getDifficultyHashtag(difficulty) {
+  const hashtags = {
+    beginner: 'junior',
+    intermediate: 'middle',
+    advanced: 'senior'
   };
-  return `${stars[difficulty] || '⭐'} ${labels[difficulty] || difficulty}`;
+  return hashtags[difficulty] || difficulty;
+}
+
+/**
+ * Форматировать пример для комментария
+ */
+export function formatExampleForComment(example, frontendBaseUrl) {
+  const parts = [];
+  parts.push(`<b>${escapeHtml(example.title)}</b>`);
+  parts.push(`<pre><code>${escapeHtml(example.code)}</code></pre>`);
+  return parts.join('\n');
 }
 
 /**
  * Форматировать статью для Telegram
+ * ВСЕ примеры всегда идут в комментарии (упрощённая логика)
+ * Возвращает объект: { text, examples }
  */
 export function formatArticleForTelegram(topic, frontendBaseUrl) {
   const metaCategoryId = findTopicMetaCategory(topic.id);
@@ -90,34 +110,39 @@ export function formatArticleForTelegram(topic, frontendBaseUrl) {
     parts.push('');
   }
   
-  // Examples
+  // Если есть примеры, добавляем пометку
   if (topic.examples && topic.examples.length > 0) {
-    parts.push('<b>Примеры кода:</b>');
-    topic.examples.forEach((example, index) => {
-      parts.push(`\n<b>${escapeHtml(example.title)}:</b>`);
-      const code = truncateCode(example.code);
-      // Для кода используем <pre><code>
-      parts.push(`<pre><code>${escapeHtml(code)}</code></pre>`);
-    });
+    parts.push('<b>Примеры:</b>');
+    const moreExamplesText = escapeHtml('смотрите в комментариях ниже ⬇️');
+    parts.push(`<i>${moreExamplesText}</i>`);
     parts.push('');
   }
   
   // Теги
+  parts.push(`\n#${escapeHtml(getDifficultyHashtag(topic.difficulty))}`);
+  
+  // Добавляем теги метараздела и подраздела
+  const categories = findTopicCategories(topic.id);
+  if (categories) {
+    parts.push(`#${escapeHtml(categories.metaCategoryId.replace(/-/g, '_'))}`);
+    parts.push(`#${escapeHtml(categories.categoryId.replace(/-/g, '_'))}`);
+  }
+  
   if (topic.tags && topic.tags.length > 0) {
     const tagsStr = topic.tags.map(tag => {
-      const tagName = tag.replace(/\s+/g, '_');
+      const tagName = tag.replace(/\s+/g, '_').replace(/-/g, '_');
       return `#${escapeHtml(tagName)}`;
     }).join(' ');
     parts.push(tagsStr);
     parts.push('');
   }
   
-  // Ссылка на статью
+  // Ссылка на сайт
   const linkText = escapeHtml('Читать полную версию на сайте');
   parts.push(`📖 <a href="${articleUrl}">${linkText}</a>`);
   
-  // Мета-информация для аудита
-  parts.push(`\n#js_interview_pro • id: ${escapeHtml(topic.id)}`);
-  
-  return parts.join('\n');
+  return {
+    text: parts.join('\n'),
+    examples: topic.examples || []
+  };
 }

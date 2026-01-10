@@ -1,5 +1,5 @@
 import cron from 'node-cron'
-import { postRandomTopic } from './mvpPosting.js'
+import { postRandomTopic } from './posting.js'
 import { TELEGRAM_BOT_TOKEN, TELEGRAM_CRON_1, TELEGRAM_CRON_2 } from '../config/env.js'
 
 /**
@@ -12,13 +12,6 @@ import { TELEGRAM_BOT_TOKEN, TELEGRAM_CRON_1, TELEGRAM_CRON_2 } from '../config/
  * Можно переопределить через переменные окружения:
  *  - TELEGRAM_CRON_1
  *  - TELEGRAM_CRON_2
- */
-/**
- * Инициализация cron-задач для автопостинга в Telegram (MVP версия)
- *
- * По умолчанию:
- *  - 09:00 МСК (06:00 UTC)
- *  - 18:00 МСК (15:00 UTC)
  */
 export function setupTelegramCron() {
   if (!TELEGRAM_BOT_TOKEN) {

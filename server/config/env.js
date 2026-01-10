@@ -24,6 +24,7 @@ export const TELEGRAM_SECRET = process.env.TELEGRAM_SECRET || API_SECRET;
 export const FRONTEND_BASE_URL = process.env.FRONTEND_BASE_URL || 'https://frontstart.ru';
 export const TELEGRAM_CRON_1 = process.env.TELEGRAM_CRON_1 || '0 6 * * *'; // 09:00 МСК
 export const TELEGRAM_CRON_2 = process.env.TELEGRAM_CRON_2 || '0 15 * * *'; // 18:00 МСК
+export const TELEGRAM_DISCUSSION_GROUP_ID = process.env.TELEGRAM_DISCUSSION_GROUP_ID;
 
 // Валидация обязательных переменных
 if (!GEMINI_API_KEY) {

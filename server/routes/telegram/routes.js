@@ -1,5 +1,5 @@
 import { checkTelegramSecret } from '../../middleware/auth.js';
-import { triggerPostingHandler, getLogsHandler } from './handler.js';
+import { triggerPostingHandler, getLogsHandler, postTopicHandler } from './handler.js';
 
 /**
  * Регистрация роутов Telegram
@@ -14,4 +14,9 @@ export async function registerTelegramRoutes(fastify) {
   fastify.get('/api/telegram/logs', {
     preHandler: checkTelegramSecret
   }, getLogsHandler);
+
+  // Постинг конкретной статьи по ID
+  fastify.post('/api/telegram/post-topic', {
+    preHandler: checkTelegramSecret
+  }, postTopicHandler);
 }
