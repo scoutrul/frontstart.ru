@@ -11,6 +11,8 @@ import { SECURITY_CATEGORIES } from './topics/security';
 import { NETWORK_CATEGORIES } from './topics/network';
 import { OPTIMIZATION_CATEGORIES } from './topics/optimization';
 import { HIRING_CATEGORIES } from './topics/hiring';
+import { INTERVIEW_QUESTIONS_CATEGORIES } from './topics/interview-questions';
+import { interviewCategoriesToCategories } from './topics/interview-questions/adapters';
 
 // Данные по категориям - единая структура для всех мета-категорий
 export const META_CATEGORIES_DATA: Record<MetaCategoryId, Category[]> = {
@@ -24,6 +26,7 @@ export const META_CATEGORIES_DATA: Record<MetaCategoryId, Category[]> = {
   security: SECURITY_CATEGORIES,
   network: NETWORK_CATEGORIES,
   optimization: OPTIMIZATION_CATEGORIES,
-  hiring: HIRING_CATEGORIES
+  hiring: HIRING_CATEGORIES,
+  "interview-questions": interviewCategoriesToCategories(INTERVIEW_QUESTIONS_CATEGORIES)
 };
 

@@ -25,3 +25,19 @@ export interface Category {
   title: string;
   topics: Topic[];
 }
+
+export interface InterviewQuestion {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  difficulty: Difficulty;
+  tags: string[];
+  relatedQuestions?: string[];
+}
+
+export interface InterviewCategory {
+  id: string;
+  title: string;
+  questions: InterviewQuestion[];
+}

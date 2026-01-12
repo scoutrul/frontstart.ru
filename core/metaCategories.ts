@@ -9,7 +9,8 @@ export type MetaCategoryId =
   | "tools"
   | "network"
   | "optimization"
-  | "hiring";
+  | "hiring"
+  | "interview-questions";
 
 export interface MetaCategory {
   id: MetaCategoryId;
@@ -84,6 +85,12 @@ export const META_CATEGORIES: MetaCategory[] = [
     title: "Найм в IT",
     icon: "fa-solid fa-briefcase",
     description: "Правила игры, которые не расскажут рекрутеры",
+  },
+  {
+    id: "interview-questions",
+    title: "Q&A",
+    icon: "fa-solid fa-question-circle",
+    description: "Вопросы на собеседованиях с ответами",
   },
 ];
 

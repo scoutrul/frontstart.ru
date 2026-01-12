@@ -13,6 +13,14 @@ const KnowledgePath: React.FC = () => {
   const handleCategorySelect = (categoryId: MetaCategoryId) => {
     setSelectedMetaCategory(categoryId);
     clearFilters(); // Очищаем фильтры при переключении категории
+    
+    // Специальная обработка для Q&A раздела
+    if (categoryId === 'interview-questions') {
+      // Для Q&A переходим на базовый путь, QALayout сам сделает редирект на первую категорию
+      navigate('/interview-questions');
+      return;
+    }
+    
     // При переключении категории выбираем первую тему
     const knowledgeBase = getKnowledgeBaseByCategory(categoryId);
     const firstTopic = knowledgeBase.flatMap(cat => cat.topics)[0];

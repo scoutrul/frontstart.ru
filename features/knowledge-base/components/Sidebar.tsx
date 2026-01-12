@@ -5,39 +5,7 @@ import { Badge } from '../../../components/ui';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 import { useTopicsFilter, useTags } from '../hooks';
 import { META_CATEGORIES } from '../../../core/metaCategories';
-
-interface SidebarHeaderProps {
-  categoryIcon: string;
-  selectedMetaCategory: string;
-  className?: string;
-}
-
-const SidebarHeader: React.FC<SidebarHeaderProps> = ({ categoryIcon, selectedMetaCategory, className = '' }) => {
-  return (
-    <div className={className}>
-      <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center border border-emerald-500">
-          <i className={`${categoryIcon} text-emerald-500 text-base`}></i>
-        </div>
-        <div className="flex flex-col">
-          <h1 className="font-bold text-white text-lg tracking-tight">
-            <span className="relative">            
-              Front
-              <span className="text-emerald-500 font-bold">Start</span>
-            </span>
-
-            {selectedMetaCategory && (
-              <>
-                <span className="text-slate-500 text-sm"> / </span>
-                <span className="text-amber-500 text-sm">{META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title}</span>
-              </>
-            )}
-          </h1>
-        </div>
-      </div>
-    </div>
-  );
-};
+import SidebarHeader from './SidebarHeader';
 
 interface SidebarProps {
   onTopicSelect: (id: string) => void;
@@ -142,7 +110,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
     `}>
       <div className="flex items-center justify-between p-5 border-b border-slate-800/80 lg:hidden">
-        <SidebarHeader categoryIcon={categoryIcon} selectedMetaCategory={selectedMetaCategory} />
+        <SidebarHeader 
+          icon={categoryIcon}
+          title={META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title || ''}
+          showFullTitle={true}
+        />
         <button
           onClick={onClose}
           className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
@@ -154,8 +126,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar">
         <div key={selectedMetaCategory} className="p-5 animate-sidebar">
           <SidebarHeader 
-            categoryIcon={categoryIcon} 
-            selectedMetaCategory={selectedMetaCategory}
+            icon={categoryIcon}
+            title={META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title || ''}
+            showFullTitle={true}
             className="hidden lg:flex items-center gap-3 mb-6"
           />
 

@@ -8,6 +8,7 @@ import KnowledgePath from './features/knowledge-base/components/KnowledgePath';
 import ProjectInfoModal from './components/ui/ProjectInfoModal';
 import NotesModal from './components/ui/NotesModal';
 import Footer from './components/ui/Footer';
+import QALayout from './features/knowledge-base/components/QALayout';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 import { getKnowledgeBaseByCategory } from './core/constants';
@@ -448,6 +449,8 @@ const App: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to={`/${selectedMetaCategory}${selectedTopicId ? `/${selectedTopicId}` : ''}`} replace />} />
+      <Route path="/interview-questions" element={<QALayout />} />
+      <Route path="/interview-questions/:categoryId" element={<QALayout />} />
       <Route path="/:category" element={<KnowledgeBaseContent />} />
       <Route path="/:category/:topicId" element={<KnowledgeBaseContent />} />
       <Route path="*" element={<Navigate to={`/${selectedMetaCategory}${selectedTopicId ? `/${selectedTopicId}` : ''}`} replace />} />
