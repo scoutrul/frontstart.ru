@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { existsSync } from 'fs';
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -21,19 +22,25 @@ async function deploy() {
     // Переходим в директорию проекта
     process.chdir(PROJECT_ROOT);
     
-    // 1. Pull изменений из GitHub
-    console.log('\n📥 Pulling latest changes...');
-    try {
-      const { stdout: pullOutput } = await execAsync('git pull origin main');
-      console.log(pullOutput);
-    } catch (error) {
-      // Если ветка не main, пробуем master
+    // 1. Pull изменений из GitHub (если есть git репозиторий)
+    const gitDir = join(PROJECT_ROOT, '.git');
+    if (existsSync(gitDir)) {
+      console.log('\n📥 Pulling latest changes...');
       try {
-        const { stdout: pullOutput } = await execAsync('git pull origin master');
+        const { stdout: pullOutput } = await execAsync('git pull origin main');
         console.log(pullOutput);
-      } catch (masterError) {
-        throw new Error(`Git pull failed: ${error.message}`);
+      } catch (error) {
+        // Если ветка не main, пробуем master
+        try {
+          const { stdout: pullOutput } = await execAsync('git pull origin master');
+          console.log(pullOutput);
+        } catch (masterError) {
+          console.warn('⚠️  Git pull failed, continuing without pull:', error.message);
+        }
       }
+    } else {
+      console.log('\n⚠️  No git repository found, skipping git pull');
+      console.log('   (Files were likely uploaded via FTP, not cloned)');
     }
     
     // 2. Устанавливаем зависимости фронтенда
