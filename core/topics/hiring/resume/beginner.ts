@@ -97,7 +97,8 @@ export const HIRING_RESUME_BEGINNER_TOPICS: Topic[] = [
 // - Использовать синонимы (React = React.js = ReactJS)`
       }
     ],
-    relatedTopics: ['hiring-resume-structure', 'hiring-resume-distribution']
+    relatedTopics: ['hiring-resume-structure', 'hiring-resume-distribution'],
+    isFrontendEssential: true
   }
 ];
 

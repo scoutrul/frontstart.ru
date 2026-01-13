@@ -110,6 +110,7 @@ Result (1-2 предложения с цифрами) — результат в�
 // 5. Практиковать перед собеседованием`
       }
     ],
-    relatedTopics: ['hiring-self-presentation-tell-about-structure', 'hiring-self-presentation-projects']
+    relatedTopics: ['hiring-self-presentation-tell-about-structure', 'hiring-self-presentation-projects'],
+    isFrontendEssential: true
   }
 ];

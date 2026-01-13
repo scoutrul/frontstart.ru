@@ -107,6 +107,7 @@ export const HIRING_SELF_PRESENTATION_PROJECTS_TOPICS: Topic[] = [
 // 5. Сократить до минимума, убрать лишнее`
       }
     ],
-    relatedTopics: ['hiring-self-presentation-star-method', 'hiring-technical-stages-formats']
+    relatedTopics: ['hiring-self-presentation-star-method', 'hiring-technical-stages-formats'],
+    isFrontendEssential: true
   }
 ];

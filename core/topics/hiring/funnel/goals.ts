@@ -102,6 +102,7 @@ export const HIRING_FUNNEL_GOALS_TOPICS: Topic[] = [
 // - Взять время на обдумывание`
       }
     ],
-    relatedTopics: ['hiring-funnel-full-chain', 'hiring-first-call-basics']
+    relatedTopics: ['hiring-funnel-full-chain', 'hiring-first-call-basics'],
+    isFrontendEssential: true
   }
 ];

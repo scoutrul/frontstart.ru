@@ -68,7 +68,8 @@ export const HIRING_PLAYERS_ROLES_TOPICS: Topic[] = [
 // - Какой стек технологий в команде?`
       }
     ],
-    relatedTopics: ['hiring-players-technical-interviewer', 'hiring-first-call-basics']
+    relatedTopics: ['hiring-players-technical-interviewer', 'hiring-first-call-basics'],
+    isFrontendEssential: true
   },
   {
     id: 'hiring-players-technical-interviewer',
@@ -139,7 +140,8 @@ export const HIRING_PLAYERS_ROLES_TOPICS: Topic[] = [
 // - Какие технологии используете в команде?`
       }
     ],
-    relatedTopics: ['hiring-players-recruiter', 'hiring-players-manager']
+    relatedTopics: ['hiring-players-recruiter', 'hiring-players-manager'],
+    isFrontendEssential: true
   },
   {
     id: 'hiring-players-manager',
