@@ -43,17 +43,30 @@ export async function githubWebhookHandler(request, reply) {
     console.log(`🚀 Starting deployment for commit ${commitId}: ${commitMessage}`);
     
     // Запускаем скрипт деплоя асинхронно
+    console.log(`📝 Executing deploy script: ${DEPLOY_SCRIPT}`);
     exec(`tsx ${DEPLOY_SCRIPT}`, { 
       cwd: PROJECT_ROOT,
       maxBuffer: 10 * 1024 * 1024 // 10MB
     }, (error, stdout, stderr) => {
       if (error) {
-        console.error('❌ Deployment failed:', error);
-        console.error('STDERR:', stderr);
+        console.error('❌ Deployment failed:', error.message);
+        if (stderr) {
+          console.error('STDERR:', stderr);
+        }
+        if (error.stdout) {
+          console.error('STDOUT:', error.stdout);
+        }
         return;
       }
-      console.log('✅ Deployment completed');
-      if (stdout) console.log(stdout);
+      console.log('✅ Deployment completed successfully');
+      if (stdout) {
+        // Выводим stdout построчно для лучшей читаемости
+        const lines = stdout.split('\n').filter(line => line.trim());
+        lines.forEach(line => console.log(`   ${line}`));
+      }
+      if (stderr) {
+        console.warn('⚠️  Deployment warnings:', stderr);
+      }
     });
 
     return { 
