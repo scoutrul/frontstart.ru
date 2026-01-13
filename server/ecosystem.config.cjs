@@ -2,7 +2,7 @@
  * PM2 Ecosystem конфигурация для сервера
  * 
  * Использование:
- *   pm2 start ecosystem.config.js
+ *   pm2 start ecosystem.config.cjs
  *   pm2 stop frontstart-server
  *   pm2 restart frontstart-server
  *   pm2 logs frontstart-server
@@ -16,7 +16,8 @@ module.exports = {
     name: 'frontstart-server',
     script: 'index.js',
     cwd: '/var/www/frontstart.ru/server',
-    interpreter: 'node',
+    interpreter: 'npx',
+    interpreter_args: 'tsx',
     exec_mode: 'fork', // Один процесс (не cluster, т.к. у нас cron внутри)
     instances: 1,
     autorestart: true,

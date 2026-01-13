@@ -2,6 +2,7 @@ import { createServer } from './config/server.js';
 import { setupCors } from './config/cors.js';
 import { registerChatRoutes } from './routes/chat/routes.js';
 import { registerTelegramRoutes } from './routes/telegram/routes.js';
+import { registerWebhookRoutes } from './routes/webhook/routes.js';
 import { setupTelegramCron } from './telegram/schedule.js';
 
 /**
@@ -17,6 +18,7 @@ async function start() {
   // Регистрируем роуты
   await registerChatRoutes(fastify);
   await registerTelegramRoutes(fastify);
+  await registerWebhookRoutes(fastify);
 
   // Настройка cron для автоматического постинга (опционально)
   setupTelegramCron();
