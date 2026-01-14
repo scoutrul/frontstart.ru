@@ -7,7 +7,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-import { existsSync } from 'fs';
+import { existsSync, rmSync } from 'fs';
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -23,29 +23,36 @@ async function deploy() {
     process.chdir(PROJECT_ROOT);
     
     // 1. Pull изменений из GitHub (если есть git репозиторий)
-    const gitDir = join(PROJECT_ROOT, '.git');
-    if (existsSync(gitDir)) {
-      console.log('\n📥 Pulling latest changes...');
-      try {
-        const { stdout: pullOutput } = await execAsync('git pull origin main');
-        console.log(pullOutput);
-      } catch (error) {
-        // Если ветка не main, пробуем master
+    try {
+      const { stdout: gitCheck } = await execAsync('git rev-parse --is-inside-work-tree', { cwd: PROJECT_ROOT });
+      if (gitCheck.trim() === 'true') {
+        console.log('\n📥 Pulling latest changes...');
         try {
-          const { stdout: pullOutput } = await execAsync('git pull origin master');
+          const { stdout: pullOutput } = await execAsync('git pull origin main', { cwd: PROJECT_ROOT });
           console.log(pullOutput);
-        } catch (masterError) {
-          console.warn('⚠️  Git pull failed, continuing without pull:', error.message);
+        } catch (error) {
+          // Если ветка не main, пробуем master
+          try {
+            const { stdout: pullOutput } = await execAsync('git pull origin master', { cwd: PROJECT_ROOT });
+            console.log(pullOutput);
+          } catch (masterError) {
+            console.warn('⚠️  Git pull failed, continuing without pull:', masterError.message);
+          }
         }
       }
-    } else {
+    } catch (gitError) {
       console.log('\n⚠️  No git repository found, skipping git pull');
       console.log('   (Files were likely uploaded via FTP, not cloned)');
     }
     
-    // 2. Устанавливаем зависимости фронтенда
-    console.log('\n📦 Installing frontend dependencies...');
-    const { stdout: installOutput } = await execAsync('pnpm install');
+    // 2. Переустанавливаем зависимости фронтенда
+    console.log('\n📦 Reinstalling frontend dependencies...');
+    const frontendNodeModules = join(PROJECT_ROOT, 'node_modules');
+    if (existsSync(frontendNodeModules)) {
+      console.log('   Removing existing node_modules...');
+      rmSync(frontendNodeModules, { recursive: true, force: true });
+    }
+    const { stdout: installOutput } = await execAsync('pnpm install', { cwd: PROJECT_ROOT });
     console.log(installOutput);
     
     // 3. Генерируем topics.json
@@ -58,11 +65,16 @@ async function deploy() {
       throw error;
     }
     
-    // 4. Устанавливаем зависимости бекенда
-    console.log('\n📦 Installing backend dependencies...');
+    // 4. Переустанавливаем зависимости бекенда
+    console.log('\n📦 Reinstalling backend dependencies...');
     const SERVER_DIR = join(PROJECT_ROOT, 'server');
+    const backendNodeModules = join(SERVER_DIR, 'node_modules');
+    if (existsSync(backendNodeModules)) {
+      console.log('   Removing existing node_modules...');
+      rmSync(backendNodeModules, { recursive: true, force: true });
+    }
     process.chdir(SERVER_DIR);
-    const { stdout: serverInstallOutput } = await execAsync('pnpm install');
+    const { stdout: serverInstallOutput } = await execAsync('pnpm install', { cwd: SERVER_DIR });
     console.log(serverInstallOutput);
     process.chdir(PROJECT_ROOT);
     
