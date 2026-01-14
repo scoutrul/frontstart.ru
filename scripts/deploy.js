@@ -48,7 +48,17 @@ async function deploy() {
     const { stdout: installOutput } = await execAsync('pnpm install');
     console.log(installOutput);
     
-    // 3. Устанавливаем зависимости бекенда
+    // 3. Генерируем topics.json
+    console.log('\n📝 Generating topics.json...');
+    try {
+      const { stdout: generateOutput } = await execAsync('pnpm run generate-topics');
+      console.log(generateOutput);
+    } catch (error) {
+      console.error('❌ Failed to generate topics.json:', error.message);
+      throw error;
+    }
+    
+    // 4. Устанавливаем зависимости бекенда
     console.log('\n📦 Installing backend dependencies...');
     const SERVER_DIR = join(PROJECT_ROOT, 'server');
     process.chdir(SERVER_DIR);
@@ -56,12 +66,12 @@ async function deploy() {
     console.log(serverInstallOutput);
     process.chdir(PROJECT_ROOT);
     
-    // 4. Собираем фронтенд
+    // 5. Собираем фронтенд
     console.log('\n🔨 Building frontend...');
     const { stdout: buildOutput } = await execAsync('pnpm run build');
     console.log(buildOutput);
     
-    // 5. Перезапускаем бекенд через PM2
+    // 6. Перезапускаем бекенд через PM2
     console.log('\n🔄 Restarting backend server...');
     try {
       const { stdout: pm2Output } = await execAsync('pm2 restart frontstart-server');

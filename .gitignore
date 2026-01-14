@@ -16,6 +16,7 @@ dist-ssr
 # Telegram posting state and logs (per-environment)
 server/posted-topics.json
 server/posting-log.json
+server/topics.json
 
 
 # Editor directories and files

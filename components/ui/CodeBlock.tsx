@@ -44,8 +44,8 @@ export const CodeBlock: React.FC<{ title: string; code: string }> = ({ title, co
         <span className="text-[12px] font-bold text-amber-500 font-mono tracking-widest uppercase">{title}</span>
       </div>
       <div className="px-4 py-6 lg:p-6 overflow-x-auto bg-[#334155]">
-        <pre className={`language-javascript text-sm leading-relaxed ${isOnlyComments ? 'code-only-comments' : ''}`} style={{ fontSize: '14px' }}>
-          <code style={{ fontSize: '14px' }} dangerouslySetInnerHTML={{ __html: highlighted }} />
+        <pre className={`language-javascript text-[12px] md:text-sm leading-relaxed ${isOnlyComments ? 'code-only-comments' : ''}`}>
+          <code className="text-[12px] md:text-sm" dangerouslySetInnerHTML={{ __html: highlighted }} />
         </pre>
       </div>
     </div>

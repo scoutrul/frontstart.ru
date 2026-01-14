@@ -17,6 +17,7 @@ const STORAGE_KEY = 'js-interview-pro-notes';
 const NotesModal: React.FC<NotesModalProps> = ({ isOpen, onClose }) => {
   const [notes, setNotes] = useState<Note[]>([]);
   const [newNote, setNewNote] = useState('');
+  const [animatingNoteId, setAnimatingNoteId] = useState<string | null>(null);
 
   // Загрузка заметок из localStorage
   useEffect(() => {
@@ -56,6 +57,10 @@ const NotesModal: React.FC<NotesModalProps> = ({ isOpen, onClose }) => {
     const updatedNotes = [note, ...notes];
     saveNotes(updatedNotes);
     setNewNote('');
+    
+    // Запускаем анимацию для новой заметки
+    setAnimatingNoteId(note.id);
+    setTimeout(() => setAnimatingNoteId(null), 500);
   };
 
   // Удаление заметки
@@ -150,7 +155,11 @@ const NotesModal: React.FC<NotesModalProps> = ({ isOpen, onClose }) => {
                   {notes.map((note) => (
                     <div
                       key={note.id}
-                      className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 group hover:border-slate-600/50 transition-all"
+                      className={`bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 group hover:border-slate-600/50 transition-all ${
+                        animatingNoteId === note.id 
+                          ? 'animate-fade-in-scale' 
+                          : ''
+                      }`}
                     >
                       <div className="flex items-start justify-between gap-3 mb-2">
                         <span className="text-xs text-slate-500">

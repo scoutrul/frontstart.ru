@@ -5,7 +5,7 @@ import { HIRING_REALITY_TOXICITY_TOPICS } from './toxicity';
 export const HIRING_REALITY_CATEGORIES: Category[] = [
   {
     id: 'hiring-reality',
-    title: 'РЕАЛЬНОСТЬ — ЧТОБЫ НЕ СХОДИТЬ С УМА',
+    title: 'Реальность',
     topics: [
       ...HIRING_REALITY_MARKET_TOPICS,
       ...HIRING_REALITY_TOXICITY_TOPICS

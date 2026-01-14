@@ -4,7 +4,7 @@ import { HIRING_PLAYERS_ROLES_TOPICS } from './roles';
 export const HIRING_PLAYERS_CATEGORIES: Category[] = [
   {
     id: 'hiring-players',
-    title: 'ИГРОКИ — КТО И ЗАЧЕМ С ВАМИ ГОВОРИТ',
+    title: 'Игроки',
     topics: [
       ...HIRING_PLAYERS_ROLES_TOPICS
     ]

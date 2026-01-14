@@ -70,6 +70,7 @@ const KnowledgePath: React.FC = () => {
             const totalTopics = getTotalTopics(category.id);
             const progress = getProgress(category.id, totalTopics);
             const isActive = selectedMetaCategory === category.id;
+            const isQA = category.id === 'interview-questions';
 
             return (
               <button
@@ -77,19 +78,23 @@ const KnowledgePath: React.FC = () => {
                 ref={isActive ? activeButtonRef : null}
                 onClick={() => handleCategorySelect(category.id)}
                 className={`
-                  flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-md transition-all lg:min-w-[70px]
-                  ${isActive 
+                  flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-md transition-all lg:min-w-[70px] min-h-[39px]
+                  ${isQA
+                    ? 'bg-amber-500/5 border border-amber-500 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.05)] flex-shrink-0'
+                    : isActive 
                     ? 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex-shrink-0' 
                     : 'bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:bg-slate-800/70 hover:text-slate-300 flex-shrink'
                   }
                 `}
               >
-                <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0`}></i>
-                <div className={`${isActive ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1`}>
-                  <div className={`text-[10px] font-black uppercase tracking-wider leading-tight whitespace-nowrap w-full ${isActive ? '' : 'overflow-hidden text-ellipsis'}`}>
+                {!isQA && (
+                  <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0`}></i>
+                )}
+                <div className={`${isActive || isQA ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1`}>
+                  <div className={`text-[10px] font-black uppercase tracking-wider leading-tight whitespace-nowrap w-full ${isActive || isQA ? '' : 'overflow-hidden text-ellipsis'}`}>
                     {category.title}
                   </div>
-                  {totalTopics > 0 && (
+                  {!isQA && totalTopics > 0 && (
                     <div className={`text-[9px] leading-tight whitespace-nowrap ${progress > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
                       {progress}% • {totalTopics}
                     </div>

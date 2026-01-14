@@ -393,7 +393,7 @@ const Content: React.FC<ContentProps> = (props) => {
           <h2 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
             {contentSearchQuery ? 'РЕЛЕВАНТНЫЕ ТЕМЫ (поиск)' : 'РЕЛЕВАНТНЫЕ ТЕМЫ'}
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {relevantTopics.map((relatedTopic, index) => {
               // Если это режим поиска, используем метаданные из searchResults, иначе ищем их
               const meta = isSearchMode && searchResultsMeta 
