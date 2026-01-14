@@ -18,13 +18,13 @@ export const useTopicsFilter = () => {
   );
 
   const filteredCategories = useMemo(() => {
-    // Разбиваем запрос на слова (минимум 3 символа)
-    // Разбиваем по пробелам, фильтруем слова >= 3 символов
+    // Разбиваем запрос на слова (минимум 1 символ)
+    // Разбиваем по пробелам, фильтруем слова длиной >= 1
     const searchWords = searchQuery
       .toLowerCase()
       .split(/\s+/)
       .map(word => word.trim())
-      .filter(word => word.length >= 3);
+      .filter(word => word.length >= 1);
     
     return knowledgeBase.map(cat => ({
       ...cat,

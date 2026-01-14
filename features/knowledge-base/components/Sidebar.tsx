@@ -28,10 +28,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
     clearAllLearned,
     learnedTopics
   } = useKnowledgeBaseStore();
-  
-  const [showAllTags, setShowAllTags] = useState(false);
-  const [tagsCategory, setTagsCategory] = useState<string>(selectedMetaCategory);
-  const TAGS_LIMIT = 12;
+
+  const [isTagDropdownOpen, setIsTagDropdownOpen] = useState(false);
+  const [highlightedTagIndex, setHighlightedTagIndex] = useState(0);
   
   const { filteredCategories } = useTopicsFilter();
   const { availableTags } = useTags();
@@ -41,26 +40,46 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
   const currentCategory = META_CATEGORIES.find(c => c.id === selectedMetaCategory);
   const categoryIcon = currentCategory?.icon || 'fa-brands fa-js';
 
-  // Сворачиваем теги при переключении категории (синхронно, без мигания)
-  useEffect(() => {
-    if (tagsCategory !== selectedMetaCategory) {
-      setShowAllTags(false);
-      setTagsCategory(selectedMetaCategory);
-    }
-  }, [selectedMetaCategory, tagsCategory]);
-
-  // Очищаем теги и сворачиваем блок при изменении фильтров
+  // Очищаем теги только при смене сложности,
+  // но не при изменении текстового поиска
   useEffect(() => {
     if (selectedTags.length > 0) {
       clearSelectedTags();
-      setShowAllTags(false);
     }
-  }, [searchQuery, selectedDifficulty]);
+  }, [selectedDifficulty]);
 
-  // Вычисляем актуальное состояние тегов - всегда false при смене категории
-  const actualShowAllTags = tagsCategory === selectedMetaCategory ? showAllTags : false;
+  // Текущий ввод для тега — последнее слово в поисковой строке
+  const tagInput = useMemo(() => {
+    if (!searchQuery) return '';
+    const parts = searchQuery.split(/\s+/);
+    return (parts[parts.length - 1] || '').toLowerCase();
+  }, [searchQuery]);
 
-  // Скроллим к заголовку подраздела, содержащего активную тему
+  // Список подсказок по тегам на основе текущего ввода
+  const tagSuggestions = useMemo(() => {
+    if (!tagInput) return [];
+    return availableTags
+      .filter(tag => !selectedTags.includes(tag) && tag.toLowerCase().includes(tagInput))
+      .slice(0, 8);
+  }, [tagInput, availableTags, selectedTags]);
+
+  useEffect(() => {
+    if (tagSuggestions.length === 0) {
+      setIsTagDropdownOpen(false);
+      setHighlightedTagIndex(0);
+    } else {
+      setHighlightedTagIndex(0);
+    }
+  }, [tagSuggestions]);
+
+  const handleTagSelect = (tag: string) => {
+    toggleTag(tag);
+
+    setSearchQuery('');
+    setIsTagDropdownOpen(false);
+  };
+
+  // Скроллим к заголовку подраздела, содержащего активную тему — только при явном выборе темы
   useEffect(() => {
     if (!selectedTopicId || !scrollRef.current) return;
     const container = scrollRef.current;
@@ -79,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
     const headerRect = categoryHeader.getBoundingClientRect();
     const offset = headerRect.top - containerRect.top + container.scrollTop - 12; // небольшой отступ сверху
     container.scrollTo({ top: offset, behavior: 'smooth' });
-  }, [selectedTopicId, filteredCategories]);
+  }, [selectedTopicId]);
   
   const renderDifficultyStars = (d: Difficulty | 'all') => {
     if (d === 'all') return 'BCE';
@@ -139,7 +158,24 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                 type="text" 
                 placeholder="Фильтр по темам и тегам" 
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setSearchQuery(value);
+                  if (value.trim().length > 0 && tagSuggestions.length > 0) {
+                    setIsTagDropdownOpen(true);
+                  } else {
+                    setIsTagDropdownOpen(false);
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    if (tagSuggestions.length > 0) {
+                      e.preventDefault();
+                      handleTagSelect(tagSuggestions[0]);
+                    }
+                    setSearchQuery('');
+                  }
+                }}
                 className={`w-full bg-[#1e293b]/30 border border-slate-800/80 rounded-md py-1.5 text-[11px] text-slate-300 outline-none focus:border-emerald-500/40 transition-all placeholder:text-slate-700 ${searchQuery ? 'pl-8 pr-8' : 'pl-8 pr-3'}`}
               />
               {searchQuery && (
@@ -151,7 +187,46 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                   <i className="fa-solid fa-times text-[10px]"></i>
                 </button>
               )}
+
+              {isTagDropdownOpen && tagSuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 mt-1 bg-[#020617] border border-slate-800/80 rounded-md shadow-lg z-20 max-h-40 overflow-y-auto">
+                  {tagSuggestions.map((tag, index) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleTagSelect(tag);
+                      }}
+                      className={`w-full text-left px-3 py-1.5 text-[11px] ${
+                        index === highlightedTagIndex
+                          ? 'bg-slate-800 text-slate-100'
+                          : 'text-slate-300 hover:bg-slate-800/80'
+                      }`}
+                    >
+                      #{tag}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
+            {selectedTags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {selectedTags.map(tag => (
+                  <button
+                    key={tag}
+                    type="button"
+                    onClick={() => toggleTag(tag)}
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-800/60 text-[10px] text-slate-200 border border-slate-700/70 hover:bg-slate-700/70 transition-colors"
+                    title="Удалить тег"
+                  >
+                    <span>{tag}</span>
+                    <i className="fa-solid fa-xmark text-[9px]"></i>
+                  </button>
+                ))}
+              </div>
+            )}
 
             <div className="flex bg-[#0a0f1d] p-0.5 rounded-md border border-slate-800/80 shadow-inner">
               {(['all', 'beginner', 'intermediate', 'advanced'] as const).map(d => (
@@ -165,38 +240,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
                   {renderDifficultyStars(d)}
                 </button>
               ))}
-            </div>
-
-            <div key={selectedMetaCategory} className="space-y-2">
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {availableTags.length > 0 ? (
-                  (actualShowAllTags ? availableTags : availableTags.slice(0, TAGS_LIMIT)).map(tag => (
-                    <button
-                      key={tag}
-                      onClick={() => toggleTag(tag)}
-                      className={`text-[12px] px-2 py-0.5 rounded border transition-all ${
-                        selectedTags.includes(tag) 
-                          ? 'bg-transparent border-white text-white' 
-                          : 'bg-transparent border-slate-800/60 text-slate-400 hover:border-slate-700'
-                      }`}
-                    >
-                      {tag}
-                    </button>
-                  ))
-                ) : (
-                  <div className="text-[9px] text-slate-600 italic">Нет доступных тегов</div>
-                )}
-                {availableTags.length > TAGS_LIMIT && (
-                  <button
-                    onClick={() => setShowAllTags(!actualShowAllTags)}
-                    className="text-[9px] text-slate-500 hover:text-slate-400 transition-colors flex items-center gap-1"
-                  >
-                    <span>{actualShowAllTags ? '' : '...'}</span>
-                    <i className={`fa-solid fa-chevron-${actualShowAllTags ? 'up' : 'down'} text-[9px]`}></i>
-                  </button>
-                )}
-              </div>
-
             </div>
           </div>
 

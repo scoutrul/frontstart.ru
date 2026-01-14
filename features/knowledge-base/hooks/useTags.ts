@@ -1,19 +1,16 @@
 import { useMemo } from 'react';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
-import { Difficulty } from '../../../core/types';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 
 export const useTags = () => {
-  const { selectedDifficulty, selectedMetaCategory } = useKnowledgeBaseStore();
+  const { selectedMetaCategory } = useKnowledgeBaseStore();
 
   const availableTags = useMemo(() => {
     const knowledgeBase = getKnowledgeBaseByCategory(selectedMetaCategory);
-    const topicsByDifficulty = knowledgeBase
-      .flatMap(cat => cat.topics)
-      .filter(t => selectedDifficulty === 'all' || t.difficulty === selectedDifficulty);
+    const allTopics = knowledgeBase.flatMap(cat => cat.topics);
     
     const tagCounts = new Map<string, number>();
-    topicsByDifficulty.forEach(topic => {
+    allTopics.forEach(topic => {
       topic.tags.forEach(tag => {
         tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
       });
@@ -25,7 +22,7 @@ export const useTags = () => {
         return a[0].localeCompare(b[0]);
       })
       .map(([tag]) => tag);
-  }, [selectedDifficulty, selectedMetaCategory]);
+  }, [selectedMetaCategory]);
 
   return { availableTags };
 };
