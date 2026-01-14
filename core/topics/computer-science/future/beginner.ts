@@ -35,7 +35,7 @@ export const CS_FUTURE_BEGINNER_TOPICS: Topic[] = [
       'Огромная часть энергии в современных дата-центрах тратится не на сами вычисления, а на охлаждение процессоров, разогревающихся из-за колоссальной плотности элементов.'
     ],
     tags: ['hardware', 'future', 'processors'],
-    relatedTopics: ['processors-transistors', 'cs-computer-architecture']
+    relatedTopics: ['processors-transistors', 'cs-computer-architecture', 'space-microprocessors-and-reliability']
   },
   {
     id: 'future-programming-evolution',
@@ -89,6 +89,6 @@ export const CS_FUTURE_BEGINNER_TOPICS: Topic[] = [
       'Будущее информатики тесно связано с экологией: создание энергоэффективных алгоритмов и железа становится критически важным для устойчивого развития планеты.'
     ],
     tags: ['future', 'trends', 'society'],
-    relatedTopics: ['cs-data-and-information', 'cs-computer-architecture']
+    relatedTopics: ['cs-data-and-information', 'cs-computer-architecture', 'electronic-computers-space-program']
   }
 ];

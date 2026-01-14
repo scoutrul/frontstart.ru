@@ -5,12 +5,12 @@ export const JS_NODEJS_ADVANCED_TOPICS: Topic[] = [
     id: 'nodejs-processes',
     title: 'Процессы и потоки',
     difficulty: 'advanced',
-    description: 'Node.js однопоточный, но может создавать дочерние процессы и потоки. child_process: spawn, exec, execFile, fork для запуска внешних команд и процессов. worker_threads: создание потоков для CPU-интенсивных задач, разделение памяти через SharedArrayBuffer. Кластер (cluster): создание нескольких процессов для использования всех ядер CPU.',
+    description: 'Node.js однопоточный с точки зрения основного потока JS, но среда выполнения обеспечивает несколько механизмов конкурентности: дочерние процессы, worker_threads и кластеризацию. child_process (spawn/exec/execFile/fork) запускает внешние команды и отдельные Node-процессы с обменом сообщениями. worker_threads — это потоковая модель, концептуально близкая к Web Workers: отдельные контексты JS с возможностью обмена сообщениями и общей памяти через SharedArrayBuffer. Кластер (cluster) поднимает несколько процессов Node.js для использования всех ядер CPU за счёт балансировки между ними.',
     keyPoints: [
       'child_process.spawn(): запуск команды с потоковым выводом, не блокирует.',
       'child_process.exec(): запуск команды, возвращает весь вывод, может быть блокирующим.',
       'child_process.fork(): создание дочернего Node.js процесса, обмен через IPC.',
-      'worker_threads: создание потоков для CPU-задач, разделение памяти через SharedArrayBuffer.',
+      'worker_threads: создание потоков для CPU-задач, обмен сообщениями и разделение памяти через SharedArrayBuffer (похоже на Web Workers, но без браузерных ограничений).',
       'cluster: создание нескольких процессов Node.js для использования всех ядер.',
       'IPC (Inter-Process Communication): обмен данными между процессами через сообщения.',
       'Использование: параллельная обработка, запуск внешних команд, использование всех ядер CPU.'
@@ -198,7 +198,7 @@ if (cluster.isMaster) {
 }`
       }
     ],
-    relatedTopics: ['nodejs-introduction', 'web-workers', 'performance-optimization'],
+    relatedTopics: ['nodejs-introduction', 'web-workers', 'performance-optimization', 'web-platform-api-overview'],
     isFrontendEssential: false
   },
   {

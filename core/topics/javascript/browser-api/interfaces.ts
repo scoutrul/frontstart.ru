@@ -197,13 +197,16 @@ io.observe(document.querySelector('.card'));`
     title: 'Workers и обмен сообщениями',
     difficulty: 'intermediate',
     description:
-      'Воркеры и каналы обмена сообщениями для выполнения кода в других потоках и общения между контекстами. Обязательны для производительных приложений и PWA.',
+      'Воркеры в веб-платформе — это способ выполнять JS-код в отдельных контекстах исполнения, не блокируя основной поток с UI. Web Workers (Dedicated/Shared) занимаются вычислениями и обработкой данных, Service Workers работают как сетевой/кеширующий «прокси» с собственным жизненным циклом, а Worklets (Audio/Paint/Layout/Animation) — это микро-воркеры, встроенные прямо в пайплайны рендеринга и медиасистемы браузера. Все они общаются через сообщения и разделяемую память.',
     keyPoints: [
-      'Worker / SharedWorker / ServiceWorker: разные типы воркеров для выполнения кода в отдельных потоках.',
-      'MessagePort / MessageChannel / MessageEvent / BroadcastChannel: каналы и события обмена сообщениями между контекстами.',
-      'Client / WindowClient / Clients: управление клиентами (вкладками) из Service Worker, отправка сообщений всем клиентам.'
+      'Web Workers (Worker / SharedWorker): отдельные JS-контексты без доступа к DOM, общение через postMessage, используются для CPU-heavy задач и интеграции с WASM.',
+      'ServiceWorker: специализированный воркер c жизненным циклом install/activate/fetch, Acting как прокси между сетью/кэшем и страницами, основа PWA и офлайна.',
+      'Worklets (AudioWorklet / PaintWorklet / LayoutWorklet / AnimationWorklet): микро-воркеры внутри пайплайнов браузера для low-latency задач (аудио, кастомный рендер, анимации).',
+      'MessagePort / MessageChannel / MessageEvent / BroadcastChannel: базовые каналы и события обмена сообщениями между контекстами (страницы, воркеры, Service Worker).',
+      'Client / WindowClient / Clients: управление клиентами (вкладками/оконными контекстами) из Service Worker, рассылка сообщений всем активным клиентам.',
+      'Общий концепт: воркеры — это модель конкурентности Web Platform API, а не языковая конструкция JS; язык остаётся однопоточным, а платформа даёт несколько изолированных контекстов.'
     ],
-    tags: ['interfaces', 'worker', 'serviceworker', 'messaging', 'pwa'],
+    tags: ['interfaces', 'worker', 'serviceworker', 'worklet', 'messaging', 'pwa', 'web-platform'],
     examples: [
       {
         title: 'MessageChannel',
@@ -219,6 +222,6 @@ channel.port2.postMessage('ping');`
 });`
       }
     ],
-    relatedTopics: ['web-workers', 'service-workers', 'websocket-api']
+    relatedTopics: ['web-workers', 'service-workers', 'websocket-api', 'web-platform-api-overview', 'nodejs-processes']
   }
 ];

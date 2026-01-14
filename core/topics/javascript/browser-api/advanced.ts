@@ -36,15 +36,15 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
     id: 'service-workers',
     title: 'Service Workers',
     difficulty: 'advanced',
-    description: 'Service Worker — прокси между браузером и сетью. Работает в фоне, может перехватывать запросы, кэшировать ресурсы, работать офлайн. Регистрация через navigator.serviceWorker.register(). События: install (установка), activate (активация), fetch (перехват запросов). Используется для PWA, офлайн-режима.',
+    description: 'Service Worker — это специализированный воркер Web Platform API, работающий как прокси между браузером и сетью/кэшем. Он живёт отдельно от страниц, имеет собственный жизненный цикл (install/activate/fetch) и позволяет реализовать офлайн-режим, стратегии кэширования и push-уведомления. В отличие от Web Workers, его основная роль — не вычисления, а управление сетевыми запросами и ресурсами приложения.',
     keyPoints: [
-      'navigator.serviceWorker.register(script): регистрация воркера.',
-      'Работает в отдельном потоке, может работать офлайн.',
-      'События: install (кэширование), activate (очистка старого кэша), fetch (перехват запросов).',
-      'Cache API: кэширование ресурсов для офлайн-доступа.',
-      'Использование: PWA, офлайн-режим, push-уведомления.'
+      'navigator.serviceWorker.register(script): регистрация сервиса-воркера из страницы, живёт за её пределами.',
+      'Жизненный цикл: install (первичная установка и кэширование), activate (очистка старых кэшей), fetch (перехват запросов).',
+      'Работает в отдельном контексте, может обслуживать несколько вкладок, продолжая жить после их закрытия.',
+      'Cache API и Clients API: кэширование ресурсов и взаимодействие с клиентами (вкладками) для обновлений и нотификаций.',
+      'Основные сценарии: PWA, офлайн-режим, стратегии кэширования, push-уведомления, background sync.'
     ],
-    tags: ['service-workers', 'pwa', 'offline', 'caching', 'browser', 'api'],
+    tags: ['service-workers', 'pwa', 'offline', 'caching', 'browser', 'api', 'web-platform'],
     examples: [
       {
         title: "Регистрация Service Worker",
@@ -59,7 +59,7 @@ export const JS_BROWSER_API_ADVANCED_TOPICS: Topic[] = [
         code: `// sw.js\nself.addEventListener('activate', (event) => {\n  console.log('Service Worker activating');\n  \n  event.waitUntil(\n    caches.keys().then(cacheNames => {\n      return Promise.all(\n        cacheNames.map(cacheName => {\n          if (cacheName !== 'v2') { // удаляем старые кэши\n            return caches.delete(cacheName);\n          }\n        })\n      );\n    })\n  );\n});`
       }
     ],
-    relatedTopics: ['web-workers', 'fetch-api', 'web-storage'],
+    relatedTopics: ['web-workers', 'fetch-api', 'web-storage', 'interfaces-workers-messaging', 'web-platform-api-overview'],
     isFrontendEssential: true
   },
 {

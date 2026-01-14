@@ -193,8 +193,42 @@ if (typeof window !== 'undefined') {
 // Это основа clean architecture и isomorphic/universal JS`
       }
     ],
-    relatedTopics: ['what-is-javascript', 'javascript-runtime', 'dom-api', 'event-loop'],
+    relatedTopics: ['what-is-javascript', 'javascript-runtime', 'dom-api', 'event-loop', 'web-platform-api-overview'],
     funFact: 'window и document не являются частью спецификации JavaScript (ECMAScript). Они определены в отдельных стандартах W3C (DOM, HTML) и доступны только в браузерном окружении. Это одна из причин, почему один и тот же JavaScript-код может работать по-разному в браузере и Node.js.',
+    isFrontendEssential: true
+  },
+  {
+    id: 'web-platform-api-overview',
+    title: 'Web Platform API: окружение для JavaScript',
+    difficulty: 'beginner',
+    description:
+      'Web Platform API — это совокупность браузерных интерфейсов (DOM, сеть, графика, воркеры, хранилища и т.д.), в которых живёт JavaScript-код. Сам язык ECMAScript не знает ни про DOM, ни про потоки, ни про сеть — всё это предоставляет хост-окружение. Понимание границы между языком и платформой важно, чтобы не путать «фичи JS» с возможностями конкретной среды и правильно переносить код между браузером, Node.js и другими рантаймами.',
+    keyPoints: [
+      'JavaScript (ECMAScript) описывает синтаксис, типы, объекты языка и модель исполнения — без доступа к DOM, сети или файловой системе.',
+      'Web Platform API в браузере добавляет DOM/UI, события, графику (Canvas, WebGL, SVG), сеть (Fetch, WebSocket, WebRTC), хранилища (Web Storage, IndexedDB, Cache), воркеры (Web Workers, Service Workers, Worklets) и интеграцию с WASM.',
+      'JS в Node.js использует другой набор host API: файловая система, сеть, процессы, worker_threads, без DOM и браузерных Web API.',
+      'Одна и та же функция на чистом JS может выполняться и в браузере, и в Node.js, но доступные глобальные объекты и API будут разными.',
+      'Воркеры (Web Workers/Service Workers/Worklets) — часть Web Platform API и реализуют модель конкурентности платформы, а не изменение однопоточности языка JS.'
+    ],
+    tags: ['browser-api', 'web-platform', 'runtime', 'environment', 'workers', 'dom', 'network'],
+    examples: [
+      {
+        title: 'JS как язык vs Web Platform как окружение',
+        code: `// Чистый JS (язык) - работает везде
+function double(arr) {
+  return arr.map(x => x * 2);
+}
+
+// Web Platform API (только в браузере)
+document.body.addEventListener('click', () => {
+  console.log('Clicked');
+});
+
+// Web Workers - часть платформы, а не языка
+const worker = new Worker('worker.js'); // работает только там, где есть Web Platform API`
+      }
+    ],
+    relatedTopics: ['browser-api-principles', 'interfaces-dom-core', 'interfaces-network', 'web-workers', 'interfaces-workers-messaging', 'nodejs-processes'],
     isFrontendEssential: true
   },
 {

@@ -65,23 +65,32 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
     relatedTopics: ['dom-api', 'event-api', 'observers-api-overview', 'performance-optimization'],
     isFrontendEssential: true
   },
-{
+  {
     id: 'web-workers',
     title: 'Web Workers',
     difficulty: 'intermediate',
-    description: 'Web Workers выполняют код в отдельном потоке, не блокируя основной. new Worker(script) создает воркер. postMessage отправляет данные, onmessage получает. SharedWorker для нескольких вкладок. Используется для тяжелых вычислений, обработки данных, не имеет доступа к DOM.',
+    description: 'Web Workers — это часть Web Platform API, а не «фича JavaScript»: браузер даёт отдельный поток исполнения для JS-кода, чтобы не блокировать основной поток с UI и его Event Loop. Сам язык JS остаётся однопоточным, а параллелизм появляется за счёт того, что платформа создаёт несколько независимых контекстов исполнения.\n\nГлавная идея: разделить ответственность. Main thread занимается UI (DOM, обработчики событий, layout/paint), а воркер — CPU-heavy работой: парсинг больших JSON/CSV, агрегации/сортировки, криптография (хэши/шифрование), компрессия, обработка изображений, симуляции/физика, подготовка данных для графиков/канваса. Поэтому в обычном CRUD-SPA воркеры часто не нужны, а в редакторах/визуализациях/аналитике/играх — почти обязательны.\n\nИсторически Web Workers появились в эпоху HTML5 (~2010), когда «толстый фронт» (Gmail, Google Maps и т.п.) начал упираться в однопоточность JS: долгие вычисления фризили интерфейс, а setTimeout/setInterval это не решали. Воркер создаётся через new Worker(script), общение идёт только сообщениями (postMessage/onmessage), доступ к DOM (document/window) внутри воркера запрещён — он работает только с данными. Для больших массивов данных важно думать о стоимости передачи: либо сериализация/копирование, либо Transferable (например ArrayBuffer), либо shared memory через SharedArrayBuffer + Atomics (при наличии правильных заголовков из-за COOP/COEP).',
     keyPoints: [
-      'new Worker(script): создает воркер в отдельном потоке.',
-      'postMessage(data): отправка данных, onmessage: получение.',
-      'Не имеет доступа к DOM, window, document.',
-      'SharedWorker: общий воркер для нескольких вкладок.',
-      'Использование: тяжелые вычисления, обработка данных, не блокирует UI.'
+      'Web Workers — это Web Platform API: браузер создаёт отдельные контексты исполнения JS с собственным event loop/heap.',
+      'Сам язык JS остаётся однопоточным, а параллелизм достигается за счёт нескольких независимых воркеров.',
+      'Воркер не имеет доступа к DOM, window, document — только чистая логика и данные.',
+      'Обмен данными идёт через postMessage/onmessage; для больших структур используют Transferable и SharedArrayBuffer + Atomics.',
+      'Типичные задачи: парсинг и агрегации, криптография, работа с бинарными данными, подготовка данных для Canvas/WebGL/WASM.'
     ],
-    tags: ['web-workers', 'multithreading', 'performance', 'async', 'browser', 'api'],
+    funFact: [
+      'Web Worker не делает JavaScript «многопоточным» в рамках одного потока: каждый воркер — отдельный изолированный рантайм со своим Event Loop; параллелизм появляется из-за нескольких потоков исполнения, которые даёт браузер.',
+      'Синтаксис new Worker(...) одинаков в разных браузерах, но конкретные ограничения (безопасность, заголовки для SharedArrayBuffer) диктует именно платформа, а не спецификация языка ECMAScript.'
+    ],
+    additionalDescription: 'Практический нюанс, на который чаще всего натыкаются: воркер ускоряет UI только если ты реально упираешься в CPU на main thread. Если у тебя тормозит из-за layout/paint/реакта-рендера, перенос логики в воркер не спасёт.\n\nВ проде воркеры часто скрыты “под капотом”: тяжёлые либы (редакторы, графика, крипто) и WASM-рантаймы запускают их автоматически. В современных сборках (Vite/Webpack) стандартный способ подключения: new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }).',
+    tags: ['web-workers', 'multithreading', 'performance', 'async', 'browser', 'api', 'web-platform'],
     examples: [
       {
         title: "Базовый воркер",
         code: `// main.js\nconst worker = new Worker('worker.js');\n\nworker.postMessage({ type: 'calculate', data: [1, 2, 3, 4, 5] });\n\nworker.onmessage = (event) => {\n  console.log('Result:', event.data);\n};\n\nworker.onerror = (error) => {\n  console.error('Worker error:', error);\n};\n\n// worker.js\nself.onmessage = (event) => {\n  const { type, data } = event.data;\n  \n  if (type === 'calculate') {\n    const result = data.reduce((sum, n) => sum + n, 0);\n    self.postMessage(result);\n  }\n};`
+      },
+      {
+        title: "Паттерн: воркер как Promise",
+        code: `// wrapper.js — утилита, превращающая воркер в Promise API\nexport function runInWorker(worker, message) {\n  return new Promise((resolve, reject) => {\n    const handleMessage = (event) => {\n      worker.removeEventListener('message', handleMessage);\n      worker.removeEventListener('error', handleError);\n      resolve(event.data);\n    };\n\n    const handleError = (error) => {\n      worker.removeEventListener('message', handleMessage);\n      worker.removeEventListener('error', handleError);\n      reject(error);\n    };\n\n    worker.addEventListener('message', handleMessage);\n    worker.addEventListener('error', handleError);\n    worker.postMessage(message);\n  });\n}\n\n// main.js\nconst worker = new Worker('worker.js');\n\nrunInWorker(worker, { type: 'calculate', data: [1, 2, 3] })\n  .then((result) => {\n    console.log('Result from worker:', result);\n  })\n  .catch(console.error);`
       },
       {
         title: "Тяжелые вычисления",
@@ -90,9 +99,13 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
       {
         title: "Inline Worker",
         code: `// Создание воркера из строки\nconst workerCode = \`\n  self.onmessage = (e) => {\n    const result = e.data * 2;\n    self.postMessage(result);\n  };\n\`;\n\nconst blob = new Blob([workerCode], { type: 'application/javascript' });\nconst worker = new Worker(URL.createObjectURL(blob));\n\nworker.postMessage(5);\nworker.onmessage = (e) => console.log(e.data); // 10`
+      },
+      {
+        title: "Web Worker с бандлером (Vite/Webpack)",
+        code: `// main.ts — современный вариант через new URL + import.meta.url\n// Vite/Webpack сами вынесут worker.ts в отдельный бандл\nconst worker = new Worker(new URL('./worker.ts', import.meta.url), {\n  type: 'module',\n});\n\nworker.postMessage({ type: 'ping' });\n\nworker.onmessage = (event) => {\n  console.log('Worker response:', event.data);\n};\n\n// worker.ts (ESM-модуль)\nself.onmessage = (event) => {\n  if (event.data.type === 'ping') {\n    self.postMessage({ type: 'pong', ts: Date.now() });\n  }\n};`
       }
     ],
-    relatedTopics: ['async-await', 'promises', 'performance-optimization']
+    relatedTopics: ['async-await', 'promises', 'performance-optimization', 'interfaces-workers-messaging', 'web-platform-api-overview', 'nodejs-processes']
   },
 {
     id: 'resize-observer',
