@@ -17,12 +17,18 @@ import { AUDIT_TOPICS } from './audit';
 import { DOCUMENTATION_TOPICS } from './documentation';
 import { MIGRATION_TOPICS } from './migration';
 import { PRACTICE_TOPICS } from './practice';
+import { ARCHITECTURE_TOPICS as ARCHITECTURE_PATTERNS_TOPICS } from './patterns';
 
 export const ARCHITECTURE_CATEGORIES: Category[] = [
   {
     id: 'intro',
     title: 'Введение: Эволюция и критерии выбора',
     topics: ARCHITECTURE_INTRO_TOPICS
+  },
+  {
+    id: 'patterns',
+    title: 'Архитектурные паттерны',
+    topics: ARCHITECTURE_PATTERNS_TOPICS
   },
   {
     id: 'component-architecture',
