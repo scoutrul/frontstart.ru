@@ -465,6 +465,41 @@ export async function postSingleScheduledTopic() {
     const post = posts[postIndex];
     const topic = post.topic;
     
+    // Проверяем, не был ли уже запощен этот топик
+    if (state.posted.includes(topic.id)) {
+      const message = `Topic ${topic.id} was already posted, skipping`;
+      console.log(message);
+      
+      // Увеличиваем счётчики и сохраняем состояние
+      state.postsTodayCount = (state.postsTodayCount || 0) + 1;
+      state.dailyPostIndex = (state.dailyPostIndex || 0) + 1;
+      
+      if (state.dailyPostIndex >= 4) {
+        state.cycleDay = newState.cycleDay;
+        state.humanitarianIndex = newState.humanitarianIndex;
+        state.metaCategoryPointers = newState.metaCategoryPointers;
+        state.dailyPostIndex = 0;
+      }
+      
+      state.lastPostDate = today;
+      await saveState(state);
+      
+      await addLogEntry({
+        topicId: topic.id,
+        status: 'skipped',
+        type: 'scheduled-single',
+        error: message,
+        postIndex,
+        postsTodayCount: state.postsTodayCount
+      });
+      
+      return {
+        success: false,
+        error: message,
+        posted: []
+      };
+    }
+    
     console.log(`Posting ${postIndex + 1}/4 for today: ${topic.id} (${post.metaCategoryId})`);
     
     try {

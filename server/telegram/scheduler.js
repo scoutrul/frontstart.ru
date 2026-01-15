@@ -48,12 +48,21 @@ export function initializeScheduleState(state) {
 /**
  * Получить тему из мета-категории по указателю
  * Возвращает { topic, newPointer } или null если темы закончились
+ * Пропускает уже запощенные темы
  */
-function getTopicFromCategory(metaId, pointer, topicsByMeta, resetOnEnd = true) {
+function getTopicFromCategory(metaId, pointer, topicsByMeta, resetOnEnd = true, postedIds = []) {
   const topics = topicsByMeta[metaId];
   
   if (!topics || topics.length === 0) {
     console.warn(`No topics found in meta-category: ${metaId}`);
+    return null;
+  }
+  
+  // Фильтруем неопубликованные темы
+  const unpostedTopics = topics.filter(t => !postedIds.includes(t.id));
+  
+  if (unpostedTopics.length === 0) {
+    console.warn(`All topics in meta-category ${metaId} have been posted`);
     return null;
   }
   
@@ -69,10 +78,34 @@ function getTopicFromCategory(metaId, pointer, topicsByMeta, resetOnEnd = true) 
     }
   }
   
-  const topic = topics[pointer];
-  const newPointer = pointer + 1;
+  // Ищем следующую незапощенную тему, начиная с указателя
+  let startPointer = pointer;
+  let currentPointer = pointer;
+  let attempts = 0;
+  const maxAttempts = topics.length;
   
-  return { topic, newPointer };
+  while (attempts < maxAttempts) {
+    const currentTopic = topics[currentPointer];
+    
+    // Если тема не запощена, используем её
+    if (!postedIds.includes(currentTopic.id)) {
+      const newPointer = currentPointer + 1;
+      return { topic: currentTopic, newPointer };
+    }
+    
+    // Переходим к следующей теме
+    currentPointer = (currentPointer + 1) % topics.length;
+    attempts++;
+    
+    // Если прошли полный круг и вернулись к началу
+    if (currentPointer === startPointer && attempts > 0) {
+      break;
+    }
+  }
+  
+  // Если все темы запощены
+  console.warn(`All topics in meta-category ${metaId} starting from pointer ${pointer} have been posted`);
+  return null;
 }
 
 /**
@@ -86,6 +119,7 @@ export function planDailyPosts(state, topicsByMeta, resetOnEnd = true) {
   
   const posts = [];
   const newState = JSON.parse(JSON.stringify(state)); // Deep clone
+  const postedIds = state.posted || [];
   
   // 1. Гуманитарный пост
   const humanitarianMetaId = HUMANITARIAN[newState.humanitarianIndex];
@@ -95,7 +129,8 @@ export function planDailyPosts(state, topicsByMeta, resetOnEnd = true) {
     humanitarianMetaId,
     humanitarianPointer,
     topicsByMeta,
-    resetOnEnd
+    resetOnEnd,
+    postedIds
   );
   
   if (humanitarianResult) {
@@ -124,7 +159,7 @@ export function planDailyPosts(state, topicsByMeta, resetOnEnd = true) {
     const metaId = TECHNICAL[techIndex];
     const pointer = newState.metaCategoryPointers[metaId];
     
-    const result = getTopicFromCategory(metaId, pointer, topicsByMeta, resetOnEnd);
+    const result = getTopicFromCategory(metaId, pointer, topicsByMeta, resetOnEnd, postedIds);
     
     if (result) {
       posts.push({
