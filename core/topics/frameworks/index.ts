@@ -10,21 +10,25 @@ export const FRAMEWORKS_CATEGORIES: Category[] = [
   {
     id: 'react',
     title: 'React',
+    description: 'Библиотека от Meta: JSX, хуки, компоненты, состояние, эффекты, экосистема.',
     topics: REACT_TOPICS
   },
   {
     id: 'vue',
     title: 'Vue',
+    description: 'Прогрессивный фреймворк: Options/Composition API, реактивность, SFC.',
     topics: VUE_TOPICS
   },
   {
     id: 'angular',
     title: 'Angular',
+    description: 'Платформа от Google: TypeScript, DI, RxJS, модули, полный стек из коробки.',
     topics: ANGULAR_TOPICS
   },
   {
     id: 'svelte',
     title: 'Svelte',
+    description: 'Компилятор вместо рантайма: минимальный бандл, простой синтаксис.',
     topics: SVELTE_TOPICS
   }
 ];

@@ -6,6 +6,7 @@ export const HIRING_SOFT_SKILLS_CATEGORIES: Category[] = [
   {
     id: 'hiring-soft-skills',
     title: 'SOFT SKILLS НА КАЖДОМ ЭТАПЕ',
+    description: 'Коммуникация, cultural fit, что проверяют помимо кода.',
     topics: [
       ...HIRING_SOFT_SKILLS_WHAT_CHECK_TOPICS,
       ...HIRING_SOFT_SKILLS_CULTURAL_FIT_TOPICS

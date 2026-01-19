@@ -7,6 +7,7 @@ export const HIRING_RESUME_CATEGORIES: Category[] = [
   {
     id: 'hiring-resume',
     title: 'Резюме',
+    description: 'Как писать резюме: ATS-оптимизация, структура, где размещать.',
     topics: [
       ...HIRING_RESUME_ATS_TOPICS,
       ...HIRING_RESUME_STRUCTURE_TOPICS,

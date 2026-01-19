@@ -23,6 +23,7 @@ export interface Topic {
 export interface Category {
   id: string;
   title: string;
+  description?: string;
   topics: Topic[];
 }
 

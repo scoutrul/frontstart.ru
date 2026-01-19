@@ -7,6 +7,7 @@ export const HIRING_STRATEGY_CATEGORIES: Category[] = [
   {
     id: 'hiring-strategy',
     title: 'Стратегия',
+    description: 'Планирование поиска работы: где искать, как подходить, тактики.',
     topics: [
       ...HIRING_STRATEGY_SEARCH_TOPICS,
       ...HIRING_STRATEGY_WHERE_TOPICS,

@@ -11,21 +11,25 @@ export const OPTIMIZATION_CATEGORIES: Category[] = [
   {
     id: 'performance',
     title: 'Производительность',
+    description: 'Введение в производительность: метрики, инструменты измерения, цели.',
     topics: PERFORMANCE_BASICS_TOPICS
   },
   {
     id: 'web-vitals',
     title: 'Web Vitals',
+    description: 'LCP, FID/INP, CLS — Core Web Vitals и как их улучшить.',
     topics: WEB_VITALS_TOPICS
   },
   {
     id: 'code-optimization',
     title: 'Оптимизация кода и рендеринга',
+    description: 'Мемоизация, виртуализация, debounce/throttle, оптимизация React/Vue.',
     topics: CODE_OPTIMIZATION_TOPICS
   },
   {
     id: 'resource-delivery',
     title: 'Оптимизация доставки ресурсов',
+    description: 'Code splitting, lazy loading, сжатие, CDN, оптимизация изображений.',
     topics: RESOURCE_DELIVERY_TOPICS
   }
 ];

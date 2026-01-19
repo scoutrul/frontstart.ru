@@ -6,7 +6,7 @@ import { getKnowledgeBaseByCategory } from '../../../core/constants';
 
 const KnowledgePath: React.FC = () => {
   const navigate = useNavigate();
-  const { selectedMetaCategory, setSelectedMetaCategory, setSelectedTopicId, getProgress, clearFilters } = useKnowledgeBaseStore();
+  const { selectedMetaCategory, setSelectedMetaCategory, getProgress, clearFilters } = useKnowledgeBaseStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -21,15 +21,8 @@ const KnowledgePath: React.FC = () => {
       return;
     }
     
-    // При переключении категории выбираем первую тему
-    const knowledgeBase = getKnowledgeBaseByCategory(categoryId);
-    const firstTopic = knowledgeBase.flatMap(cat => cat.topics)[0];
-    if (firstTopic) {
-      setSelectedTopicId(firstTopic.id);
-      navigate(`/${categoryId}/${firstTopic.id}`);
-    } else {
-      navigate(`/${categoryId}`);
-    }
+    // Переходим на титульную страницу метараздела
+    navigate(`/${categoryId}`);
   };
 
   // Подсчитываем общее количество тем для каждой категории

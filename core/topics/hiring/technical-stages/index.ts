@@ -7,6 +7,7 @@ export const HIRING_TECHNICAL_STAGES_CATEGORIES: Category[] = [
   {
     id: 'hiring-technical-stages',
     title: 'ТЕХНИЧЕСКИЕ ЭТАПЫ',
+    description: 'Live coding, system design, take-home — форматы и подготовка.',
     topics: [
       ...HIRING_TECHNICAL_STAGES_FORMATS_TOPICS,
       ...HIRING_TECHNICAL_STAGES_PREPARATION_TOPICS,

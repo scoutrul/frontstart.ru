@@ -9,11 +9,14 @@ import ProjectInfoModal from './components/ui/ProjectInfoModal';
 import NotesModal from './components/ui/NotesModal';
 import Footer from './components/ui/Footer';
 import QALayout from './features/knowledge-base/components/QALayout';
+import MetaCategoryIndex from './features/knowledge-base/components/MetaCategoryIndex';
+import SubsectionIndex from './features/knowledge-base/components/SubsectionIndex';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 import { getKnowledgeBaseByCategory } from './core/constants';
 import { MetaCategoryId, META_CATEGORIES } from './core/metaCategories';
 import { useNotesCount } from './hooks/useNotesCount';
+import { isSubsectionId, getSubsectionById } from './core/isSubsectionId';
 
 // Компонент для обновления meta-тегов и JSON-LD
 const SEOHead: React.FC<{ topic: { id: string; title: string; description: string; tags?: string[] } | null; category: MetaCategoryId; topicId?: string }> = ({ topic, category, topicId }) => {
@@ -232,6 +235,9 @@ const SEOHead: React.FC<{ topic: { id: string; title: string; description: strin
   return null;
 };
 
+// Определяем тип контента: index метараздела, index подраздела, или тема
+type ContentType = 'meta-index' | 'subsection-index' | 'topic';
+
 // Основной компонент контента
 const KnowledgeBaseContent: React.FC = () => {
   const navigate = useNavigate();
@@ -253,24 +259,30 @@ const KnowledgeBaseContent: React.FC = () => {
     searchAreaRef
   } = useContentSearch(currentTopic?.id);
 
+  // Определяем тип контента
+  const contentType: ContentType = !urlTopicId 
+    ? 'meta-index' 
+    : isSubsectionId(urlCategory as MetaCategoryId, urlTopicId) 
+      ? 'subsection-index' 
+      : 'topic';
+  
+  // Получаем данные подраздела если это subsection-index
+  const subsection = contentType === 'subsection-index' && urlCategory
+    ? getSubsectionById(urlCategory as MetaCategoryId, urlTopicId!)
+    : null;
+
   // Синхронизация: URL -> состояние (только когда URL меняется из браузера - назад/вперед или прямой переход)
   useEffect(() => {
     if (urlCategory && META_CATEGORIES.find(c => c.id === urlCategory)) {
       if (urlCategory !== selectedMetaCategory) {
         setSelectedMetaCategory(urlCategory);
       }
-      if (urlTopicId && urlTopicId !== selectedTopicId) {
+      // Устанавливаем topicId только для страниц тем
+      if (contentType === 'topic' && urlTopicId && urlTopicId !== selectedTopicId) {
         setSelectedTopicId(urlTopicId);
-      } else if (!urlTopicId && selectedTopicId) {
-        // Если в URL нет topicId, но в состоянии есть - выбираем первую тему категории
-        const knowledgeBase = getKnowledgeBaseByCategory(urlCategory);
-        const firstTopic = knowledgeBase.flatMap(cat => cat.topics)[0];
-        if (firstTopic && firstTopic.id !== selectedTopicId) {
-          setSelectedTopicId(firstTopic.id);
-        }
       }
     }
-  }, [urlCategory, urlTopicId]);
+  }, [urlCategory, urlTopicId, contentType]);
 
   // Автоматически открываем сайдбар на мобильных при смене категории
   const prevMetaCategoryRef = useRef<MetaCategoryId | null>(null);
@@ -328,7 +340,8 @@ const KnowledgeBaseContent: React.FC = () => {
     setIsSidebarOpen(false);
   };
 
-  if (!currentTopic) {
+  // Для страниц тем требуется currentTopic
+  if (contentType === 'topic' && !currentTopic) {
     return (
       <div className="flex h-screen bg-[#0a0f1d] items-center justify-center">
         <div className="text-slate-400">Загрузка...</div>
@@ -338,7 +351,9 @@ const KnowledgeBaseContent: React.FC = () => {
 
   return (
     <>
-      <SEOHead topic={currentTopic} category={selectedMetaCategory} topicId={urlTopicId} />
+      {contentType === 'topic' && currentTopic && (
+        <SEOHead topic={currentTopic} category={selectedMetaCategory} topicId={urlTopicId} />
+      )}
       <div className="flex h-screen bg-[#0a0f1d] overflow-hidden pb-12">
       {/* Overlay для мобильных */}
       {isSidebarOpen && (
@@ -373,29 +388,50 @@ const KnowledgeBaseContent: React.FC = () => {
           <i className="fa-solid fa-bars text-sm"></i>
         </button>
 
-        {/* Поиск по контенту */}
-        <ContentSearch
-          contentSearchQuery={contentSearchQuery}
-          setContentSearchQuery={setContentSearchQuery}
-          searchResults={searchResults}
-          searchAreaRef={searchAreaRef}
-          onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
-        />
-        
-        <div className="fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:clamp(2.5rem,4vw,3rem)_clamp(2.5rem,4vw,3rem)] pointer-events-none"></div>
-        <div className={contentSearchQuery !== null && searchResults.length > 0 ? 'pt-[calc(73px+min(60vh,400px))]' : contentSearchQuery !== null ? 'pt-[73px]' : ''}>
-          <Content 
-            topic={currentTopic}
-            relatedTopics={relatedTopics}
-            explicitRelatedTopicIds={explicitRelatedTopicIds}
-            onTopicJump={handleTopicJump}
+        {/* Поиск по контенту - только для страниц тем */}
+        {contentType === 'topic' && (
+          <ContentSearch
             contentSearchQuery={contentSearchQuery}
             setContentSearchQuery={setContentSearchQuery}
             searchResults={searchResults}
-            savedSearchQuery={savedSearchQuery}
+            searchAreaRef={searchAreaRef}
+            onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
           />
-        </div>
-        <Footer />
+        )}
+        
+        <div className="fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:clamp(2.5rem,4vw,3rem)_clamp(2.5rem,4vw,3rem)] pointer-events-none"></div>
+        
+        {/* Контент в зависимости от типа страницы */}
+        {contentType === 'meta-index' && urlCategory && (
+          <MetaCategoryIndex 
+            metaCategoryId={urlCategory as MetaCategoryId} 
+            onTopicSelect={handleTopicJump}
+          />
+        )}
+        
+        {contentType === 'subsection-index' && urlCategory && subsection && (
+          <SubsectionIndex 
+            metaCategoryId={urlCategory as MetaCategoryId}
+            category={subsection}
+            onTopicSelect={handleTopicJump}
+          />
+        )}
+        
+        {contentType === 'topic' && currentTopic && (
+          <div className={contentSearchQuery !== null && searchResults.length > 0 ? 'pt-[calc(73px+min(60vh,400px))]' : contentSearchQuery !== null ? 'pt-[73px]' : ''}>
+            <Content 
+              topic={currentTopic}
+              relatedTopics={relatedTopics}
+              explicitRelatedTopicIds={explicitRelatedTopicIds}
+              onTopicJump={handleTopicJump}
+              contentSearchQuery={contentSearchQuery}
+              setContentSearchQuery={setContentSearchQuery}
+              searchResults={searchResults}
+              savedSearchQuery={savedSearchQuery}
+            />
+            <Footer />
+          </div>
+        )}
       </main>
       
       {/* Панель переключения метакатегорий */}
@@ -444,16 +480,16 @@ const KnowledgeBaseContent: React.FC = () => {
 
 // Главный компонент с роутингом
 const App: React.FC = () => {
-  const { selectedMetaCategory, selectedTopicId } = useKnowledgeBaseStore();
+  const { selectedMetaCategory } = useKnowledgeBaseStore();
   
   return (
     <Routes>
-      <Route path="/" element={<Navigate to={`/${selectedMetaCategory}${selectedTopicId ? `/${selectedTopicId}` : ''}`} replace />} />
+      <Route path="/" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
       <Route path="/interview-questions" element={<QALayout />} />
       <Route path="/interview-questions/:categoryId" element={<QALayout />} />
       <Route path="/:category" element={<KnowledgeBaseContent />} />
       <Route path="/:category/:topicId" element={<KnowledgeBaseContent />} />
-      <Route path="*" element={<Navigate to={`/${selectedMetaCategory}${selectedTopicId ? `/${selectedTopicId}` : ''}`} replace />} />
+      <Route path="*" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
     </Routes>
   );
 };

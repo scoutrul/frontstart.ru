@@ -16,6 +16,7 @@ export const HIRING_SELF_PRESENTATION_CATEGORIES: Category[] = [
   {
     id: 'hiring-self-presentation',
     title: 'Скрининг',
+    description: 'Самопрезентация, STAR-метод, вопросы о проектах и опыте.',
     topics: [
       ...HIRING_SELF_PRESENTATION_TELL_ABOUT_TOPICS,
       ...HIRING_SELF_PRESENTATION_STAR_TOPICS,
