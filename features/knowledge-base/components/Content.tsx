@@ -35,13 +35,19 @@ const Content: React.FC<ContentProps> = (props) => {
   // Находим категорию для текущей темы
   const topicMeta = findTopicMeta(topic.id);
 
-  // Получаем следующую тему из структуры
+  // Получаем следующую тему из структуры (с сортировкой по difficulty как в sidebar)
   const nextTopic = useMemo(() => {
     const knowledgeBase = getKnowledgeBaseByCategory(selectedMetaCategory);
-    const allTopics = knowledgeBase.flatMap(cat => cat.topics);
-    const currentIndex = allTopics.findIndex(t => t.id === topic.id);
-    if (currentIndex !== -1 && currentIndex < allTopics.length - 1) {
-      return allTopics[currentIndex + 1];
+    const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 } as const;
+    
+    // Применяем ту же сортировку что и в sidebar
+    const sortedTopics = knowledgeBase.flatMap(cat => 
+      [...cat.topics].sort((a, b) => difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty])
+    );
+    
+    const currentIndex = sortedTopics.findIndex(t => t.id === topic.id);
+    if (currentIndex !== -1 && currentIndex < sortedTopics.length - 1) {
+      return sortedTopics[currentIndex + 1];
     }
     return null;
   }, [topic.id, selectedMetaCategory]);
