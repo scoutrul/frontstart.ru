@@ -56,46 +56,49 @@ const KnowledgePath: React.FC = () => {
   }, [selectedMetaCategory]);
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-sm border-t border-slate-800/80 shadow-2xl">
-      <div className="w-full px-0 lg:px-4 py-2">
-        <div ref={scrollContainerRef} className="flex items-center justify-start px-2 lg:justify-center gap-2 overflow-x-auto lg:overflow-x-hidden">
-          {META_CATEGORIES.map((category) => {
-            const totalTopics = getTotalTopics(category.id);
-            const progress = getProgress(category.id, totalTopics);
-            const isActive = selectedMetaCategory === category.id;
-            const isQA = category.id === 'interview-questions';
+    <div className="fixed bottom-0 left-0 right-0 z-50 pb-2 px-2 lg:px-4">
+      <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)] 
+      w-fit mx-auto">
+        <div className="w-full px-2 lg:px-3 py-2">
+          <div ref={scrollContainerRef} className="flex items-center justify-center gap-1.5 overflow-x-auto">
+            {META_CATEGORIES.map((category) => {
+              const totalTopics = getTotalTopics(category.id);
+              const progress = getProgress(category.id, totalTopics);
+              const isActive = selectedMetaCategory === category.id;
+              const isQA = category.id === 'interview-questions';
 
-            return (
-              <button
-                key={category.id}
-                ref={isActive ? activeButtonRef : null}
-                onClick={() => handleCategorySelect(category.id)}
-                className={`
-                  flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-md transition-all lg:min-w-[70px] min-h-[39px]
-                  ${isQA
-                    ? 'bg-amber-500/5 border border-amber-500 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.05)] flex-shrink-0'
-                    : isActive 
-                    ? 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 flex-shrink-0' 
-                    : 'bg-slate-800/50 border border-slate-700/50 text-slate-400 hover:bg-slate-800/70 hover:text-slate-300 flex-shrink'
-                  }
-                `}
-              >
-                {!isQA && (
-                  <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0`}></i>
-                )}
-                <div className={`${isActive || isQA ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1`}>
-                  <div className={`text-[10px] font-black uppercase tracking-wider leading-tight whitespace-nowrap w-full ${isActive || isQA ? '' : 'overflow-hidden text-ellipsis'}`}>
-                    {category.title}
-                  </div>
-                  {!isQA && totalTopics > 0 && (
-                    <div className={`text-[9px] leading-tight whitespace-nowrap ${progress > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
-                      {progress}% • {totalTopics}
-                    </div>
+              return (
+                <button
+                  key={category.id}
+                  ref={isActive ? activeButtonRef : null}
+                  onClick={() => handleCategorySelect(category.id)}
+                  className={`
+                    flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all lg:min-w-[70px] min-h-[39px]
+                    ${isQA
+                      ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)] flex-shrink-0'
+                      : isActive 
+                      ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex-shrink-0' 
+                      : 'bg-white/[0.03] border border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-300 flex-shrink'
+                    }
+                  `}
+                >
+                  {!isQA && (
+                    <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0`}></i>
                   )}
-                </div>
-              </button>
-            );
-          })}
+                  <div className={`${isActive || isQA ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1`}>
+                    <div className={`text-[10px] font-black uppercase tracking-wider leading-tight whitespace-nowrap w-full ${isActive || isQA ? '' : 'overflow-hidden text-ellipsis'}`}>
+                      {category.title}
+                    </div>
+                    {!isQA && totalTopics > 0 && (
+                      <div className={`text-[9px] leading-tight whitespace-nowrap ${progress > 0 ? 'text-emerald-400' : 'text-slate-500'}`}>
+                        {progress}% • {totalTopics}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>

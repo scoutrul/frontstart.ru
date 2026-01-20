@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import QASidebar from './QASidebar';
 import QAContent from './QAContent';
 import KnowledgePath from './KnowledgePath';
+import ContentToolbar from './ContentToolbar';
+import ProjectInfoModal from '../../../components/ui/ProjectInfoModal';
+import NotesModal from '../../../components/ui/NotesModal';
+import { useContentSearch } from '../hooks';
+import { useNotesCount } from '../../../hooks/useNotesCount';
 import { INTERVIEW_QUESTIONS_CATEGORIES } from '../../../core/topics/interview-questions';
 
 const QALayout: React.FC = () => {
@@ -13,6 +18,17 @@ const QALayout: React.FC = () => {
     categoryId || firstCategoryId
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProjectInfoOpen, setIsProjectInfoOpen] = useState(false);
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const notesCount = useNotesCount();
+  
+  const {
+    contentSearchQuery,
+    setContentSearchQuery,
+    searchResults,
+    searchAreaRef
+  } = useContentSearch(selectedCategoryId || undefined);
 
   // Синхронизация с URL
   useEffect(() => {
@@ -37,29 +53,13 @@ const QALayout: React.FC = () => {
     ? INTERVIEW_QUESTIONS_CATEGORIES.find((c) => c.id === selectedCategoryId)
     : null;
 
+  const handleTopicSelect = (id: string, _query: string | null) => {
+    // Переходим на страницу темы в основном разделе
+    navigate(`/javascript/${id}`);
+  };
+
   return (
     <div className="flex h-screen bg-[#0a0f1d] overflow-hidden">
-      {/* Упрощенная шапка */}
-      <div className="fixed top-0 left-0 right-0 h-16 bg-[#0f172a]/95 backdrop-blur-sm border-b border-slate-800/80 z-30 flex items-center justify-between px-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="lg:hidden text-slate-400 hover:text-slate-200 transition-colors"
-          >
-            <i className="fa-solid fa-bars text-xl"></i>
-          </button>
-          <h1 className="font-bold text-white text-lg tracking-tight">
-            <span className="text-emerald-500 font-bold">Q&A</span>
-            {selectedCategory && (
-              <>
-                <span className="text-slate-500 text-sm"> / </span>
-                <span className="text-amber-500 text-sm">{selectedCategory.title}</span>
-              </>
-            )}
-          </h1>
-        </div>
-      </div>
-
       {/* Сайдбар */}
       <QASidebar
         selectedCategoryId={selectedCategoryId}
@@ -69,14 +69,38 @@ const QALayout: React.FC = () => {
       />
 
       {/* Основной контент */}
-      <main className="flex-1 flex flex-col overflow-hidden pt-16 pb-12">
-        <div className="flex-1 overflow-y-auto">
+      <main className="flex-1 flex flex-col overflow-hidden pb-16 relative">
+        <ContentToolbar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          contentSearchQuery={contentSearchQuery}
+          setContentSearchQuery={setContentSearchQuery}
+          searchResults={searchResults}
+          searchAreaRef={searchAreaRef}
+          onTopicSelect={handleTopicSelect}
+          setIsProjectInfoOpen={setIsProjectInfoOpen}
+          setIsNotesOpen={setIsNotesOpen}
+          notesCount={notesCount}
+        />
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto relative">
           <QAContent categoryId={selectedCategoryId} />
         </div>
       </main>
 
       {/* Нижнее меню навигации по мета-категориям */}
       <KnowledgePath />
+
+      {/* Модальное окно информации о проекте */}
+      <ProjectInfoModal 
+        isOpen={isProjectInfoOpen}
+        onClose={() => setIsProjectInfoOpen(false)}
+      />
+
+      {/* Модальное окно заметок */}
+      <NotesModal 
+        isOpen={isNotesOpen}
+        onClose={() => setIsNotesOpen(false)}
+      />
     </div>
   );
 };

@@ -8,9 +8,10 @@ import Footer from '../../../components/ui/Footer';
 interface MetaCategoryIndexProps {
   metaCategoryId: MetaCategoryId;
   onTopicSelect: (topicId: string) => void;
+  onSearchOpen?: () => void;
 }
 
-const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, onTopicSelect }) => {
+const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, onTopicSelect, onSearchOpen }) => {
   const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
   const categories = META_CATEGORIES_DATA[metaCategoryId] || [];
   

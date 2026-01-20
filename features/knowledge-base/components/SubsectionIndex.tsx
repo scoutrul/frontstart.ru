@@ -9,9 +9,10 @@ interface SubsectionIndexProps {
   metaCategoryId: MetaCategoryId;
   category: Category;
   onTopicSelect: (topicId: string) => void;
+  onSearchOpen?: () => void;
 }
 
-const SubsectionIndex: React.FC<SubsectionIndexProps> = ({ metaCategoryId, category, onTopicSelect }) => {
+const SubsectionIndex: React.FC<SubsectionIndexProps> = ({ metaCategoryId, category, onTopicSelect, onSearchOpen }) => {
   const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
 
   return (

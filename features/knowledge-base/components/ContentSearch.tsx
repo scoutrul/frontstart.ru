@@ -18,15 +18,7 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
   onTopicSelect
 }) => {
   if (contentSearchQuery === null) {
-    return (
-      <button
-        onClick={() => setContentSearchQuery('')}
-        className="fixed top-4 right-6 z-40 w-10 h-10 bg-slate-900/90 border border-slate-800/80 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg"
-        title="Поиск по контенту"
-      >
-        <i className="fa-solid fa-search text-sm"></i>
-      </button>
-    );
+    return null;
   }
 
   return (

@@ -3,7 +3,6 @@ import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation, Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './features/knowledge-base/components/Sidebar';
 import Content from './features/knowledge-base/components/Content';
-import ContentSearch from './features/knowledge-base/components/ContentSearch';
 import KnowledgePath from './features/knowledge-base/components/KnowledgePath';
 import ProjectInfoModal from './components/ui/ProjectInfoModal';
 import NotesModal from './components/ui/NotesModal';
@@ -11,6 +10,7 @@ import Footer from './components/ui/Footer';
 import QALayout from './features/knowledge-base/components/QALayout';
 import MetaCategoryIndex from './features/knowledge-base/components/MetaCategoryIndex';
 import SubsectionIndex from './features/knowledge-base/components/SubsectionIndex';
+import ContentToolbar from './features/knowledge-base/components/ContentToolbar';
 import { useCurrentTopic, useContentSearch } from './features/knowledge-base/hooks';
 import { useKnowledgeBaseStore } from './store/knowledgeBaseStore';
 import { getKnowledgeBaseByCategory } from './core/constants';
@@ -354,7 +354,7 @@ const KnowledgeBaseContent: React.FC = () => {
       {contentType === 'topic' && currentTopic && (
         <SEOHead topic={currentTopic} category={selectedMetaCategory} topicId={urlTopicId} />
       )}
-      <div className="flex h-screen bg-[#0a0f1d] overflow-hidden pb-12">
+      <div className="flex h-screen bg-[#1e293b] overflow-hidden">
       {/* Overlay для мобильных */}
       {isSidebarOpen && (
         <div 
@@ -380,24 +380,18 @@ const KnowledgeBaseContent: React.FC = () => {
           }
         }}
       >
-        {/* Кнопка меню для мобильных */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="lg:hidden fixed top-4 left-4 z-40 w-10 h-10 bg-slate-800/80 border border-slate-700 rounded-lg flex items-center justify-center text-white hover:bg-slate-700 transition-colors"
-        >
-          <i className="fa-solid fa-bars text-sm"></i>
-        </button>
-
-        {/* Поиск по контенту - только для страниц тем */}
-        {contentType === 'topic' && (
-          <ContentSearch
-            contentSearchQuery={contentSearchQuery}
-            setContentSearchQuery={setContentSearchQuery}
-            searchResults={searchResults}
-            searchAreaRef={searchAreaRef}
-            onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
-          />
-        )}
+        <ContentToolbar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          contentSearchQuery={contentSearchQuery}
+          setContentSearchQuery={setContentSearchQuery}
+          searchResults={searchResults}
+          searchAreaRef={searchAreaRef}
+          onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
+          setIsProjectInfoOpen={setIsProjectInfoOpen}
+          setIsNotesOpen={setIsNotesOpen}
+          notesCount={notesCount}
+        />
         
         <div className="fixed inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:clamp(2.5rem,4vw,3rem)_clamp(2.5rem,4vw,3rem)] pointer-events-none"></div>
         
@@ -406,6 +400,7 @@ const KnowledgeBaseContent: React.FC = () => {
           <MetaCategoryIndex 
             metaCategoryId={urlCategory as MetaCategoryId} 
             onTopicSelect={handleTopicJump}
+            onSearchOpen={() => setContentSearchQuery('')}
           />
         )}
         
@@ -414,6 +409,7 @@ const KnowledgeBaseContent: React.FC = () => {
             metaCategoryId={urlCategory as MetaCategoryId}
             category={subsection}
             onTopicSelect={handleTopicJump}
+            onSearchOpen={() => setContentSearchQuery('')}
           />
         )}
         
@@ -436,31 +432,6 @@ const KnowledgeBaseContent: React.FC = () => {
       
       {/* Панель переключения метакатегорий */}
       <KnowledgePath />
-
-      {/* Кнопка информации о проекте */}
-      <button
-        onClick={() => setIsProjectInfoOpen(true)}
-        className="fixed top-16 right-6 z-40 h-8 w-8 bg-slate-950/90 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg"
-        title="Информация о проекте"
-      >
-        <i className="fa-solid fa-info text-sm"></i>
-      </button>
-
-      {/* Кнопка заметок */}
-      <div className="fixed top-28 right-6 z-40">
-        <button
-          onClick={() => setIsNotesOpen(true)}
-          className="h-8 w-8 bg-slate-950/90 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-300 hover:bg-slate-800/90 transition-all shadow-lg relative"
-          title="Заметки"
-        >
-          <i className="fa-solid fa-note-sticky text-sm"></i>
-          {notesCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-emerald-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1.5">
-              {notesCount > 99 ? '99+' : notesCount}
-            </span>
-          )}
-        </button>
-      </div>
 
       {/* Модальное окно информации о проекте */}
       <ProjectInfoModal 
