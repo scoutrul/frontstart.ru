@@ -50,7 +50,7 @@ const SubsectionIndex: React.FC<SubsectionIndexProps> = ({ metaCategoryId, categ
                 <span className="text-slate-600 text-sm font-mono flex-shrink-0 w-6 text-right pt-0.5">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0 max-h-[4rem]">
                   <div className="flex items-center gap-3 mb-1 justify-between">
                     <h2 className="text-base font-bold text-white group-hover:text-emerald-400 transition-colors">
                       {topic.title}
