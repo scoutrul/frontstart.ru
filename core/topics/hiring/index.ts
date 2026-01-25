@@ -4,7 +4,6 @@ import { HIRING_STRATEGY_CATEGORIES } from './strategy';
 import { HIRING_PLAYERS_CATEGORIES } from './players';
 import { HIRING_FUNNEL_CATEGORIES } from './funnel';
 import { HIRING_RESUME_CATEGORIES } from './resume';
-import { HIRING_FIRST_CALL_CATEGORIES } from './first-call';
 import { HIRING_SELF_PRESENTATION_CATEGORIES } from './self-presentation';
 import { HIRING_TECHNICAL_STAGES_CATEGORIES } from './technical-stages';
 import { HIRING_SOFT_SKILLS_CATEGORIES } from './soft-skills';
@@ -17,7 +16,6 @@ export const HIRING_CATEGORIES: Category[] = [
   ...HIRING_PLAYERS_CATEGORIES,
   ...HIRING_FUNNEL_CATEGORIES,
   ...HIRING_RESUME_CATEGORIES,
-  ...HIRING_FIRST_CALL_CATEGORIES,
   ...HIRING_SELF_PRESENTATION_CATEGORIES,
   ...HIRING_TECHNICAL_STAGES_CATEGORIES,
   ...HIRING_SOFT_SKILLS_CATEGORIES,
