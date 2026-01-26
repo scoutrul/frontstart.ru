@@ -143,7 +143,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onTopicSelect, isOpen = true, onClose
       </div>
       
       <div ref={scrollRef} className="flex-1 overflow-y-auto custom-scrollbar">
-        <div key={selectedMetaCategory} className="p-5 animate-sidebar">
+        <div key={selectedMetaCategory} className="p-5 pb-24 animate-sidebar">
           <SidebarHeader 
             icon={categoryIcon}
             title={META_CATEGORIES.find(c => c.id === selectedMetaCategory)?.title || ''}
