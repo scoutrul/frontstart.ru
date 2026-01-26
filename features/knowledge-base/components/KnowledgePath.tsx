@@ -9,6 +9,8 @@ const KnowledgePath: React.FC = () => {
   const { selectedMetaCategory, setSelectedMetaCategory, getProgress, clearFilters } = useKnowledgeBaseStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const activeButtonRef = useRef<HTMLButtonElement>(null);
+  const prevProgressRef = useRef<Map<MetaCategoryId, number>>(new Map());
+  const flashRefs = useRef<Map<MetaCategoryId, HTMLButtonElement | null>>(new Map());
 
   const handleCategorySelect = (categoryId: MetaCategoryId) => {
     setSelectedMetaCategory(categoryId);
@@ -55,6 +57,30 @@ const KnowledgePath: React.FC = () => {
     scrollToActive();
   }, [selectedMetaCategory]);
 
+  // Отслеживание изменений прогресса и применение flash-эффекта
+  useEffect(() => {
+    META_CATEGORIES.forEach((category) => {
+      if (category.id === 'interview-questions') return;
+      
+      const totalTopics = getTotalTopics(category.id);
+      const currentProgress = getProgress(category.id, totalTopics);
+      const prevProgress = prevProgressRef.current.get(category.id);
+      
+      // Применяем эффект только если прогресс увеличился (не уменьшился)
+      if (prevProgress !== undefined && currentProgress > prevProgress) {
+        const button = flashRefs.current.get(category.id);
+        if (button) {
+          button.classList.add('progress-flash');
+          setTimeout(() => {
+            button.classList.remove('progress-flash');
+          }, 600);
+        }
+      }
+      
+      prevProgressRef.current.set(category.id, currentProgress);
+    });
+  });
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 pb-2 sm:px-2 lg:px-4">
       <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)] 
@@ -71,10 +97,13 @@ const KnowledgePath: React.FC = () => {
               return (
                 <button
                   key={category.id}
-                  ref={isActive ? activeButtonRef : null}
+                  ref={(el) => {
+                    if (isActive) activeButtonRef.current = el;
+                    flashRefs.current.set(category.id, el);
+                  }}
                   onClick={() => handleCategorySelect(category.id)}
                   className={`
-                    flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all lg:min-w-[70px] max-w-[180px] min-h-[39px]
+                    flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all lg:min-w-[70px] max-w-[180px] min-h-[39px] overflow-hidden
                     ${isCompleted ? 'shine-effect' : ''}
                     ${isQA
                       ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)] flex-shrink-0'
@@ -82,7 +111,6 @@ const KnowledgePath: React.FC = () => {
                       ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex-shrink-0' 
                       : 'bg-white/[0.03] border border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-300 flex-shrink'
                     }
-                    ${isCompleted ? 'shadow-[0_0_20px_rgba(16,185,129,0.3)]' : ''}
                   `}
                 >
                   {!isQA && (
