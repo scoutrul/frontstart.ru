@@ -66,6 +66,7 @@ const KnowledgePath: React.FC = () => {
               const progress = getProgress(category.id, totalTopics);
               const isActive = selectedMetaCategory === category.id;
               const isQA = category.id === 'interview-questions';
+              const isCompleted = progress === 100;
 
               return (
                 <button
@@ -74,18 +75,20 @@ const KnowledgePath: React.FC = () => {
                   onClick={() => handleCategorySelect(category.id)}
                   className={`
                     flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all lg:min-w-[70px] max-w-[180px] min-h-[39px]
+                    ${isCompleted ? 'shine-effect' : ''}
                     ${isQA
                       ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)] flex-shrink-0'
                       : isActive 
                       ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 flex-shrink-0' 
                       : 'bg-white/[0.03] border border-white/[0.06] text-slate-400 hover:bg-white/[0.06] hover:text-slate-300 flex-shrink'
                     }
+                    ${isCompleted ? 'shadow-[0_0_20px_rgba(16,185,129,0.3)]' : ''}
                   `}
                 >
                   {!isQA && (
-                    <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0`}></i>
+                    <i className={`${category.icon} text-sm ${isActive ? 'text-emerald-400' : 'text-slate-500'} flex-shrink-0 relative z-10`}></i>
                   )}
-                  <div className={`${isActive || isQA ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1 max-w-full`}>
+                  <div className={`${isActive || isQA ? 'flex' : 'hidden lg:flex'} flex-col items-start min-w-0 flex-1 max-w-full relative z-10`}>
                     <div className={`text-[10px] font-black uppercase tracking-wider leading-tight whitespace-nowrap w-full overflow-hidden text-ellipsis`}>
                       {category.title}
                     </div>

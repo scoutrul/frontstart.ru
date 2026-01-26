@@ -189,3 +189,31 @@ code[class*="language-"] {
   border: 1px solid #44475a;
 }
 
+/* Shine-эффект для завершенных тем */
+@keyframes shine {
+  0% {
+    transform: translateX(-200%) translateY(-100%) ;
+  }
+  100% {
+    transform: translateX(40%) translateY(0%) ;
+  }
+}
+
+.shine-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.shine-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgb(1 255 32 / 17%) 50%, transparent 70%);
+  animation: shine 5s infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
