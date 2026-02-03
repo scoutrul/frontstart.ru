@@ -85,8 +85,8 @@ const KnowledgePath: React.FC = () => {
     <div className="fixed bottom-0 left-0 right-0 z-50 pb-2 sm:px-2 lg:px-4">
       <div className="bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl shadow-[0_-8px_32px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.05)] 
       sm:w-fit mx-auto">
-        <div className="w-full px-2 lg:px-3 py-2 sm:max-w-[calc(100vw_-_2rem)]">
-          <div ref={scrollContainerRef} className="flex items-center justify-center gap-1.5 overflow-x-auto">
+        <div className="w-full px-2 lg:px-3 py-2 sm:max-w-[calc(100vw_-_2rem)] overflow-x-auto">
+          <div ref={scrollContainerRef} className="flex items-center justify-center gap-1.5 min-w-fit lg:min-w-full">
             {META_CATEGORIES.map((category) => {
               const totalTopics = getTotalTopics(category.id);
               const progress = getProgress(category.id, totalTopics);
@@ -103,7 +103,7 @@ const KnowledgePath: React.FC = () => {
                   }}
                   onClick={() => handleCategorySelect(category.id)}
                   className={`
-                    flex items-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all lg:min-w-[70px] max-w-[180px] min-h-[39px] overflow-hidden
+                    flex items-center justify-center gap-2 px-2 lg:px-3 py-1.5 rounded-xl transition-all min-w-[40px] lg:min-w-[70px] max-w-[180px] min-h-[40px] overflow-hidden
                     ${isCompleted ? 'shine-effect' : ''}
                     ${isQA
                       ? 'bg-amber-500/10 border border-amber-500/30 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)] flex-shrink-0'
