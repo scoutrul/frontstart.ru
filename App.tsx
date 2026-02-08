@@ -275,6 +275,7 @@ const KnowledgeBaseContent: React.FC = () => {
 
   const categorySyncedFromUrlRef = useRef(false);
   const prevMetaCategoryRef = useRef<MetaCategoryId | null>(null);
+  const hasDoneFirstSyncRef = useRef(false);
 
   // Синхронизация: URL -> состояние (только когда URL меняется из браузера - назад/вперед или прямой переход)
   useEffect(() => {
@@ -290,19 +291,32 @@ const KnowledgeBaseContent: React.FC = () => {
     }
   }, [urlCategory, urlTopicId, contentType, selectedMetaCategory, selectedTopicId, setSelectedMetaCategory, setSelectedTopicId]);
 
-  // Автоматически открываем сайдбар на мобильных при смене категории (не при переходе по прямой ссылке / синке с URL)
+  // Автоматически открываем сайдбар на мобильных при смене категории. Не открываем только при первом заходе с внешнего источника.
   useEffect(() => {
     const isMobile = window.innerWidth < 1024; // lg breakpoint
     if (categorySyncedFromUrlRef.current) {
       categorySyncedFromUrlRef.current = false;
-      prevMetaCategoryRef.current = selectedMetaCategory;
-      return;
+      const isFirstSync = !hasDoneFirstSyncRef.current;
+      if (isFirstSync) {
+        hasDoneFirstSyncRef.current = true;
+        try {
+          const fromExternal = !document.referrer || new URL(document.referrer).origin !== window.location.origin;
+          if (fromExternal) {
+            prevMetaCategoryRef.current = urlCategory ?? selectedMetaCategory;
+            return;
+          }
+        } catch {
+          prevMetaCategoryRef.current = urlCategory ?? selectedMetaCategory;
+          return;
+        }
+      }
+      // Не первый заход (переход по нижнему меню и т.п.) — проваливаемся и откроем сайдбар ниже
     }
     if (isMobile && selectedMetaCategory && prevMetaCategoryRef.current && prevMetaCategoryRef.current !== selectedMetaCategory) {
       setIsSidebarOpen(true);
     }
     prevMetaCategoryRef.current = selectedMetaCategory;
-  }, [selectedMetaCategory]);
+  }, [selectedMetaCategory, urlCategory]);
 
   // Найти категорию для темы по ID (используем индекс вместо перебора всех категорий)
   const findTopicCategory = (topicId: string): MetaCategoryId | null => {
