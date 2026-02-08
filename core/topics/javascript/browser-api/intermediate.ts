@@ -81,7 +81,7 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
       'Web Worker не делает JavaScript «многопоточным» в рамках одного потока: каждый воркер — отдельный изолированный рантайм со своим Event Loop; параллелизм появляется из-за нескольких потоков исполнения, которые даёт браузер.',
       'Синтаксис new Worker(...) одинаков в разных браузерах, но конкретные ограничения (безопасность, заголовки для SharedArrayBuffer) диктует именно платформа, а не спецификация языка ECMAScript.'
     ],
-    additionalDescription: 'Практический нюанс, на который чаще всего натыкаются: воркер ускоряет UI только если ты реально упираешься в CPU на main thread. Если у тебя тормозит из-за layout/paint/реакта-рендера, перенос логики в воркер не спасёт.\n\nВ проде воркеры часто скрыты “под капотом”: тяжёлые либы (редакторы, графика, крипто) и WASM-рантаймы запускают их автоматически. В современных сборках (Vite/Webpack) стандартный способ подключения: new Worker(new URL("./worker.ts", import.meta.url), { type: "module" }).',
+    additionalDescription: 'Практический нюанс, на который чаще всего натыкаются: воркер ускоряет UI только если ты реально упираешься в CPU на main thread. Если у тебя тормозит из-за layout/paint/реакта-рендера, перенос логики в воркер не спасёт.\n\nВ проде воркеры часто скрыты “под капотом”: тяжёлые либы (редакторы, графика, крипто) и WASM-рантаймы запускают их автоматически. В современных сборках (Vite/Webpack) стандартный способ подключения: new Worker(new URL("./worker.js", import.meta.url), { type: "module" }).',
     tags: ['web-workers', 'multithreading', 'performance', 'async', 'browser', 'api', 'web-platform'],
     examples: [
       {
@@ -102,7 +102,7 @@ export const JS_BROWSER_API_INTERMEDIATE_TOPICS: Topic[] = [
       },
       {
         title: "Web Worker с бандлером (Vite/Webpack)",
-        code: `// main.ts — современный вариант через new URL + import.meta.url\n// Vite/Webpack сами вынесут worker.ts в отдельный бандл\nconst worker = new Worker(new URL('./worker.ts', import.meta.url), {\n  type: 'module',\n});\n\nworker.postMessage({ type: 'ping' });\n\nworker.onmessage = (event) => {\n  console.log('Worker response:', event.data);\n};\n\n// worker.ts (ESM-модуль)\nself.onmessage = (event) => {\n  if (event.data.type === 'ping') {\n    self.postMessage({ type: 'pong', ts: Date.now() });\n  }\n};`
+        code: `// main.js — современный вариант через new URL + import.meta.url\n// Vite/Webpack сами вынесут worker.js в отдельный бандл\nconst worker = new Worker(new URL('./worker.js', import.meta.url), {\n  type: 'module',\n});\n\nworker.postMessage({ type: 'ping' });\n\nworker.onmessage = (event) => {\n  console.log('Worker response:', event.data);\n};\n\n// worker.js (ESM-модуль)\nself.onmessage = (event) => {\n  if (event.data.type === 'ping') {\n    self.postMessage({ type: 'pong', ts: Date.now() });\n  }\n};`
       }
     ],
     relatedTopics: ['async-await', 'promises', 'performance-optimization', 'interfaces-workers-messaging', 'web-platform-api-overview', 'nodejs-processes']
