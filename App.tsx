@@ -17,6 +17,8 @@ import { getKnowledgeBaseByCategory } from './core/constants';
 import { MetaCategoryId, META_CATEGORIES } from './core/metaCategories';
 import { useNotesCount } from './hooks/useNotesCount';
 import { isSubsectionId, getSubsectionById } from './core/isSubsectionId';
+import { getTopicMetaCategory } from './core/topicIndex';
+import { MetaCategoryDataProvider } from './contexts/MetaCategoryDataContext';
 
 // Компонент для обновления meta-тегов и JSON-LD
 const SEOHead: React.FC<{ topic: { id: string; title: string; description: string; tags?: string[] } | null; category: MetaCategoryId; topicId?: string }> = ({ topic, category, topicId }) => {
@@ -286,7 +288,7 @@ const KnowledgeBaseContent: React.FC = () => {
         setSelectedTopicId(urlTopicId);
       }
     }
-  }, [urlCategory, urlTopicId, contentType]);
+  }, [urlCategory, urlTopicId, contentType, selectedMetaCategory, selectedTopicId, setSelectedMetaCategory, setSelectedTopicId]);
 
   // Автоматически открываем сайдбар на мобильных при смене категории (не при переходе по прямой ссылке / синке с URL)
   useEffect(() => {
@@ -302,18 +304,9 @@ const KnowledgeBaseContent: React.FC = () => {
     prevMetaCategoryRef.current = selectedMetaCategory;
   }, [selectedMetaCategory]);
 
-  // Найти категорию для темы по ID
+  // Найти категорию для темы по ID (используем индекс вместо перебора всех категорий)
   const findTopicCategory = (topicId: string): MetaCategoryId | null => {
-    const allCategoryIds = META_CATEGORIES.map(m => m.id);
-
-    for (const categoryId of allCategoryIds) {
-      const categories = getKnowledgeBaseByCategory(categoryId);
-      const topic = categories.flatMap(cat => cat.topics).find(t => t.id === topicId);
-      if (topic) {
-        return categoryId;
-      }
-    }
-    return null;
+    return getTopicMetaCategory(topicId);
   };
 
   const handleTopicJump = (id: string, fromSearch: boolean | string = false) => {
@@ -461,14 +454,16 @@ const App: React.FC = () => {
   const { selectedMetaCategory } = useKnowledgeBaseStore();
   
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
-      <Route path="/interview-questions" element={<QALayout />} />
-      <Route path="/interview-questions/:categoryId" element={<QALayout />} />
-      <Route path="/:category" element={<KnowledgeBaseContent />} />
-      <Route path="/:category/:topicId" element={<KnowledgeBaseContent />} />
-      <Route path="*" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
-    </Routes>
+    <MetaCategoryDataProvider>
+      <Routes>
+        <Route path="/" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
+        <Route path="/interview-questions" element={<QALayout />} />
+        <Route path="/interview-questions/:categoryId" element={<QALayout />} />
+        <Route path="/:category" element={<KnowledgeBaseContent />} />
+        <Route path="/:category/:topicId" element={<KnowledgeBaseContent />} />
+        <Route path="*" element={<Navigate to={`/${selectedMetaCategory}`} replace />} />
+      </Routes>
+    </MetaCategoryDataProvider>
   );
 };
 

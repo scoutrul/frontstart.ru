@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { META_CATEGORIES, MetaCategoryId } from '../../../core/metaCategories';
-import { META_CATEGORIES_DATA } from '../../../core/metaCategoriesData';
 import { Badge } from '../../../components/ui';
 import Footer from '../../../components/ui/Footer';
 import { useDoubleClickSearch } from '../hooks/useDoubleClickSearch';
+import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 
 interface MetaCategoryIndexProps {
   metaCategoryId: MetaCategoryId;
@@ -14,13 +14,21 @@ interface MetaCategoryIndexProps {
 
 const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, onTopicSelect, onSearchOpen }) => {
   const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
-  const categories = META_CATEGORIES_DATA[metaCategoryId] || [];
+  const { categories, loading } = useMetaCategoryData();
   const containerRef = useRef<HTMLDivElement>(null);
   
   const totalTopics = categories.reduce((sum, cat) => sum + cat.topics.length, 0);
 
   if (!metaCategory) {
     return <div className="text-slate-400 p-8">Раздел не найден</div>;
+  }
+
+  if (loading) {
+    return (
+      <div className="flex h-screen bg-[#0a0f1d] items-center justify-center">
+        <div className="text-slate-400">Загрузка раздела...</div>
+      </div>
+    );
   }
 
   // Обработка двойного клика для поиска с открытием модалки
@@ -34,7 +42,7 @@ const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, o
           searchInput.value = word;
           searchInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
-      }, 100);
+      }, 50);
     }
   });
 

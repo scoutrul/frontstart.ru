@@ -105,14 +105,14 @@ const Content: React.FC<ContentProps> = (props) => {
       const aScore = calculateRelevanceScore(
         a,
         aMeta.category ?? undefined,
-        (aMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined,
+        aMeta.metaCategoryId ?? undefined,
         highlightQuery,
         relevanceWords
       );
       const bScore = calculateRelevanceScore(
         b,
         bMeta.category ?? undefined,
-        (bMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined,
+        bMeta.metaCategoryId ?? undefined,
         highlightQuery,
         relevanceWords
       );
@@ -130,8 +130,8 @@ const Content: React.FC<ContentProps> = (props) => {
       if (!aHasTitleMatch && bHasTitleMatch) return 1;
       
       // Приоритет 2: Название мета-секции или подсекции содержит искомое слово
-      const aHasCategoryMatch = hasCategoryMatch(aMeta.category ?? undefined, (aMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined, highlightQuery, relevanceWords);
-      const bHasCategoryMatch = hasCategoryMatch(bMeta.category ?? undefined, (bMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined, highlightQuery, relevanceWords);
+      const aHasCategoryMatch = hasCategoryMatch(aMeta.category ?? undefined, aMeta.metaCategoryId ?? undefined, highlightQuery, relevanceWords);
+      const bHasCategoryMatch = hasCategoryMatch(bMeta.category ?? undefined, bMeta.metaCategoryId ?? undefined, highlightQuery, relevanceWords);
       
       if (aHasCategoryMatch && !bHasCategoryMatch) return -1;
       if (!aHasCategoryMatch && bHasCategoryMatch) return 1;
@@ -315,7 +315,7 @@ const Content: React.FC<ContentProps> = (props) => {
                   onClick={() => props.onTopicJump(relatedTopic.id)}
                   highlightQuery={highlightQuery}
                   relevanceWords={!isSearchMode ? topic.tags : undefined}
-                  metaCategoryId={(meta?.metaCategoryId || undefined) as MetaCategoryId | undefined}
+                  metaCategoryId={meta?.metaCategoryId || undefined}
                   category={meta?.category || undefined}
                   padding="p-5"
                   descriptionLines={3}

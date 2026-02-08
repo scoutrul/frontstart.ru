@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { META_CATEGORIES, MetaCategoryId } from '../../../core/metaCategories';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
+import { getMetaCategoryTopicCount } from '../../../core/topicIndex';
 
 const CollapsibleKnowledgePath: React.FC = () => {
   const navigate = useNavigate();
@@ -14,19 +14,12 @@ const CollapsibleKnowledgePath: React.FC = () => {
   const handleCategorySelect = (categoryId: MetaCategoryId) => {
     setSelectedMetaCategory(categoryId);
     clearFilters();
-    const knowledgeBase = getKnowledgeBaseByCategory(categoryId);
-    const firstTopic = knowledgeBase.flatMap(cat => cat.topics)[0];
-    if (firstTopic) {
-      setSelectedTopicId(firstTopic.id);
-      navigate(`/${categoryId}/${firstTopic.id}`);
-    } else {
-      navigate(`/${categoryId}`);
-    }
+    // Просто переходим на индекс метакатегории, не пытаемся найти первую тему
+    navigate(`/${categoryId}`);
   };
 
   const getTotalTopics = (categoryId: MetaCategoryId): number => {
-    const knowledgeBase = getKnowledgeBaseByCategory(categoryId);
-    return knowledgeBase.flatMap(cat => cat.topics).length;
+    return getMetaCategoryTopicCount(categoryId);
   };
 
   const scrollToActive = () => {

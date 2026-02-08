@@ -2,12 +2,13 @@ import { useMemo } from 'react';
 import { Topic } from '../../../core/types';
 import { useTopicsFilter } from './useTopicsFilter';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
-import { META_CATEGORIES_DATA } from '../../../core/metaCategoriesData';
 import { findRelatedTopicsByTags } from '../utils/findRelatedTopicsByTags';
+import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 
 export const useCurrentTopic = () => {
   const { selectedTopicId } = useKnowledgeBaseStore();
   const { flatTopics } = useTopicsFilter();
+  const { categories } = useMetaCategoryData();
 
   const currentTopic = useMemo(() => {
     const topic = flatTopics.find(t => t.id === selectedTopicId) || flatTopics[0];
@@ -17,19 +18,14 @@ export const useCurrentTopic = () => {
     return topic;
   }, [selectedTopicId, flatTopics]);
 
-  // Получаем все категории из всех мета-категорий
-  const allCategories = useMemo(() => {
-    return Object.values(META_CATEGORIES_DATA).flat();
-  }, []);
-
   const relatedTopics = useMemo(() => {
     if (!currentTopic) return { topics: [], explicitTopicIds: new Set<string>() };
 
     // Существующие связанные темы из темы (явные связи)
     const existingRelatedTopicIds = new Set(currentTopic.relatedTopics);
 
-    // Автоматически находим связанные темы по тегам
-    const autoRelatedTopicIds = findRelatedTopicsByTags(currentTopic, allCategories);
+    // Автоматически находим связанные темы по тегам (только в текущей метакатегории)
+    const autoRelatedTopicIds = findRelatedTopicsByTags(currentTopic, categories);
 
     // Объединяем и убираем дубликаты
     const allRelatedTopicIds = Array.from(
@@ -42,7 +38,7 @@ export const useCurrentTopic = () => {
       .filter(Boolean) as Topic[];
 
     return { topics, explicitTopicIds: existingRelatedTopicIds };
-  }, [currentTopic, flatTopics, allCategories]);
+  }, [currentTopic, flatTopics, categories]);
 
   return { currentTopic, relatedTopics: relatedTopics.topics, explicitRelatedTopicIds: relatedTopics.explicitTopicIds };
 };

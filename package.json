@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "generate-topics": "tsx scripts/generate-topics-json.js",
+    "generate-topic-index": "tsx scripts/generate-topic-index.js",
     "deploy": "tsx scripts/deploy.js"
   },
   "dependencies": {

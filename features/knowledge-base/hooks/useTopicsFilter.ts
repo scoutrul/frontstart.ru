@@ -1,16 +1,12 @@
 import { useMemo } from 'react';
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Category, Difficulty } from '../../../core/types';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
 import { createWordBoundaryRegex } from '../utils/wordBoundaryRegex';
+import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 
 export const useTopicsFilter = () => {
   const { searchQuery, selectedDifficulty, selectedTags, selectedMetaCategory } = useKnowledgeBaseStore();
-
-  const knowledgeBase = useMemo(
-    () => getKnowledgeBaseByCategory(selectedMetaCategory),
-    [selectedMetaCategory]
-  );
+  const { categories: knowledgeBase, loading } = useMetaCategoryData();
 
   const flatTopics = useMemo(
     () => knowledgeBase.flatMap(c => c.topics),
@@ -57,6 +53,6 @@ export const useTopicsFilter = () => {
     })).filter(cat => cat.topics.length > 0);
   }, [searchQuery, selectedDifficulty, selectedTags, knowledgeBase, selectedMetaCategory]);
 
-  return { flatTopics, filteredCategories };
+  return { flatTopics, filteredCategories, loading };
 };
 

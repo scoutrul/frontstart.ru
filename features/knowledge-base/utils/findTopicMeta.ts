@@ -1,28 +1,29 @@
 
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
+import { META_CATEGORIES, MetaCategoryId } from '../../../core/metaCategories';
 import { Category } from '../../../core/types';
-import { MetaCategoryId, META_CATEGORIES } from '../../../core/metaCategories';
+import { getCachedMetaCategoryData } from '../../../core/metaCategoriesLoader';
+import { getTopicMetaCategory, getTopicCategoryId } from '../../../core/topicIndex';
 
 export const findTopicMeta = (topicId: string): { metaCategoryId: MetaCategoryId | null; category: Category | null } => {
-  const allCategoryIds = META_CATEGORIES.map(m => m.id);
-
-  for (const categoryId of allCategoryIds) {
-    const categories = getKnowledgeBaseByCategory(categoryId);
-    for (const category of categories) {
-      const topic = category.topics.find(t => t.id === topicId);
-      if (topic) {
-        return {
-          metaCategoryId: categoryId,
-          category
-        };
-      }
-    }
+  // Используем индекс для поиска метакатегории
+  const metaCategoryId = getTopicMetaCategory(topicId);
+  
+  if (!metaCategoryId) {
+    return { metaCategoryId: null, category: null };
+  }
+  
+  // Пытаемся получить категорию из загруженных данных
+  const categories = getCachedMetaCategoryData(metaCategoryId);
+  
+  if (!categories) {
+    // Данные ещё не загружены, возвращаем только метакатегорию
+    return { metaCategoryId, category: null };
   }
 
-  return {
-    metaCategoryId: null,
-    category: null
-  };
+  const categoryId = getTopicCategoryId(topicId);
+  const category = categories.find(c => c.id === categoryId) || null;
+
+  return { metaCategoryId, category };
 };
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { META_CATEGORIES, MetaCategoryId } from '../../../core/metaCategories';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
+import { getMetaCategoryTopicCount } from '../../../core/topicIndex';
 
 const KnowledgePath: React.FC = () => {
   const navigate = useNavigate();
@@ -27,10 +27,9 @@ const KnowledgePath: React.FC = () => {
     navigate(`/${categoryId}`);
   };
 
-  // Подсчитываем общее количество тем для каждой категории
+  // Подсчитываем общее количество тем для каждой категории (из индекса, без загрузки данных)
   const getTotalTopics = (categoryId: MetaCategoryId): number => {
-    const knowledgeBase = getKnowledgeBaseByCategory(categoryId);
-    return knowledgeBase.flatMap(cat => cat.topics).length;
+    return getMetaCategoryTopicCount(categoryId);
   };
 
   // Скролл активной кнопки в видимую область на мобильных устройствах

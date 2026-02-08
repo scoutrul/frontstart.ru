@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
+import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 
 export const useTags = () => {
   const { selectedMetaCategory } = useKnowledgeBaseStore();
+  const { categories: knowledgeBase } = useMetaCategoryData();
 
   const availableTags = useMemo(() => {
-    const knowledgeBase = getKnowledgeBaseByCategory(selectedMetaCategory);
     const allTopics = knowledgeBase.flatMap(cat => cat.topics);
     
     const tagCounts = new Map<string, number>();
@@ -22,7 +22,7 @@ export const useTags = () => {
         return a[0].localeCompare(b[0]);
       })
       .map(([tag]) => tag);
-  }, [selectedMetaCategory]);
+  }, [knowledgeBase]);
 
   return { availableTags };
 };

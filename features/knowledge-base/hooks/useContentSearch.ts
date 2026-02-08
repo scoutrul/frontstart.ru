@@ -1,5 +1,4 @@
 import { useState, useMemo, useRef } from 'react';
-import { getKnowledgeBaseByCategory } from '../../../core/constants';
 import { Topic, Category } from '../../../core/types';
 import { MetaCategoryId, META_CATEGORIES } from '../../../core/metaCategories';
 import { hasTitleMatch } from '../utils/hasTitleMatch';
@@ -7,6 +6,8 @@ import { hasHighlightedWords } from '../utils/hasHighlightedWords';
 import { hasCategoryMatch } from '../utils/hasCategoryMatch';
 import { calculateRelevanceScore } from '../utils/calculateRelevanceScore';
 import { createWordBoundaryRegex } from '../utils/wordBoundaryRegex';
+import { useKnowledgeBaseStore } from '../../../store/knowledgeBaseStore';
+import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 
 export interface TopicWithMeta {
   topic: Topic;
@@ -17,28 +18,25 @@ export interface TopicWithMeta {
 export const useContentSearch = (currentTopicId: string | undefined) => {
   const [contentSearchQuery, setContentSearchQuery] = useState<string | null>(null);
   const searchAreaRef = useRef<HTMLDivElement | null>(null);
+  const { selectedMetaCategory } = useKnowledgeBaseStore();
+  const { categories } = useMetaCategoryData();
 
-  // Получаем все темы из всех категорий с информацией о метакатегории и категории
+  // Получаем темы только из текущей метакатегории (для оптимизации)
   const allTopicsWithMeta = useMemo(() => {
-    const allCategoryIds = META_CATEGORIES.map(m => m.id);
-    
     const result: TopicWithMeta[] = [];
     
-    allCategoryIds.forEach(metaCategoryId => {
-      const categories = getKnowledgeBaseByCategory(metaCategoryId);
-      categories.forEach(category => {
-        category.topics.forEach(topic => {
-          result.push({
-            topic,
-            metaCategoryId,
-            category
-          });
+    categories.forEach(category => {
+      category.topics.forEach(topic => {
+        result.push({
+          topic,
+          metaCategoryId: selectedMetaCategory,
+          category
         });
       });
     });
     
     return result;
-  }, []);
+  }, [categories, selectedMetaCategory]);
 
   const searchResults = useMemo(() => {
     if (!contentSearchQuery || !contentSearchQuery.trim() || !currentTopicId) {
