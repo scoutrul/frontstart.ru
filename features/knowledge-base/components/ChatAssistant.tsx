@@ -177,7 +177,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
       </div>
 
       {/* Чат */}
-      <div className="mb-4 mx-4">
+      <div className="mb-4 mx-4 gap-2 flex flex-col">
         {/* Приветственное сообщение от бота */}
         {messages.length === 0 && !loading && (
           <div className="flex justify-start animate-fade-in">
@@ -219,7 +219,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
             <div
               key={idx}
               ref={isLastUserMessageInHistory ? lastUserMessageRef : null}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in ${isLastUserMessageInHistory ? 'scroll-mt-[100px]' : ''}`}
             >
               <div
                 className={`max-w-[85%] rounded-lg px-3 py-2 ${
