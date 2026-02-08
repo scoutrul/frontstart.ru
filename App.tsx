@@ -271,10 +271,14 @@ const KnowledgeBaseContent: React.FC = () => {
     ? getSubsectionById(urlCategory as MetaCategoryId, urlTopicId!)
     : null;
 
+  const categorySyncedFromUrlRef = useRef(false);
+  const prevMetaCategoryRef = useRef<MetaCategoryId | null>(null);
+
   // Синхронизация: URL -> состояние (только когда URL меняется из браузера - назад/вперед или прямой переход)
   useEffect(() => {
     if (urlCategory && META_CATEGORIES.find(c => c.id === urlCategory)) {
       if (urlCategory !== selectedMetaCategory) {
+        categorySyncedFromUrlRef.current = true;
         setSelectedMetaCategory(urlCategory);
       }
       // Устанавливаем topicId только для страниц тем
@@ -284,13 +288,11 @@ const KnowledgeBaseContent: React.FC = () => {
     }
   }, [urlCategory, urlTopicId, contentType]);
 
-  // Автоматически открываем сайдбар на мобильных при смене категории (не при переходе по прямой ссылке)
-  const prevMetaCategoryRef = useRef<MetaCategoryId | null>(null);
-  const isInitialLoadRef = useRef(true);
+  // Автоматически открываем сайдбар на мобильных при смене категории (не при переходе по прямой ссылке / синке с URL)
   useEffect(() => {
     const isMobile = window.innerWidth < 1024; // lg breakpoint
-    if (isInitialLoadRef.current) {
-      isInitialLoadRef.current = false;
+    if (categorySyncedFromUrlRef.current) {
+      categorySyncedFromUrlRef.current = false;
       prevMetaCategoryRef.current = selectedMetaCategory;
       return;
     }
