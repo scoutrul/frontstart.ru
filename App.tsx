@@ -284,11 +284,16 @@ const KnowledgeBaseContent: React.FC = () => {
     }
   }, [urlCategory, urlTopicId, contentType]);
 
-  // Автоматически открываем сайдбар на мобильных при смене категории
+  // Автоматически открываем сайдбар на мобильных при смене категории (не при переходе по прямой ссылке)
   const prevMetaCategoryRef = useRef<MetaCategoryId | null>(null);
+  const isInitialLoadRef = useRef(true);
   useEffect(() => {
     const isMobile = window.innerWidth < 1024; // lg breakpoint
-    // Открываем сайдбар только если категория действительно изменилась (не при первой загрузке)
+    if (isInitialLoadRef.current) {
+      isInitialLoadRef.current = false;
+      prevMetaCategoryRef.current = selectedMetaCategory;
+      return;
+    }
     if (isMobile && selectedMetaCategory && prevMetaCategoryRef.current && prevMetaCategoryRef.current !== selectedMetaCategory) {
       setIsSidebarOpen(true);
     }
@@ -371,7 +376,7 @@ const KnowledgeBaseContent: React.FC = () => {
       
       <main 
         ref={scrollContainerRef} 
-        className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative"
+        className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative pointer-events-none"
         role="main"
         onClick={(e) => {
           // Закрываем поиск при клике вне области поиска (включая края)
