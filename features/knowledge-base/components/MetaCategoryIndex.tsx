@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { META_CATEGORIES, MetaCategoryId } from '../../../core/metaCategories';
 import { META_CATEGORIES_DATA } from '../../../core/metaCategoriesData';
 import { Badge } from '../../../components/ui';
 import Footer from '../../../components/ui/Footer';
+import { useDoubleClickSearch } from '../hooks/useDoubleClickSearch';
 
 interface MetaCategoryIndexProps {
   metaCategoryId: MetaCategoryId;
@@ -14,6 +15,7 @@ interface MetaCategoryIndexProps {
 const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, onTopicSelect, onSearchOpen }) => {
   const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
   const categories = META_CATEGORIES_DATA[metaCategoryId] || [];
+  const containerRef = useRef<HTMLDivElement>(null);
   
   const totalTopics = categories.reduce((sum, cat) => sum + cat.topics.length, 0);
 
@@ -21,8 +23,23 @@ const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, o
     return <div className="text-slate-400 p-8">Раздел не найден</div>;
   }
 
+  // Обработка двойного клика для поиска с открытием модалки
+  useDoubleClickSearch(containerRef, (word) => {
+    if (onSearchOpen) {
+      onSearchOpen();
+      // Даем время на открытие поиска, затем устанавливаем значение
+      setTimeout(() => {
+        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.value = word;
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      }, 100);
+    }
+  });
+
   return (
-    <div className="relative z-10">
+    <div ref={containerRef} className="relative z-10">
       <div className="max-w-4xl mx-auto px-4 lg:px-8 py-8 lg:py-12 pb-24">
         {/* Header */}
         <div className="mb-10">
@@ -35,7 +52,7 @@ const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, o
               <p className="text-slate-400 text-sm">{totalTopics} тем в {categories.length} разделах</p>
             </div>
           </div>
-          <p className="text-slate-300">{metaCategory.description}</p>
+          <p className="text-slate-300 pointer-events-auto">{metaCategory.description}</p>
         </div>
 
         {/* Sections with Topics */}

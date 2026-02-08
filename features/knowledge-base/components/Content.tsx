@@ -14,6 +14,8 @@ import { hasTitleMatch } from '../utils/hasTitleMatch';
 import { hasCategoryMatch } from '../utils/hasCategoryMatch';
 import { calculateRelevanceScore } from '../utils/calculateRelevanceScore';
 import { getKnowledgeBaseByCategory } from '../../../core/constants';
+import { useDoubleClickSearch } from '../hooks/useDoubleClickSearch';
+import { MetaCategoryId } from '../../../core/metaCategories';
 
 interface ContentProps {
   topic: Topic;
@@ -103,14 +105,14 @@ const Content: React.FC<ContentProps> = (props) => {
       const aScore = calculateRelevanceScore(
         a,
         aMeta.category ?? undefined,
-        aMeta.metaCategoryId ?? undefined,
+        (aMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined,
         highlightQuery,
         relevanceWords
       );
       const bScore = calculateRelevanceScore(
         b,
         bMeta.category ?? undefined,
-        bMeta.metaCategoryId ?? undefined,
+        (bMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined,
         highlightQuery,
         relevanceWords
       );
@@ -128,8 +130,8 @@ const Content: React.FC<ContentProps> = (props) => {
       if (!aHasTitleMatch && bHasTitleMatch) return 1;
       
       // Приоритет 2: Название мета-секции или подсекции содержит искомое слово
-      const aHasCategoryMatch = hasCategoryMatch(aMeta.category ?? undefined, aMeta.metaCategoryId ?? undefined, highlightQuery, relevanceWords);
-      const bHasCategoryMatch = hasCategoryMatch(bMeta.category ?? undefined, bMeta.metaCategoryId ?? undefined, highlightQuery, relevanceWords);
+      const aHasCategoryMatch = hasCategoryMatch(aMeta.category ?? undefined, (aMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined, highlightQuery, relevanceWords);
+      const bHasCategoryMatch = hasCategoryMatch(bMeta.category ?? undefined, (bMeta.metaCategoryId ?? undefined) as MetaCategoryId | undefined, highlightQuery, relevanceWords);
       
       if (aHasCategoryMatch && !bHasCategoryMatch) return -1;
       if (!aHasCategoryMatch && bHasCategoryMatch) return 1;
@@ -159,87 +161,12 @@ const Content: React.FC<ContentProps> = (props) => {
     ? new Map(searchResults.map(item => [item.topic.id, { metaCategoryId: item.metaCategoryId, category: item.category }]))
     : null;
 
-
-  // Получение слова из выделения после двойного клика
-  const getWordFromSelection = (): string | null => {
-    const selection = window.getSelection();
-    
-    if (!selection || selection.rangeCount === 0) {
-      return null;
-    }
-
-    const range = selection.getRangeAt(0);
-    const selectedText = selection.toString().trim();
-
-    // Проверяем, что выделение находится внутри контентной части
-    if (!contentRef.current) {
-      return null;
-    }
-
-    // Проверяем, что выделение внутри нашего контейнера
-    const container = range.commonAncestorContainer;
-    const isInContainer = contentRef.current.contains(
-      container.nodeType === Node.TEXT_NODE ? container.parentElement : container as Node
-    );
-
-    if (!isInContainer) {
-      return null;
-    }
-
-    // Проверяем, что выделено одно слово (без пробелов и спецсимволов в начале/конце)
-    if (!selectedText || /\s/.test(selectedText) || selectedText.length < 2) {
-      return null;
-    }
-
-    // Очищаем от пунктуации в начале и конце (с поддержкой Unicode/кириллицы)
-    const cleanedWord = selectedText.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '');
-    
-    if (cleanedWord.length < 2) {
-      return null;
-    }
-
-    return cleanedWord;
-  };
-
-  // Обработка двойного клика
-  useEffect(() => {
-    if (!contentRef.current) {
-      return;
-    }
-
-    const handleDoubleClick = (e: MouseEvent) => {
-      // Проверяем, что клик внутри контентной области
-      const target = e.target as Node;
-      if (!contentRef.current || !contentRef.current.contains(target)) {
-        return;
-      }
-
-      // Увеличиваем задержку, чтобы браузер успел выделить слово
-      setTimeout(() => {
-        const word = getWordFromSelection();
-        
-        if (word) {
-          setContentSearchQuery(word);
-          // Снимаем выделение
-          window.getSelection()?.removeAllRanges();
-        }
-      }, 250);
-    };
-
-    const element = contentRef.current;
-    element.addEventListener('dblclick', handleDoubleClick);
-
-    return () => {
-      if (element) {
-        element.removeEventListener('dblclick', handleDoubleClick);
-      }
-    };
-  }, [setContentSearchQuery, topic.id]);
-
+  // Обработка двойного клика для поиска
+  useDoubleClickSearch(contentRef, setContentSearchQuery);
 
   return (
     <article ref={contentRef} key={topic.id} className="w-full mx-auto py-8 px-4 lg:px-6 animate-content relative pb-20 lg:pb-12 max-w-screen-2xl pointer-events-none">
-      <header className="mb-10 relative">
+      <header className="mb-10 relative pointer-events-auto">
         <div className="flex items-start gap-4 mb-4 flex-wrap">
           <Badge variant={topic.difficulty} className="px-3 py-1.5" />
           {topic.tags && topic.tags.length > 0 && (
@@ -277,7 +204,7 @@ const Content: React.FC<ContentProps> = (props) => {
 
       {/* Первый занимательный факт - перед ключевыми моментами */}
       {topic.funFact && (Array.isArray(topic.funFact) ? topic.funFact[0] : topic.funFact) && (
-        <section className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10">
+        <section className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10 pointer-events-auto">
           <div className="flex items-start gap-3">
             <i className="fa-solid fa-lightbulb text-emerald-400 text-lg mt-0.5"></i>
             <div>
@@ -293,7 +220,7 @@ const Content: React.FC<ContentProps> = (props) => {
         </section>
       )}
 
-      <section className="bg-[#12162a] border border-slate-800/60 rounded-xl p-8 mb-10 shadow-xl">
+      <section className="bg-[#12162a] border border-slate-800/60 rounded-xl p-8 mb-10 shadow-xl pointer-events-auto">
         <h3 className="text-white text-sm font-bold mb-6 flex items-center gap-2">
           <i className="fa-solid fa-star text-emerald-500 text-xs"></i>
           Ключевые моменты
@@ -319,7 +246,7 @@ const Content: React.FC<ContentProps> = (props) => {
       {topic.funFact && Array.isArray(topic.funFact) && topic.funFact.length > 1 && (
         <>
           {topic.funFact.slice(1).map((fact, index) => (
-            <section key={index} className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10">
+            <section key={index} className="bg-gradient-to-r from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 rounded-xl p-6 mb-10 pointer-events-auto">
               <div className="flex items-start gap-3">
                 <i className="fa-solid fa-lightbulb text-emerald-400 text-lg mt-0.5"></i>
                 <div>
@@ -334,7 +261,7 @@ const Content: React.FC<ContentProps> = (props) => {
         </>
       )}
 
-      <section className="mb-10">
+      <section className="mb-10 pointer-events-auto">
         <h2 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-4">ПРИМЕРЫ</h2>
         {topic.examples?.map((ex, i) => (
           <CodeBlock key={i} title={ex.title} code={ex.code} />
@@ -345,7 +272,7 @@ const Content: React.FC<ContentProps> = (props) => {
 
       <ChatAssistant topic={topic} />
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col sm:flex-row gap-3 pointer-events-auto">
         <button
           onClick={() => toggleLearned(topic.id, selectedMetaCategory)}
           className={`flex-[1] flex items-center justify-center gap-2 px-6 py-3 rounded-lg border transition-all font-bold ${
@@ -370,7 +297,7 @@ const Content: React.FC<ContentProps> = (props) => {
       </div>
 
       {relevantTopics.length > 0 && (
-        <section className="mt-16">
+        <section className="mt-16 pointer-events-auto">
           <h2 className="text-slate-500 text-[9px] font-black uppercase tracking-[0.2em] mb-6">
             {contentSearchQuery ? 'РЕЛЕВАНТНЫЕ ТЕМЫ (поиск)' : 'РЕЛЕВАНТНЫЕ ТЕМЫ'}
           </h2>
@@ -388,7 +315,7 @@ const Content: React.FC<ContentProps> = (props) => {
                   onClick={() => props.onTopicJump(relatedTopic.id)}
                   highlightQuery={highlightQuery}
                   relevanceWords={!isSearchMode ? topic.tags : undefined}
-                  metaCategoryId={meta?.metaCategoryId || undefined}
+                  metaCategoryId={(meta?.metaCategoryId || undefined) as MetaCategoryId | undefined}
                   category={meta?.category || undefined}
                   padding="p-5"
                   descriptionLines={3}

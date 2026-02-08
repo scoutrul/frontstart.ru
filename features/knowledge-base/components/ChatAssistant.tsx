@@ -169,7 +169,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
   ];
 
   return (
-    <section className="mt-16 mb-10 bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6 lg:p-8 shadow-xl">
+    <section className="mt-16 mb-10 bg-slate-800 border border-slate-700 rounded-xl p-4 md:p-6 lg:p-8 shadow-xl pointer-events-auto">
       {/* Заголовок */}
       <div className="mb-4">
         <h2 className="text-white text-lg font-black mb-1">AI-ассистент по этой теме</h2>
