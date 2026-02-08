@@ -378,7 +378,7 @@ const KnowledgeBaseContent: React.FC = () => {
       
       <main 
         ref={scrollContainerRef} 
-        className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative pointer-events-none"
+        className="flex-1 overflow-y-auto bg-[#1e293b] bg-gradient-to-br from-[#1e293b] via-[#1a2332] to-[#0f172a] relative"
         role="main"
         onClick={(e) => {
           // Закрываем поиск при клике вне области поиска (включая края)

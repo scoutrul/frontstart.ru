@@ -238,7 +238,7 @@ const Content: React.FC<ContentProps> = (props) => {
 
 
   return (
-    <article ref={contentRef} key={topic.id} className="w-full mx-auto py-8 px-4 lg:px-6 animate-content relative pb-20 lg:pb-12 max-w-screen-2xl">
+    <article ref={contentRef} key={topic.id} className="w-full mx-auto py-8 px-4 lg:px-6 animate-content relative pb-20 lg:pb-12 max-w-screen-2xl pointer-events-none">
       <header className="mb-10 relative">
         <div className="flex items-start gap-4 mb-4 flex-wrap">
           <Badge variant={topic.difficulty} className="px-3 py-1.5" />
