@@ -8,15 +8,15 @@ import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 export const useCurrentTopic = () => {
   const { selectedTopicId } = useKnowledgeBaseStore();
   const { flatTopics } = useTopicsFilter();
-  const { categories } = useMetaCategoryData();
+  const { categories, loading } = useMetaCategoryData();
 
   const currentTopic = useMemo(() => {
     const topic = flatTopics.find(t => t.id === selectedTopicId) || flatTopics[0];
-    if (!topic) {
+    if (!topic && !loading) {
       console.error('No topics found in KNOWLEDGE_BASE');
     }
     return topic;
-  }, [selectedTopicId, flatTopics]);
+  }, [selectedTopicId, flatTopics, loading]);
 
   const relatedTopics = useMemo(() => {
     if (!currentTopic) return { topics: [], explicitTopicIds: new Set<string>() };
