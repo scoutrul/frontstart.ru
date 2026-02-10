@@ -94,7 +94,9 @@ export function formatArticleForTelegram(topic, frontendBaseUrl) {
   // Ключевые моменты — нумерованный список в blockquote; expandable только если 7+
   if (topic.keyPoints && topic.keyPoints.length > 0) {
     parts.push('<b>Ключевые моменты:</b>');
-    const listLines = topic.keyPoints.map((point, index) => `${index + 1}. ${escapeHtml(point)}`).join('\n');
+    const listLines = topic.keyPoints
+      .map((point, index) => `${index + 1}. ${escapeHtml(point)}`)
+      .join('\n\n');
     const expandable = topic.keyPoints.length > 7 ? ' expandable' : '';
     parts.push(`<blockquote${expandable}>${listLines}</blockquote>`);
     parts.push('');
