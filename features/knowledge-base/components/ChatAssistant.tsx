@@ -62,11 +62,19 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
     }
   }, [messages]);
 
-  // Фиксированная высота textarea
+  // Автоматическое изменение высоты textarea
+  const adjustTextareaHeight = () => {
+    if (!textareaRef.current) return;
+    const textarea = textareaRef.current;
+    const minHeight = 48;
+    const maxHeight = 200;
+    textarea.style.height = 'auto';
+    const newHeight = Math.min(Math.max(textarea.scrollHeight, minHeight), maxHeight);
+    textarea.style.height = `${newHeight}px`;
+  };
+
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = '48px';
-    }
+    adjustTextareaHeight();
   }, []);
 
   const handleIntentClick = (intent: ChatIntent) => {
@@ -96,6 +104,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
     const intent = intentOverride || currentIntent;
     setError(null);
     setLoading(true);
+    let sendSucceeded = false;
 
     // Добавляем сообщение пользователя (если есть)
     let newMessages = [...messages];
@@ -104,7 +113,6 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
       newMessages.push(userMsg);
       setMessages(newMessages);
       addMessage(userMsg);
-      setInput('');
     }
 
     try {
@@ -133,6 +141,7 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
       setMessages(updatedMessages);
       addMessage(assistantMsg);
       setHistory(updatedMessages);
+      sendSucceeded = true;
     } catch (err) {
       const chatError = err as ChatError;
       setError(chatError.error || 'Произошла ошибка');
@@ -143,6 +152,9 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
       }
     } finally {
       setLoading(false);
+      if (sendSucceeded) {
+        setInput('');
+      }
     }
   };
 
@@ -271,13 +283,14 @@ const ChatAssistant: React.FC<ChatAssistantProps> = ({ topic }) => {
             onChange={(e) => {
               if (e.target.value.length <= 1000) {
                 setInput(e.target.value);
+                adjustTextareaHeight();
               }
             }}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             disabled={loading}
             rows={1}
-            className="w-full h-[48px] bg-slate-900/50 border border-slate-600/50 rounded-lg px-3 py-3 text-slate-300 text-xs resize-none focus:outline-none focus:border-emerald-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-slate-900/50 border border-slate-600/50 rounded-lg px-3 py-3 text-slate-300 text-xs resize-none focus:outline-none focus:border-emerald-500/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           />
           {input.length > 0 && (
             <div className="absolute bottom-1.5 right-2 text-[10px] text-slate-500">
