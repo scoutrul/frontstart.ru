@@ -26,10 +26,11 @@ interface ContentProps {
   setContentSearchQuery: (query: string | null) => void;
   searchResults: TopicWithMeta[];
   savedSearchQuery: string | null;
+  onDoubleClickSearch?: (word: string) => void;
 }
 
 const Content: React.FC<ContentProps> = (props) => {
-  const { topic, contentSearchQuery, searchResults, savedSearchQuery, setContentSearchQuery } = props;
+  const { topic, contentSearchQuery, searchResults, savedSearchQuery, setContentSearchQuery, onDoubleClickSearch } = props;
   const { isLearned, toggleLearned, selectedMetaCategory } = useKnowledgeBaseStore();
   const learned = isLearned(topic.id, selectedMetaCategory);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -162,7 +163,13 @@ const Content: React.FC<ContentProps> = (props) => {
     : null;
 
   // Обработка двойного клика для поиска
-  useDoubleClickSearch(contentRef, setContentSearchQuery);
+  useDoubleClickSearch(contentRef, (word) => {
+    if (onDoubleClickSearch) {
+      onDoubleClickSearch(word);
+    } else {
+      setContentSearchQuery(word);
+    }
+  });
 
   return (
     <article ref={contentRef} key={topic.id} className="w-full mx-auto py-8 px-4 lg:px-6 animate-content relative pb-20 lg:pb-12 max-w-screen-2xl pointer-events-none">

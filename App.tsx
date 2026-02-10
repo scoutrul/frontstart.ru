@@ -253,6 +253,8 @@ const KnowledgeBaseContent: React.FC = () => {
   const { selectedTopicId, setSelectedTopicId, setSelectedMetaCategory, selectedMetaCategory } = useKnowledgeBaseStore();
   const { currentTopic, relatedTopics, explicitRelatedTopicIds } = useCurrentTopic();
   const notesCount = useNotesCount();
+  const doubleClickSearchPendingRef = useRef<string | null>(null);
+  const [hideSearchForDoubleClick, setHideSearchForDoubleClick] = useState(false);
   
   const {
     contentSearchQuery,
@@ -322,6 +324,30 @@ const KnowledgeBaseContent: React.FC = () => {
   const findTopicCategory = (topicId: string): MetaCategoryId | null => {
     return getTopicMetaCategory(topicId);
   };
+
+  const openSearchFromDoubleClick = (query: string) => {
+    doubleClickSearchPendingRef.current = query;
+    setHideSearchForDoubleClick(true);
+    setContentSearchQuery(query);
+  };
+
+  useEffect(() => {
+    if (
+      doubleClickSearchPendingRef.current !== null &&
+      contentSearchQuery === doubleClickSearchPendingRef.current
+    ) {
+      const trimmed = contentSearchQuery?.trim();
+      if (trimmed && searchResults.length === 0) {
+        // Если запрос из двойного клика не дал результатов — сразу закрываем панель
+        setContentSearchQuery(null);
+        setHideSearchForDoubleClick(false);
+      } else if (trimmed && searchResults.length > 0) {
+        // Разрешаем показать поиск только после того, как получили результаты
+        setHideSearchForDoubleClick(false);
+      }
+      doubleClickSearchPendingRef.current = null;
+    }
+  }, [contentSearchQuery, searchResults, setContentSearchQuery]);
 
   const handleTopicJump = (id: string, fromSearch: boolean | string = false) => {
     // Найти категорию для выбранной темы
@@ -402,6 +428,7 @@ const KnowledgeBaseContent: React.FC = () => {
           searchResults={searchResults}
           searchAreaRef={searchAreaRef}
           onTopicSelect={(id, query) => handleTopicJump(id, query || true)}
+          hideSearch={hideSearchForDoubleClick}
           setIsProjectInfoOpen={setIsProjectInfoOpen}
           setIsNotesOpen={setIsNotesOpen}
           notesCount={notesCount}
@@ -414,7 +441,7 @@ const KnowledgeBaseContent: React.FC = () => {
           <MetaCategoryIndex 
             metaCategoryId={urlCategory as MetaCategoryId} 
             onTopicSelect={handleTopicJump}
-            onSearchOpen={() => setContentSearchQuery('')}
+            onSearchOpen={(word) => openSearchFromDoubleClick(word)}
           />
         )}
         
@@ -438,6 +465,7 @@ const KnowledgeBaseContent: React.FC = () => {
               setContentSearchQuery={setContentSearchQuery}
               searchResults={searchResults}
               savedSearchQuery={savedSearchQuery}
+              onDoubleClickSearch={openSearchFromDoubleClick}
             />
             <Footer />
           </div>

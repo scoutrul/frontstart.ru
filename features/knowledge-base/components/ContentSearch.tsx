@@ -8,6 +8,7 @@ interface ContentSearchProps {
   searchResults: TopicWithMeta[];
   searchAreaRef: React.RefObject<HTMLDivElement | null>;
   onTopicSelect: (id: string, query: string | null) => void;
+  hideSearch?: boolean;
 }
 
 const ContentSearch: React.FC<ContentSearchProps> = ({
@@ -15,9 +16,10 @@ const ContentSearch: React.FC<ContentSearchProps> = ({
   setContentSearchQuery,
   searchResults,
   searchAreaRef,
-  onTopicSelect
+  onTopicSelect,
+  hideSearch = false
 }) => {
-  if (contentSearchQuery === null) {
+  if (contentSearchQuery === null || hideSearch) {
     return null;
   }
 

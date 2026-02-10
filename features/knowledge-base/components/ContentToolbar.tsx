@@ -10,6 +10,7 @@ interface ContentToolbarProps {
   searchResults: TopicWithMeta[];
   searchAreaRef: React.RefObject<HTMLDivElement | null>;
   onTopicSelect: (id: string, query: string | null) => void;
+  hideSearch?: boolean;
   isProjectInfoOpen?: boolean;
   setIsProjectInfoOpen?: (open: boolean) => void;
   isNotesOpen?: boolean;
@@ -25,6 +26,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
   searchResults,
   searchAreaRef,
   onTopicSelect,
+  hideSearch = false,
   setIsProjectInfoOpen,
   setIsNotesOpen,
   notesCount = 0
@@ -128,6 +130,7 @@ const ContentToolbar: React.FC<ContentToolbarProps> = ({
         searchResults={searchResults}
         searchAreaRef={searchAreaRef}
         onTopicSelect={onTopicSelect}
+        hideSearch={hideSearch}
       />
     </>
   );

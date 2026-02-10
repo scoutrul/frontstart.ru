@@ -55,7 +55,11 @@ export const useContentSearch = (currentTopicId: string | undefined) => {
     }
 
     // Ищем темы, где хотя бы одно слово найдено в контенте (с границами слов)
+    // и исключаем текущую тему из результатов
     const filteredResults = allTopicsWithMeta.filter(({ topic, category, metaCategoryId }) => {
+      if (topic.id === currentTopicId) {
+        return false;
+      }
       const metaCategory = META_CATEGORIES.find(m => m.id === metaCategoryId);
       const searchText = [
         topic.title,

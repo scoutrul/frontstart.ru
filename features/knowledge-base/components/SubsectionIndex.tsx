@@ -9,7 +9,7 @@ interface SubsectionIndexProps {
   metaCategoryId: MetaCategoryId;
   category: Category;
   onTopicSelect: (topicId: string) => void;
-  onSearchOpen?: () => void;
+  onSearchOpen?: (initialQuery: string) => void;
 }
 
 const SubsectionIndex: React.FC<SubsectionIndexProps> = ({ metaCategoryId, category, onTopicSelect, onSearchOpen }) => {

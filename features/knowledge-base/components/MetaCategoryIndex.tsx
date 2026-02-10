@@ -9,7 +9,7 @@ import { useMetaCategoryData } from '../../../contexts/MetaCategoryDataContext';
 interface MetaCategoryIndexProps {
   metaCategoryId: MetaCategoryId;
   onTopicSelect: (topicId: string) => void;
-  onSearchOpen?: () => void;
+  onSearchOpen?: (initialQuery: string) => void;
 }
 
 const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, onTopicSelect, onSearchOpen }) => {
@@ -34,15 +34,7 @@ const MetaCategoryIndex: React.FC<MetaCategoryIndexProps> = ({ metaCategoryId, o
   // Обработка двойного клика для поиска с открытием модалки
   useDoubleClickSearch(containerRef, (word) => {
     if (onSearchOpen) {
-      onSearchOpen();
-      // Даем время на открытие поиска, затем устанавливаем значение
-      setTimeout(() => {
-        const searchInput = document.querySelector('input[type="text"]') as HTMLInputElement;
-        if (searchInput) {
-          searchInput.value = word;
-          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-      }, 50);
+      onSearchOpen(word);
     }
   });
 
